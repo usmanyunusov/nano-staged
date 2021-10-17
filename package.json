@@ -1,0 +1,46 @@
+{
+  "name": "nano-staged",
+  "version": "0.1.0",
+  "description": "Pipeliner for git staged files",
+  "keywords": [
+    "runner",
+    "lint",
+    "git",
+    "staged",
+    "eslint",
+    "prettier",
+    "stylelint"
+  ],
+  "author": "Usman Yunusov",
+  "license": "ISC",
+  "repository": "usmanyunusov/nano-staged",
+  "type": "module",
+  "bin": "./bin/index.js",
+  "scripts": {
+    "lint": "prettier --write **/*.js"
+  },
+  "dependencies": {
+    "globrex": "^0.1.2",
+    "picocolors": "^1.0.0"
+  },
+  "devDependencies": {
+    "clean-publish": "^3.4.2",
+    "prettier": "^2.4.1"
+  },
+  "clean-publish": {
+    "cleanDocs": true
+  },
+  "prettier": {
+    "printWidth": 100,
+    "semi": false,
+    "singleQuote": true
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "coverageThreshold": {
+      "global": {
+        "statements": 100
+      }
+    }
+  }
+}
