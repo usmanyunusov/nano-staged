@@ -36,7 +36,7 @@ async function run() {
   }
 
   let files = prepareFiles(stagedFiles, config)
-  if (files.tasks.every((task) => !task.files.length)) {
+  if (files.tasks.every((subTasks) => subTasks.every((task) => !task.files.length))) {
     error(`No staged files match any configured task.`)
     process.exit(1)
   }

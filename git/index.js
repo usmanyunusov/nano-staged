@@ -47,7 +47,7 @@ export async function gitCheckout(paths) {
 export async function gitCreateStash() {
   try {
     let hash = await git(['stash', 'create'])
-    await git(['stash', 'store', '-m', STASH_MESSAGE, '-q', hash])
+    await git(['stash', 'store', '-m', STASH_MESSAGE, '-q', hash.trim()])
   } catch (err) {
     throw 'Automatic backup is failed!'
   }
@@ -70,7 +70,7 @@ export async function gitGetStagedFiles({ gitDir, cwd }) {
   try {
     let i = 0
     let lastIndex
-    let raw = await git(['status', '-u', '-z'])
+    let raw = await git(['status', '-z'])
 
     while (i < raw.length) {
       let code = raw.charCodeAt(i)

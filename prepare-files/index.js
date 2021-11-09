@@ -8,6 +8,7 @@ export function prepareFiles(entries, config) {
   let tasks = []
 
   for (let [pattern, cmd] of Object.entries(config)) {
+    let subTasks = []
     let cmds = Array.isArray(cmd) ? cmd : [cmd]
 
     let matches = glob(pattern, { extended: true })
@@ -30,12 +31,14 @@ export function prepareFiles(entries, config) {
     })
 
     for (let cmd of cmds) {
-      tasks.push({
+      subTasks.push({
         pattern,
         cmd,
         files: files.map(({ path }) => path),
       })
     }
+
+    tasks.push(subTasks)
   }
 
   return { tasks, staged, deleted, changed }

@@ -23,7 +23,7 @@ export async function git(args, opts) {
   try {
     return spawn('git', args, opts)
   } catch (err) {
-    throw new Error(err)
+    throw err
   }
 }
 
@@ -71,7 +71,7 @@ export async function spawn(program, args, opts, onData) {
       if (err) {
         reject(err)
       } else {
-        resolve(stdout.trim())
+        resolve(stdout)
       }
     }
 

@@ -16,11 +16,7 @@ export function createPipeliner({ files }) {
 
   return {
     async run() {
-      await this.preparingPipline()
-    },
-
-    async preparingPipline() {
-      console.log(pico.green('Preparing piplines...'))
+      console.log(pico.green('-') + ' Preparing piplines...')
 
       try {
         await gitCreateStash()
@@ -35,7 +31,7 @@ export function createPipeliner({ files }) {
       if (changed.length || deleted.length) {
         try {
           if (changed.length) {
-            console.log(pico.green('Backup unstaged changes for staged files...'))
+            console.log(pico.green('-') + ' Backup unstaged changes for staged files...')
             let sources = await readFiles(changed)
 
             for (let [path, source] of sources) {
@@ -43,7 +39,7 @@ export function createPipeliner({ files }) {
             }
           }
 
-          console.log(pico.green('Discard unstaged changes in working directory...'))
+          console.log(pico.green('-') + ' Discard unstaged changes in working directory...')
           await gitCheckout([...changed, ...deleted])
         } catch (err) {
           await this.restoreOriginalState()
@@ -56,7 +52,7 @@ export function createPipeliner({ files }) {
 
     async restoreUnstagedFiles() {
       if (changed.length || deleted.length) {
-        console.log(pico.green('Restore unstaged changes for staged files...'))
+        console.log(pico.green('-') + ' Restore unstaged changes for staged files...')
 
         try {
           if (deleted.length) {
@@ -76,27 +72,33 @@ export function createPipeliner({ files }) {
       await this.clean()
     },
 
+    async runTask(tasks) {
+      let task = tasks.shift()
+
+      if (!task) return
+
+      if (task.files.length) {
+        console.log(`  ${pico.green(task.pattern)}: ${task.cmd}`)
+
+        let [cmd, ...args] = stringToArgv(task.cmd)
+        await spawn(cmd, [...args, ...task.files])
+      } else {
+        console.log(`  ${pico.yellow(task.pattern)}: no staged files match`)
+      }
+
+      await this.runTask(tasks)
+    },
+
     async runTasks() {
-      console.log(pico.green('Run tasks...'))
+      console.log(pico.green('-') + ' Running tasks...')
 
       try {
-        async function runTask() {
-          let task = tasks.shift()
+        await Promise.all(
+          tasks.map(async (subTasks) => {
+            await this.runTask(subTasks)
+          })
+        )
 
-          if (!task) return
-
-          if (task.files.length) {
-            console.log(pico.green(`  Run task for ${task.pattern}:`))
-            console.log(pico.green(`  - ${task.cmd}`))
-
-            let [cmd, ...args] = stringToArgv(task.cmd)
-            await spawn(cmd, [...args, ...task.files])
-          }
-
-          await runTask()
-        }
-
-        await runTask()
         await gitAdd(staged)
       } catch (err) {
         await this.restoreOriginalState()
@@ -107,7 +109,7 @@ export function createPipeliner({ files }) {
     },
 
     async clean() {
-      console.log(pico.green('Clearing...'))
+      console.log(pico.green('-') + ' Clearing...')
       clearCache()
 
       try {
@@ -118,7 +120,7 @@ export function createPipeliner({ files }) {
     },
 
     async restoreOriginalState() {
-      console.log(pico.green('Restore original state for repo...'))
+      console.log(pico.green('-') + ' Reverting to original state because of errors...')
       clearCache()
 
       try {
