@@ -21,7 +21,7 @@ export function info(message) {
 
 export async function git(args, opts) {
   try {
-    return spawn('git', args, opts)
+    return await spawn('git', args, opts)
   } catch (err) {
     throw err
   }
@@ -53,11 +53,7 @@ export async function spawn(program, args, opts, onData) {
     let stdout = ''
 
     proc.on('error', (err) => {
-      if (err.code === 'ENOENT') {
-        reject(new Error(`Couldn't find the binary ${program}`, err.code, program))
-      } else {
-        reject(err)
-      }
+      reject(err)
     })
 
     function updateStdout(chunk) {
