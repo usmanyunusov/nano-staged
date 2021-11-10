@@ -10,16 +10,16 @@ Running time for `index.js`
 
 ```diff
 $ node benchmarks/running-time/index.js
-  lint-staged 1.4783997449874877ms
-+ nano-staged 1.2016788699626924ms
+  lint-staged 1.431 ms
++ nano-staged 1.113 ms
 ```
 
 Running time for `index.js`, `index.css`, `bootstrap.css`
 
 ```diff
 $ node benchmarks/running-time/index.js
-  lint-staged 1.8991241788864135ms
-+ nano-staged 1.6362823400497437ms
+  lint-staged 1.898 ms
++ nano-staged 1.710 ms
 ```
 
 ## Configuration

@@ -1,50 +1,50 @@
-import fs from 'fs-extra'
-import path from 'path'
 import { git, spawn } from '../../utils/index.js'
 import normalize from 'normalize-path'
 import { fileURLToPath } from 'url'
+import { nanoid } from 'nanoid'
+import fs from 'fs-extra'
+import path from 'path'
 
-let __dirname = path.dirname(fileURLToPath(import.meta.url))
 let tmpDir, cwd, before
 
-const createTempDir = async () => {
-  const dirname = path.resolve(__dirname, `.nano-staged-test`)
+async function makeDir() {
+  let currentDir = path.dirname(fileURLToPath(import.meta.url))
+  let dirname = path.resolve(currentDir, `nano-staged-${nanoid()}`)
+
   await fs.ensureDir(dirname)
   return dirname
 }
 
-function showTime(name) {
-  let after = performance.now()
-  process.stdout.write(name + ' ' + parseFloat((after - before) / 1000) + 'ms\n')
+async function appendFile(filename, content, dir = cwd) {
+  fs.appendFile(path.resolve(dir, filename), content)
 }
 
-const appendFile = async (filename, content, dir = cwd) =>
-  fs.appendFile(path.resolve(dir, filename), content)
+async function execGit(args) {
+  await git(args, { cwd })
+}
 
-const execGit = async (args) => git(args, { cwd })
-
-const initGitRepo = async () => {
+async function initGitRepo() {
   await execGit(['init'])
   await execGit(['config', 'user.name', '"test"'])
   await execGit(['config', 'user.email', '"test@test.com"'])
   await appendFile('README.md', '# Test\n')
+  await appendFile('.gitignore', `node_modules/\n`)
   await execGit(['add', 'README.md'])
   await execGit(['commit', '-m initial commit'])
-  await appendFile('.gitignore', `node_modules/`)
 }
 
-const initYarn = async () => {
+async function initProject() {
   await appendFile(
     'package.json',
     `{
-        "lint-staged": {
-            "*.js": "prettier --write",
-            "*.css": ["prettier --write", "prettier --write"]
-        },
-        "nano-staged": {
-            "*.js": "prettier --write",
-            "*.css": ["prettier --write", "prettier --write"]
-        }
+      "lint-staged": {
+        "*.js": "prettier --write",
+        "*.css": ["prettier --write", "prettier --write"]
+      },
+      "nano-staged": {
+        "*.js": "prettier --write",
+        "*.css": ["prettier --write", "prettier --write"]
+      }
     }`
   )
 
@@ -52,16 +52,29 @@ const initYarn = async () => {
   await spawn('yarn', ['add', path.resolve(cwd, '../../../')], {
     cwd,
   })
+  await appendFile('index.js', 'var test = {};')
+  await appendFile('index.css', 'body {color: red;}')
+  await appendFile('bootstrap.css', 'body {color: red;}')
 }
 
-tmpDir = await createTempDir()
+tmpDir = await makeDir()
 cwd = normalize(tmpDir)
 
 await initGitRepo()
-await initYarn()
+await initProject()
 
+function showTime(name) {
+  let prefix = name === 'nano-staged' ? '+ ' : '  '
+  let after = performance.now()
+  let time = (Math.round(after - before) / 1000)
+    .toString()
+    .replace(/\.\d$/, '$&00')
+    .replace(/\.\d\d$/, '$&0')
+  process.stdout.write(prefix + name + '\x1B[1m' + time.padStart(6) + '\x1B[22m ms\n')
+}
+
+// Running time for index.js
 process.stdout.write('Running time for index.js\n')
-await appendFile('index.js', 'var test = {};')
 await execGit(['add', 'index.js'])
 
 before = performance.now()
@@ -72,9 +85,8 @@ before = performance.now()
 await spawn('npx', ['nano-staged'], { cwd })
 showTime('nano-staged')
 
+// Running time for index.js, index.css, bootstrap.css
 process.stdout.write('Running time for index.js, index.css, bootstrap.css\n')
-await appendFile('index.css', 'body {color: red;}')
-await appendFile('bootstrap.css', 'body {color: red;}')
 await execGit(['add', 'index.css', 'bootstrap.css'])
 
 before = performance.now()
@@ -85,4 +97,5 @@ before = performance.now()
 await spawn('npx', ['nano-staged'], { cwd })
 showTime('nano-staged')
 
+// Remove dir
 await fs.remove(tmpDir)

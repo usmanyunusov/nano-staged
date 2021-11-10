@@ -2,10 +2,10 @@
 
 import { getGitDir, gitGetStagedFiles } from '../git/index.js'
 import { loadConfig, validConfig } from '../config/index.js'
-import { getVersion } from '../utils/index.js'
 import { prepareFiles } from '../prepare-files/index.js'
 import { createPipeliner } from '../pipeliner/index.js'
 import { createReporter } from '../reporter/index.js'
+import { getVersion } from '../utils/index.js'
 import pico from 'picocolors'
 
 let reporter = createReporter({ stream: process.stderr })
