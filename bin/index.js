@@ -18,31 +18,31 @@ async function run() {
   let git = createGitSpawn({ cwd })
   let { gitDir, gitConfigDir } = await git.resolveDir(cwd)
   if (!gitDir) {
-    reporter.info('Nano Staged didn’t find git directory\n')
+    reporter.info('Nano Staged didn’t find git directory')
     return
   }
 
   let config = await loadConfig(cwd)
   if (!config) {
-    reporter.info(`Create Nano Staged config in package.json\n`)
+    reporter.info(`Create Nano Staged config in package.json`)
     return
   }
 
   let isValid = validConfig(config)
   if (!isValid) {
-    reporter.info(`Nano Staged config invalid\n`)
+    reporter.info(`Nano Staged config invalid`)
     return
   }
 
   let stagedFiles = await git.getStagedFiles({ gitDir, cwd })
   if (!stagedFiles.length) {
-    reporter.info(`Git staging area is empty.\n`)
+    reporter.info(`Git staging area is empty.`)
     return
   }
 
   let files = prepareFiles(stagedFiles, config)
   if (files.tasks.every((subTasks) => subTasks.every((task) => !task.files.length))) {
-    reporter.info(`No staged files match any configured task.\n`)
+    reporter.info(`No staged files match any configured task.`)
     return
   }
 
