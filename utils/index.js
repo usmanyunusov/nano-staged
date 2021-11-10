@@ -1,7 +1,6 @@
 import { resolve, join, normalize, relative, isAbsolute } from 'path'
 import { spawn as _spawn } from 'child_process'
 import { existsSync } from 'fs'
-import pico from 'picocolors'
 
 export function toAbsolute(file, cwd) {
   return isAbsolute(file) ? file : normalize(resolve(cwd, file))
@@ -9,14 +8,6 @@ export function toAbsolute(file, cwd) {
 
 export function toRelative(file, cwd) {
   return normalize(relative(cwd, file))
-}
-
-export function error(message) {
-  process.stderr.write(pico.red(message) + '\n')
-}
-
-export function info(message) {
-  process.stderr.write(message + '\n')
 }
 
 export async function git(args, opts) {

@@ -1,5 +1,5 @@
 import { CHANGED_CODE, DELETED_CODE } from '../git/index.js'
-import glob from 'globrex'
+import { globrex } from '../globrex/index.js'
 
 export function prepareFiles(entries, config) {
   let staged = []
@@ -11,7 +11,7 @@ export function prepareFiles(entries, config) {
     let subTasks = []
     let cmds = Array.isArray(cmd) ? cmd : [cmd]
 
-    let matches = glob(pattern, { extended: true })
+    let matches = globrex(pattern, { extended: true })
     let files = entries.filter(({ path, type }) => {
       if (matches.regex.test(path)) {
         if (staged.indexOf(path) === -1) {

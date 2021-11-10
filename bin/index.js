@@ -2,43 +2,46 @@
 
 import { getGitDir, gitGetStagedFiles } from '../git/index.js'
 import { loadConfig, validConfig } from '../config/index.js'
-import { error, info, getVersion } from '../utils/index.js'
+import { getVersion } from '../utils/index.js'
 import { prepareFiles } from '../prepare-files/index.js'
 import { createPipeliner } from '../pipeliner/index.js'
+import { createReporter } from '../reporter/index.js'
 import pico from 'picocolors'
+
+let reporter = createReporter({ stream: process.stderr })
 
 async function run() {
   let version = await getVersion(process.cwd())
-  info(pico.bold(`Nano Staged v${version}`))
+  reporter.log(pico.bold(`Nano Staged v${version}`))
 
   let gitDir = await getGitDir(process.cwd())
   if (!gitDir) {
-    error('Nano Staged didn’t find git directory')
-    process.exit(1)
+    reporter.info('Nano Staged didn’t find git directory\n')
+    return
   }
 
   let config = await loadConfig(process.cwd())
   if (!config) {
-    error(`Create Nano Staged config in package.json`)
-    process.exit(1)
+    reporter.info(`Create Nano Staged config in package.json\n`)
+    return
   }
 
   let isValid = validConfig(config)
   if (!isValid) {
-    error(`Nano Staged config invalid`)
-    process.exit(1)
+    reporter.info(`Nano Staged config invalid\n`)
+    return
   }
 
   let stagedFiles = await gitGetStagedFiles({ gitDir, cwd: process.cwd() })
   if (!stagedFiles.length) {
-    error(`Git staging area is empty.`)
-    process.exit(1)
+    reporter.info(`Git staging area is empty.\n`)
+    return
   }
 
   let files = prepareFiles(stagedFiles, config)
   if (files.tasks.every((subTasks) => subTasks.every((task) => !task.files.length))) {
-    error(`No staged files match any configured task.`)
-    process.exit(1)
+    reporter.info(`No staged files match any configured task.\n`)
+    return
   }
 
   return createPipeliner({ process, files }).run()
@@ -48,11 +51,11 @@ run()
   .then(() => {})
   .catch((err) => {
     if (err.own) {
-      error(err.message)
+      reporter.error(err.message)
     } else if (err.stack) {
-      error(err.stack)
+      reporter.error(err.stack)
     } else {
-      error(err)
+      reporter.error(err)
     }
 
     process.exit(1)

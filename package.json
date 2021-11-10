@@ -13,18 +13,19 @@
   ],
   "author": "Usman Yunusov",
   "license": "ISC",
-  "repository": "usmanyunusov/nano-staged",
+  "repository": "https://github.com/usmanyunusov/nano-staged",
   "type": "module",
   "bin": "./bin/index.js",
   "scripts": {
     "lint": "prettier --write **/*.js"
   },
   "dependencies": {
-    "globrex": "^0.1.2",
     "picocolors": "^1.0.0"
   },
   "devDependencies": {
     "clean-publish": "^3.4.2",
+    "fs-extra": "^10.0.0",
+    "normalize-path": "^3.0.0",
     "prettier": "^2.4.1"
   },
   "clean-publish": {
@@ -42,5 +43,6 @@
         "statements": 100
       }
     }
-  }
+  },
+  "main": "index.js"
 }

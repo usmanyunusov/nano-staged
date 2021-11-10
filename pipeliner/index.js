@@ -58,34 +58,28 @@ export function createPipeliner({ process, files }) {
     },
 
     async runTask(tasks) {
-      if (!tasks.length) {
-        return
-      }
+      for (let task of tasks) {
+        if (task.files.length) {
+          let [cmd, ...args] = stringToArgv(task.cmd)
 
-      let task = tasks.shift()
-
-      if (task.files.length) {
-        let [cmd, ...args] = stringToArgv(task.cmd)
-
-        try {
-          await spawn(cmd, [...args, ...task.files])
-          reporter.log(`  ${pico.bold(pico.green(task.pattern))} ${task.cmd}`)
-        } catch (err) {
-          reporter.log(`  ${pico.bold(pico.red(task.pattern))} ${task.cmd}`)
-          throw err
+          try {
+            await spawn(cmd, [...args, ...task.files])
+            reporter.log(`  ${pico.bold(pico.green(task.pattern))} ${task.cmd}`)
+          } catch (err) {
+            reporter.log(`  ${pico.bold(pico.red(task.pattern))} ${task.cmd}`)
+            throw err
+          }
+        } else {
+          reporter.log(`  ${pico.yellow(task.pattern)} no staged files match`)
         }
-      } else {
-        reporter.log(`  ${pico.yellow(task.pattern)} no staged files match`)
       }
-
-      return await this.runTask(tasks)
     },
 
     async runTasks() {
       reporter.step('Running tasks')
 
       try {
-        await Promise.all(tasks.map(async (subTasks) => await this.runTask(subTasks)))
+        await Promise.all(tasks.map((subTasks) => this.runTask(subTasks)))
       } catch (err) {
         await this.restoreOriginalState()
         throw err
