@@ -1,6 +1,7 @@
 import { writeFiles, readFiles, deleteFiles } from '../files/index.js'
 import { setCache, getCache, clearCache } from '../cache/index.js'
 import { spawn, stringToArgv } from '../utils/index.js'
+import { createReporter } from '../reporter/index.js'
 import pico from 'picocolors'
 import {
   gitCreateStash,
@@ -11,15 +12,17 @@ import {
   gitAdd,
 } from '../git/index.js'
 
-export function createPipeliner({ files }) {
+export function createPipeliner({ process, files }) {
+  let reporter = createReporter({ stream: process.stderr })
   let { changed, deleted, tasks, staged } = files
 
   return {
     async run() {
-      console.log(pico.green('-') + ' Preparing piplines...')
+      reporter.step('Preparing pipeliner')
 
       try {
         await gitCreateStash()
+        reporter.log(pico.dim(`  » Done backing up original state to git stash`))
       } catch (err) {
         throw err
       }
@@ -29,18 +32,22 @@ export function createPipeliner({ files }) {
 
     async backupUnstagedFiles() {
       if (changed.length || deleted.length) {
+        reporter.step('Backing unstaged changes for staged files')
+
         try {
           if (changed.length) {
-            console.log(pico.green('-') + ' Backup unstaged changes for staged files...')
-            let sources = await readFiles(changed)
-
-            for (let [path, source] of sources) {
-              setCache(path, source)
+            for (let sources of await readFiles(changed)) {
+              if (sources.length) {
+                let [path, source] = sources
+                setCache(path, source)
+              }
             }
+
+            reporter.log(pico.dim(`  » Done cached for unstaged changes`))
           }
 
-          console.log(pico.green('-') + ' Discard unstaged changes in working directory...')
           await gitCheckout([...changed, ...deleted])
+          reporter.log(pico.dim(`  » Done remove unstaged changes for staged files`))
         } catch (err) {
           await this.restoreOriginalState()
           throw err
@@ -50,56 +57,49 @@ export function createPipeliner({ files }) {
       await this.runTasks()
     },
 
-    async restoreUnstagedFiles() {
-      if (changed.length || deleted.length) {
-        console.log(pico.green('-') + ' Restore unstaged changes for staged files...')
-
-        try {
-          if (deleted.length) {
-            await deleteFiles(deleted)
-          }
-
-          if (changed.length) {
-            let sources = changed.map((path) => [path, getCache(path)])
-            await writeFiles(sources)
-          }
-        } catch (err) {
-          await this.restoreOriginalState()
-          throw err
-        }
+    async runTask(tasks) {
+      if (!tasks.length) {
+        return
       }
 
-      await this.clean()
-    },
-
-    async runTask(tasks) {
       let task = tasks.shift()
 
-      if (!task) return
-
       if (task.files.length) {
-        console.log(`  ${pico.green(task.pattern)}: ${task.cmd}`)
-
         let [cmd, ...args] = stringToArgv(task.cmd)
-        await spawn(cmd, [...args, ...task.files])
+
+        try {
+          await spawn(cmd, [...args, ...task.files])
+          reporter.log(`  ${pico.bold(pico.green(task.pattern))} ${task.cmd}`)
+        } catch (err) {
+          reporter.log(`  ${pico.bold(pico.red(task.pattern))} ${task.cmd}`)
+          throw err
+        }
       } else {
-        console.log(`  ${pico.yellow(task.pattern)}: no staged files match`)
+        reporter.log(`  ${pico.yellow(task.pattern)} no staged files match`)
       }
 
-      await this.runTask(tasks)
+      return await this.runTask(tasks)
     },
 
     async runTasks() {
-      console.log(pico.green('-') + ' Running tasks...')
+      reporter.step('Running tasks')
 
       try {
-        await Promise.all(
-          tasks.map(async (subTasks) => {
-            await this.runTask(subTasks)
-          })
-        )
+        await Promise.all(tasks.map(async (subTasks) => await this.runTask(subTasks)))
+      } catch (err) {
+        await this.restoreOriginalState()
+        throw err
+      }
 
+      await this.applyModifications()
+    },
+
+    async applyModifications() {
+      reporter.step('Applying modifications')
+
+      try {
         await gitAdd(staged)
+        reporter.log(pico.dim(`  » Added task modifications to index`))
       } catch (err) {
         await this.restoreOriginalState()
         throw err
@@ -108,29 +108,54 @@ export function createPipeliner({ files }) {
       await this.restoreUnstagedFiles()
     },
 
-    async clean() {
-      console.log(pico.green('-') + ' Clearing...')
-      clearCache()
+    async restoreUnstagedFiles() {
+      if (changed.length || deleted.length) {
+        reporter.step('Restoring unstaged changes')
 
-      try {
-        await gitDropStash()
-      } catch (err) {
-        throw err
+        try {
+          if (deleted.length) {
+            await deleteFiles(deleted)
+            reporter.log(pico.dim(`  » Done delete deleted files`))
+          }
+
+          if (changed.length) {
+            let sources = changed.map((path) => [path, getCache(path)])
+            await writeFiles(sources)
+            reporter.log(pico.dim(`  » Done revert changes`))
+          }
+        } catch (err) {
+          await this.restoreOriginalState()
+          throw err
+        }
       }
+
+      await this.cleanUp()
     },
 
     async restoreOriginalState() {
-      console.log(pico.green('-') + ' Reverting to original state because of errors...')
-      clearCache()
+      reporter.step('Reverting to original state because of errors')
 
       try {
+        clearCache()
         await gitResetHard()
         await gitApplyStash()
       } catch (err) {
         throw err
       }
 
-      await this.clean()
+      await this.cleanUp()
+    },
+
+    async cleanUp() {
+      reporter.step('Cleaning up')
+
+      try {
+        clearCache()
+        await gitDropStash()
+        reporter.log(pico.dim(`  » Done clearing cache abd dropping backup git stash`))
+      } catch (err) {
+        throw err
+      }
     },
   }
 }

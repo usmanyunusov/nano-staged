@@ -20,7 +20,7 @@ export async function readFiles(files) {
           let source = await fs.readFile(path)
           return [path, source]
         } catch (err) {
-          return null
+          return []
         }
       })
       .filter(Boolean)

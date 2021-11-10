@@ -9,7 +9,7 @@ import pico from 'picocolors'
 
 async function run() {
   let version = await getVersion(process.cwd())
-  info(pico.bold(`Nano Staged ${version}`))
+  info(pico.bold(`Nano Staged v${version}`))
 
   let gitDir = await getGitDir(process.cwd())
   if (!gitDir) {
@@ -46,11 +46,14 @@ async function run() {
 
 run()
   .then(() => {})
-  .catch((e) => {
-    if (e.own) {
-      error(e.message)
+  .catch((err) => {
+    if (err.own) {
+      error(err.message)
+    } else if (err.stack) {
+      error(err.stack)
     } else {
-      error(e.stack)
+      error(err)
     }
+
     process.exit(1)
   })
