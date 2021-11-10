@@ -36,7 +36,7 @@ export async function getVersion() {
   return '0.1.0'
 }
 
-export async function spawn(program, args, opts, onData) {
+export async function spawn(program, args, opts = {}, onData) {
   return new Promise((resolve, reject) => {
     let proc = _spawn(program, args, opts)
     let processingDone = false
@@ -116,4 +116,28 @@ export function stringToArgv(str) {
   } while (match !== null)
 
   return args
+}
+
+export function normalizePath(path, stripTrailing) {
+  if (path === '\\' || path === '/') return '/'
+
+  let len = path.length
+  if (len <= 1) return path
+
+  let prefix = ''
+  if (len > 4 && path[3] === '\\') {
+    let ch = path[2]
+
+    if ((ch === '?' || ch === '.') && path.slice(0, 2) === '\\\\') {
+      path = path.slice(2)
+      prefix = '//'
+    }
+  }
+
+  let segs = path.split(/[/\\]+/)
+  if (stripTrailing !== false && segs[segs.length - 1] === '') {
+    segs.pop()
+  }
+
+  return prefix + segs.join('/')
 }

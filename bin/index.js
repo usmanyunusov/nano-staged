@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { getGitDir, gitGetStagedFiles } from '../git/index.js'
+import { createGitSpawn } from '../git/index.js'
 import { loadConfig, validConfig } from '../config/index.js'
 import { prepareFiles } from '../prepare-files/index.js'
 import { createPipeliner } from '../pipeliner/index.js'
@@ -11,16 +11,18 @@ import pico from 'picocolors'
 let reporter = createReporter({ stream: process.stderr })
 
 async function run() {
-  let version = await getVersion(process.cwd())
+  let cwd = process.cwd()
+  let version = await getVersion(cwd)
   reporter.log(pico.bold(`Nano Staged v${version}`))
 
-  let gitDir = await getGitDir(process.cwd())
+  let git = createGitSpawn({ cwd })
+  let { gitDir, gitConfigDir } = await git.resolveDir(cwd)
   if (!gitDir) {
     reporter.info('Nano Staged didn’t find git directory\n')
     return
   }
 
-  let config = await loadConfig(process.cwd())
+  let config = await loadConfig(cwd)
   if (!config) {
     reporter.info(`Create Nano Staged config in package.json\n`)
     return
@@ -32,7 +34,7 @@ async function run() {
     return
   }
 
-  let stagedFiles = await gitGetStagedFiles({ gitDir, cwd: process.cwd() })
+  let stagedFiles = await git.getStagedFiles({ gitDir, cwd })
   if (!stagedFiles.length) {
     reporter.info(`Git staging area is empty.\n`)
     return
@@ -44,7 +46,7 @@ async function run() {
     return
   }
 
-  return createPipeliner({ process, files }).run()
+  return createPipeliner({ process, files, gitConfigDir, gitDir }).run()
 }
 
 run()

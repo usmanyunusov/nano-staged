@@ -1,5 +1,4 @@
-import { git, spawn } from '../../utils/index.js'
-import normalize from 'normalize-path'
+import { git, spawn, normalizePath } from '../../utils/index.js'
 import { fileURLToPath } from 'url'
 import { nanoid } from 'nanoid'
 import fs from 'fs-extra'
@@ -58,7 +57,7 @@ async function initProject() {
 }
 
 tmpDir = await makeDir()
-cwd = normalize(tmpDir)
+cwd = normalizePath(tmpDir)
 
 await initGitRepo()
 await initProject()

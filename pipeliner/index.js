@@ -2,27 +2,25 @@ import { writeFiles, readFiles, deleteFiles } from '../files/index.js'
 import { setCache, getCache, clearCache } from '../cache/index.js'
 import { spawn, stringToArgv } from '../utils/index.js'
 import { createReporter } from '../reporter/index.js'
+import { createGitSpawn } from '../git/index.js'
+import { resolve } from 'path'
 import pico from 'picocolors'
-import {
-  gitCreateStash,
-  gitApplyStash,
-  gitResetHard,
-  gitDropStash,
-  gitCheckout,
-  gitAdd,
-} from '../git/index.js'
 
-export function createPipeliner({ process, files }) {
+const PATCH_ORIGIN = 'nano-staged.patch'
+
+export function createPipeliner({ process, files, gitConfigDir, gitDir }) {
   let reporter = createReporter({ stream: process.stderr })
+  let patchPath = resolve(gitConfigDir, `./${PATCH_ORIGIN}`)
   let { changed, deleted, tasks, staged } = files
+  let git = createGitSpawn({ cwd: gitDir })
 
   return {
     async run() {
       reporter.step('Preparing pipeliner')
 
       try {
-        await gitCreateStash()
-        reporter.log(pico.dim(`  » Done backing up original state to git stash`))
+        await git.diffPatch(patchPath)
+        reporter.log(pico.dim(`  » Done backing up original state`))
       } catch (err) {
         throw err
       }
@@ -46,7 +44,7 @@ export function createPipeliner({ process, files }) {
             reporter.log(pico.dim(`  » Done cached for unstaged changes`))
           }
 
-          await gitCheckout([...changed, ...deleted])
+          await git.checkout([...changed, ...deleted])
           reporter.log(pico.dim(`  » Done remove unstaged changes for staged files`))
         } catch (err) {
           await this.restoreOriginalState()
@@ -92,8 +90,8 @@ export function createPipeliner({ process, files }) {
       reporter.step('Applying modifications')
 
       try {
-        await gitAdd(staged)
-        reporter.log(pico.dim(`  » Added task modifications to index`))
+        await git.add(staged)
+        reporter.log(pico.dim(`  » Done applying`))
       } catch (err) {
         await this.restoreOriginalState()
         throw err
@@ -127,12 +125,12 @@ export function createPipeliner({ process, files }) {
     },
 
     async restoreOriginalState() {
-      reporter.step('Reverting to original state because of errors')
+      reporter.step('Restoring original state')
 
       try {
-        clearCache()
-        await gitResetHard()
-        await gitApplyStash()
+        await git.checkout('.')
+        await git.applyPatch(patchPath)
+        reporter.log(pico.dim(`  » Done restoring`))
       } catch (err) {
         throw err
       }
@@ -141,12 +139,12 @@ export function createPipeliner({ process, files }) {
     },
 
     async cleanUp() {
-      reporter.step('Cleaning up')
+      reporter.step('Removing patch files')
 
       try {
         clearCache()
-        await gitDropStash()
-        reporter.log(pico.dim(`  » Done clearing cache abd dropping backup git stash`))
+        await deleteFiles(patchPath)
+        reporter.log(pico.dim(`  » Done removing`))
       } catch (err) {
         throw err
       }

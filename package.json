@@ -15,6 +15,7 @@
   "license": "ISC",
   "repository": "https://github.com/usmanyunusov/nano-staged",
   "type": "module",
+  "main": "./bin/index.js",
   "bin": "./bin/index.js",
   "scripts": {
     "lint": "prettier --write **/*.js"
@@ -26,7 +27,6 @@
     "clean-publish": "^3.4.2",
     "fs-extra": "^10.0.0",
     "nanoid": "^3.1.30",
-    "normalize-path": "^3.0.0",
     "prettier": "^2.4.1"
   },
   "clean-publish": {
@@ -36,14 +36,5 @@
     "printWidth": 100,
     "semi": false,
     "singleQuote": true
-  },
-  "jest": {
-    "testEnvironment": "node",
-    "coverageThreshold": {
-      "global": {
-        "statements": 100
-      }
-    }
-  },
-  "main": "index.js"
+  }
 }
