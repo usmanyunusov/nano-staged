@@ -65,6 +65,7 @@ export function pipeliner({ process, files, gitConfigDir, gitDir }) {
           try {
             await spawn(cmd, [...args, ...task.files], {
               cwd: gitDir,
+              env: { ...process.env, FORCE_COLOR: '1' },
             })
             log(`  ${pico.bold(pico.green(task.pattern))} ${task.cmd}`)
           } catch (err) {
