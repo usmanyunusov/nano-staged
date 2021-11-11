@@ -20,9 +20,9 @@ export function fileSystem() {
           .map(async (path) => {
             try {
               let source = await fs.readFile(path)
-              return [path, source]
+              return { path, source }
             } catch (err) {
-              return []
+              return null
             }
           })
           .filter(Boolean)
@@ -33,7 +33,7 @@ export function fileSystem() {
       files = Array.isArray(files) ? files : [files]
 
       return await Promise.all(
-        files.map(async ([path, source]) => {
+        files.map(async ({ path, source }) => {
           return await fs.writeFile(path, source)
         })
       )

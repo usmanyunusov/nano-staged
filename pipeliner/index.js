@@ -38,8 +38,8 @@ export function pipeliner({ process, files, gitConfigDir, gitDir }) {
         try {
           if (changed.length) {
             for (let sources of await fs.read(changed)) {
-              if (sources.length) {
-                let [path, source] = sources
+              if (sources) {
+                let { path, source } = sources
                 cache.set(path, source)
               }
             }
@@ -123,7 +123,7 @@ export function pipeliner({ process, files, gitConfigDir, gitDir }) {
           }
 
           if (changed.length) {
-            let sources = changed.map((path) => [path, cache.get(path)])
+            let sources = changed.map((path) => ({ path, source: cache.get(path) }))
             await fs.write(sources)
           }
 
@@ -143,7 +143,11 @@ export function pipeliner({ process, files, gitConfigDir, gitDir }) {
 
       try {
         await git.checkout('.')
-        await git.applyPatch(patchPath)
+
+        if (await git.checkPatch(patchPath)) {
+          await git.applyPatch(patchPath)
+        }
+
         log(pico.dim(`  ${pico.green('»')} Done restoring`))
       } catch (err) {
         log(pico.dim(`  ${pico.red('»')} Fail restoring`))

@@ -33,6 +33,15 @@ export function gitWorker(opts = {}) {
       await gitSpawn(['apply', ...APPLY_ARGS, patchPath], opts)
     },
 
+    async checkPatch(patchPath) {
+      try {
+        await gitSpawn(['apply', '--check', ...APPLY_ARGS, patchPath], opts)
+        return true
+      } catch (error) {
+        return false
+      }
+    },
+
     async resolveDir(cwd = '') {
       let gitDir = findUp(cwd, '.git')
       let gitConfigDir = join(gitDir, '.git')
