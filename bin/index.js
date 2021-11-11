@@ -8,6 +8,9 @@ import { getVersion } from '../utils/index.js'
 import { gitWorker } from '../git/index.js'
 import pico from 'picocolors'
 
+// Do not terminate main process on SIGINT
+process.on('SIGINT', () => {})
+
 let { log, info } = reporter({ stream: process.stderr })
 
 async function run() {
