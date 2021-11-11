@@ -1,13 +1,13 @@
 # Nano Staged
 
-A tool that lets you easily manage staged git files
+A tiny pipeliner on git staged files.
 
-- Only **single dependency** `picocolors`.
-- It **80 times** smaller than `lint-staged`.
+- 📦 **Small**: 80x+ lighter than **lint-staged**.
+- 🥇 **Single dependency** (Picocolors).
 
 ## Motivation
 
-Run tests/formatters only files that will be committed
+**Nano Staged** allows you to run commands only on git staged files, **speeding up** the validation/formatting processes. It is for working with git-hooks tools like an **simple-git-hooks**.
 
 ## Benchmarks
 
@@ -32,7 +32,7 @@ $ node benchmarks/running-time/index.js
 1. Install `nano-staged` as a dev dependency:
 
    ```terminal
-   npm install nano-staged --save-dev
+   npm i -D nano-staged
    ```
 
 2. Add `nano-staged` to your `package.json`. Fill it with glob pattern and the corresponding commands.
@@ -48,21 +48,14 @@ $ node benchmarks/running-time/index.js
    }
    ```
 
+3. Add `simple-git-hooks`
+   ```json
+   {
+     "simple-git-hooks": {
+       "pre-commit": "npx nano-staged"
+     }
+   }
+   ```
+
 ## Configuration
-
-#### `package.json` example:
-
-```json
-{
-  "name": "MyApp",
-  "version": "0.1.0",
-  "nano-staged": {
-    "*": "your-cmd"
-  },
-  "simple-git-hooks": {
-    "pre-commit": "npx nano-staged"
-  }
-}
-```
-
 ## Examples
