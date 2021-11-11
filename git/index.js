@@ -1,4 +1,4 @@
-import { toAbsolute, toRelative, git, findUp } from '../utils/index.js'
+import { toAbsolute, toRelative, git as gitSpawn, findUp } from '../utils/index.js'
 import { join } from 'path'
 
 const ADDED = 'A'.charCodeAt(0)
@@ -23,14 +23,14 @@ const DIFF_ARGS = [
   '--submodule=short',
 ]
 
-export function createGitSpawn(opts = {}) {
+export function gitWorker(opts = {}) {
   return {
     async diffPatch(patchPath) {
-      await git(['diff', ...DIFF_ARGS, '--output', patchPath], opts)
+      await gitSpawn(['diff', ...DIFF_ARGS, '--output', patchPath], opts)
     },
 
     async applyPatch(patchPath) {
-      await git(['apply', ...APPLY_ARGS, patchPath], opts)
+      await gitSpawn(['apply', ...APPLY_ARGS, patchPath], opts)
     },
 
     async resolveDir(cwd = '') {
@@ -44,7 +44,7 @@ export function createGitSpawn(opts = {}) {
       let list = Array.isArray(paths) ? paths : [paths]
 
       if (list.length) {
-        await git(['add', '-A', '--', ...list], opts)
+        await gitSpawn(['add', '-A', '--', ...list], opts)
       }
     },
 
@@ -52,7 +52,7 @@ export function createGitSpawn(opts = {}) {
       let list = Array.isArray(paths) ? paths : [paths]
 
       if (list.length) {
-        await git(['checkout', '-q', '--force', '--', ...list], opts)
+        await gitSpawn(['checkout', '-q', '--force', '--', ...list], opts)
       }
     },
 
@@ -62,7 +62,7 @@ export function createGitSpawn(opts = {}) {
       try {
         let i = 0
         let lastIndex
-        let raw = await git(['status', '-z'], opts)
+        let raw = await gitSpawn(['status', '-z'], opts)
 
         while (i < raw.length) {
           let code = raw.charCodeAt(i)

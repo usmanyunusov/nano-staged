@@ -1,21 +1,25 @@
-let all = new Map()
+export function createCache() {
+  let cache = new Map()
 
-export function setCache(key, val) {
-  all.set(key, val)
-}
+  return {
+    set(key, val) {
+      cache.set(key, val)
+    },
 
-export function getCache(key) {
-  return all.get(key)
-}
+    get(key) {
+      return cache.get(key)
+    },
 
-export function delCache(key) {
-  all.delete(key)
-}
+    delete(key) {
+      cache.delete(key)
+    },
 
-export function clearCache() {
-  all.clear()
-}
+    clear() {
+      cache.clear()
+    },
 
-export function getAllCache() {
-  return all
+    getAll() {
+      return cache
+    },
+  }
 }

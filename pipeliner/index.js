@@ -1,26 +1,28 @@
-import { writeFiles, readFiles, deleteFiles } from '../files/index.js'
-import { setCache, getCache, clearCache } from '../cache/index.js'
 import { spawn, stringToArgv } from '../utils/index.js'
-import { createReporter } from '../reporter/index.js'
-import { createGitSpawn } from '../git/index.js'
+import { createCache } from '../cache/index.js'
+import { reporter } from '../reporter/index.js'
+import { fileSystem } from '../fs/index.js'
+import { gitWorker } from '../git/index.js'
 import { resolve } from 'path'
 import pico from 'picocolors'
 
 const PATCH_ORIGIN = 'nano-staged.patch'
 
-export function createPipeliner({ process, files, gitConfigDir, gitDir }) {
-  let reporter = createReporter({ stream: process.stderr })
+export function pipeliner({ process, files, gitConfigDir, gitDir }) {
   let patchPath = resolve(gitConfigDir, `./${PATCH_ORIGIN}`)
+  let { log, step } = reporter({ stream: process.stderr })
   let { changed, deleted, tasks, staged } = files
-  let git = createGitSpawn({ cwd: gitDir })
+  let git = gitWorker({ cwd: gitDir })
+  let cache = createCache()
+  let fs = fileSystem()
 
   return {
     async run() {
-      reporter.step('Preparing pipeliner')
+      step('Preparing pipeliner')
 
       try {
         await git.diffPatch(patchPath)
-        reporter.log(pico.dim(`  » Done backing up original state`))
+        log(pico.dim(`  » Done backing up original state`))
       } catch (err) {
         throw err
       }
@@ -30,22 +32,22 @@ export function createPipeliner({ process, files, gitConfigDir, gitDir }) {
 
     async backupUnstagedFiles() {
       if (changed.length || deleted.length) {
-        reporter.step('Backing unstaged changes for staged files')
+        step('Backing unstaged changes for staged files')
 
         try {
           if (changed.length) {
-            for (let sources of await readFiles(changed)) {
+            for (let sources of await fs.read(changed)) {
               if (sources.length) {
                 let [path, source] = sources
-                setCache(path, source)
+                cache.set(path, source)
               }
             }
 
-            reporter.log(pico.dim(`  » Done cached for unstaged changes`))
+            log(pico.dim(`  » Done cached for unstaged changes`))
           }
 
           await git.checkout([...changed, ...deleted])
-          reporter.log(pico.dim(`  » Done remove unstaged changes for staged files`))
+          log(pico.dim(`  » Done remove unstaged changes for staged files`))
         } catch (err) {
           await this.restoreOriginalState()
           throw err
@@ -62,19 +64,19 @@ export function createPipeliner({ process, files, gitConfigDir, gitDir }) {
 
           try {
             await spawn(cmd, [...args, ...task.files])
-            reporter.log(`  ${pico.bold(pico.green(task.pattern))} ${task.cmd}`)
+            log(`  ${pico.bold(pico.green(task.pattern))} ${task.cmd}`)
           } catch (err) {
-            reporter.log(`  ${pico.bold(pico.red(task.pattern))} ${task.cmd}`)
+            log(`  ${pico.bold(pico.red(task.pattern))} ${task.cmd}`)
             throw err
           }
         } else {
-          reporter.log(`  ${pico.yellow(task.pattern)} no staged files match`)
+          log(`  ${pico.yellow(task.pattern)} no staged files match`)
         }
       }
     },
 
     async runTasks() {
-      reporter.step('Running tasks')
+      step('Running tasks')
 
       try {
         await Promise.all(tasks.map((subTasks) => this.runTask(subTasks)))
@@ -87,11 +89,11 @@ export function createPipeliner({ process, files, gitConfigDir, gitDir }) {
     },
 
     async applyModifications() {
-      reporter.step('Applying modifications')
+      step('Applying modifications')
 
       try {
         await git.add(staged)
-        reporter.log(pico.dim(`  » Done applying`))
+        log(pico.dim(`  » Done applying`))
       } catch (err) {
         await this.restoreOriginalState()
         throw err
@@ -102,18 +104,18 @@ export function createPipeliner({ process, files, gitConfigDir, gitDir }) {
 
     async restoreUnstagedFiles() {
       if (changed.length || deleted.length) {
-        reporter.step('Restoring unstaged changes')
+        step('Restoring unstaged changes')
 
         try {
           if (deleted.length) {
-            await deleteFiles(deleted)
-            reporter.log(pico.dim(`  » Done delete deleted files`))
+            await fs.delete(deleted)
+            log(pico.dim(`  » Done delete deleted files`))
           }
 
           if (changed.length) {
-            let sources = changed.map((path) => [path, getCache(path)])
-            await writeFiles(sources)
-            reporter.log(pico.dim(`  » Done revert changes`))
+            let sources = changed.map((path) => [path, cache.get(path)])
+            await fs.write(sources)
+            log(pico.dim(`  » Done revert changes`))
           }
         } catch (err) {
           await this.restoreOriginalState()
@@ -125,12 +127,12 @@ export function createPipeliner({ process, files, gitConfigDir, gitDir }) {
     },
 
     async restoreOriginalState() {
-      reporter.step('Restoring original state')
+      step('Restoring original state')
 
       try {
         await git.checkout('.')
         await git.applyPatch(patchPath)
-        reporter.log(pico.dim(`  » Done restoring`))
+        log(pico.dim(`  » Done restoring`))
       } catch (err) {
         throw err
       }
@@ -139,12 +141,12 @@ export function createPipeliner({ process, files, gitConfigDir, gitDir }) {
     },
 
     async cleanUp() {
-      reporter.step('Removing patch files')
+      step('Removing patch file')
 
       try {
-        clearCache()
-        await deleteFiles(patchPath)
-        reporter.log(pico.dim(`  » Done removing`))
+        cache.clear()
+        await fs.delete(patchPath)
+        log(pico.dim(`  » Done removing`))
       } catch (err) {
         throw err
       }

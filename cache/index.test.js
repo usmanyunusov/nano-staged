@@ -1,24 +1,26 @@
 import { equal } from 'uvu/assert'
 import { test } from 'uvu'
 
-import { setCache, getCache, delCache, clearCache, getAllCache } from './index.js'
+import { createCache } from './index.js'
 
-test('track cache', () => {
-  setCache('a.js', 1)
-  equal(getCache('a.js'), 1)
+test('track cache work', () => {
+  let cache = createCache()
 
-  delCache('a.js')
-  equal(getCache('a.js'), undefined)
+  cache.set('a.js', 1)
+  equal(cache.get('a.js'), 1)
 
-  setCache('a.js', 1)
-  equal(getAllCache().size, 1)
+  cache.delete('a.js')
+  equal(cache.get('a.js'), undefined)
 
-  clearCache()
-  equal(getAllCache().size, 0)
+  cache.set('a.js', 1)
+  equal(cache.getAll().size, 1)
 
-  setCache('a.js', 1)
-  setCache('a.js', 2)
-  equal(getCache('a.js'), 2)
+  cache.clear()
+  equal(cache.getAll().size, 0)
+
+  cache.set('a.js', 1)
+  cache.set('a.js', 2)
+  equal(cache.get('a.js'), 2)
 })
 
 test.run()

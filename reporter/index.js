@@ -1,22 +1,24 @@
 import pico from 'picocolors'
 
-export function createReporter({ stream }) {
-  return {
+export function reporter({ stream }) {
+  let report = {
     log(msg) {
       stream.write(`${msg}\n`)
     },
 
     info(msg) {
-      this.log(`${pico.cyan(`-`)} ${msg}`)
+      report.log(`${pico.cyan(`-`)} ${msg}`)
     },
 
     error(msg) {
-      this.log(pico.red(msg))
+      report.log(pico.red(msg))
     },
 
     step(msg) {
       msg += '...'
-      this.log(`${pico.green(`-`)} ${msg}`)
+      report.log(`${pico.green(`-`)} ${msg}`)
     },
   }
+
+  return report
 }
