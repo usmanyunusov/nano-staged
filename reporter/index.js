@@ -10,10 +10,6 @@ export function reporter({ stream }) {
       report.log(`${pico.cyan(`-`)} ${msg}`)
     },
 
-    error(msg) {
-      report.log(pico.red(msg))
-    },
-
     step(msg) {
       msg += '...'
       report.log(`${pico.green(`-`)} ${msg}`)

@@ -36,63 +36,38 @@ export async function getVersion() {
   return '0.1.0'
 }
 
-export async function spawn(program, args, opts = {}, onData) {
-  return new Promise((resolve, reject) => {
-    let proc = _spawn(program, args, opts)
-    let processingDone = false
-    let err = null
-    let stdout = ''
+export async function spawn(program, args, opts = {}) {
+  let child = _spawn(program, args, opts)
+  let stdout = ''
+  let stderr = ''
 
-    proc.on('error', (err) => {
-      reject(err)
+  if (child.stdout) {
+    child.stdout.on('data', (data) => {
+      stdout += data
     })
+  }
 
-    function updateStdout(chunk) {
-      stdout += chunk
-      if (onData) {
-        onData(chunk)
-      }
-    }
+  if (child.stderr) {
+    child.stderr.on('data', (data) => {
+      stderr += data
+    })
+  }
 
-    function finish() {
-      if (err) {
-        reject(err)
-      } else {
+  let promise = new Promise((resolve, reject) => {
+    child.on('error', reject)
+
+    child.on('close', (code) => {
+      if (code === 0) {
         resolve(stdout)
-      }
-    }
-
-    if (proc.stderr) {
-      proc.stderr.on('data', updateStdout)
-    }
-
-    if (proc.stdout) {
-      proc.stdout.on('data', updateStdout)
-    }
-
-    processingDone = true
-
-    proc.on('close', (code, signal) => {
-      if (signal || code >= 1) {
-        err = new Error(
-          [
-            'Command failed.',
-            signal ? `Exit signal: ${signal}` : `Exit code: ${code}`,
-            `Command: ${program}`,
-            `Arguments: ${args.join(' ')}`,
-            `Directory: ${opts?.cwd || process.cwd()}`,
-            `Output:\n${stdout.trim()}`,
-          ].join('\n')
-        )
-        err.EXIT_SIGNAL = signal
-        err.EXIT_CODE = code
-      }
-
-      if (processingDone || err) {
-        finish()
+      } else {
+        reject(stderr)
       }
     })
   })
+
+  promise.child = child
+
+  return promise
 }
 
 function firstString(...args) {

@@ -8,7 +8,7 @@ import { getVersion } from '../utils/index.js'
 import { gitWorker } from '../git/index.js'
 import pico from 'picocolors'
 
-let { log, info, error } = reporter({ stream: process.stderr })
+let { log, info } = reporter({ stream: process.stderr })
 
 async function run() {
   let cwd = process.cwd()
@@ -53,12 +53,14 @@ async function run() {
 run()
   .then(() => {})
   .catch((err) => {
-    if (err.own) {
-      error(err.message)
+    if (err.cmds) {
+      log('\n' + err.cmds)
+    } else if (err.own) {
+      log('\n' + pico.red(err.message))
     } else if (err.stack) {
-      error(err.stack)
+      log('\n' + pico.red(err.stack))
     } else {
-      error(err)
+      log('\n' + pico.red(err))
     }
 
     process.exit(1)

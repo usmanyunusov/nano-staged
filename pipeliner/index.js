@@ -63,11 +63,13 @@ export function pipeliner({ process, files, gitConfigDir, gitDir }) {
           let [cmd, ...args] = stringToArgv(task.cmd)
 
           try {
-            await spawn(cmd, [...args, ...task.files])
+            await spawn(cmd, [...args, ...task.files], {
+              cwd: gitDir,
+            })
             log(`  ${pico.bold(pico.green(task.pattern))} ${task.cmd}`)
           } catch (err) {
             log(`  ${pico.bold(pico.red(task.pattern))} ${task.cmd}`)
-            throw err
+            throw `${pico.red(`${task.cmd}:\n`) + err}`
           }
         } else {
           log(`  ${pico.yellow(task.pattern)} no staged files match`)
@@ -79,7 +81,14 @@ export function pipeliner({ process, files, gitConfigDir, gitDir }) {
       step('Running tasks')
 
       try {
-        await Promise.all(tasks.map((subTasks) => this.runTask(subTasks)))
+        let result = await Promise.allSettled(tasks.map((subTasks) => this.runTask(subTasks)))
+        let errors = result.filter((i) => i.status === 'rejected')
+
+        if (errors.length) {
+          let err = new Error()
+          err.cmds = errors.map((e) => e.reason).join('\n')
+          throw err
+        }
       } catch (err) {
         await this.restoreOriginalState()
         throw err
