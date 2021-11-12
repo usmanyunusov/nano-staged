@@ -3,7 +3,7 @@ import { test } from 'uvu'
 
 import { createCache } from './index.js'
 
-test('track cache work', () => {
+test('track cache correctly', () => {
   let cache = createCache()
 
   cache.set('a.js', 1)
