@@ -12,7 +12,7 @@
     "stylelint"
   ],
   "author": "Usman Yunusov",
-  "license": "ISC",
+  "license": "MIT",
   "repository": "https://github.com/usmanyunusov/nano-staged",
   "type": "module",
   "main": "./bin/index.js",
