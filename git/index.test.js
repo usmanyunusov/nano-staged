@@ -1,4 +1,3 @@
-import { spawn } from '../utils/index.js'
 import { dirname, join, resolve } from 'path'
 import { promises as fs } from 'fs'
 import { fileURLToPath } from 'url'
