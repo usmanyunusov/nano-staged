@@ -6,10 +6,8 @@ const WILDCARD = `([^/]*)`
 const GLOBSTAR_SEGMENT = `((?:[^${SEP_ESC}]*(?:${SEP_ESC}|$))*)`
 const WILDCARD_SEGMENT = `([^${SEP_ESC}]*)`
 
-export function globrex(
-  glob,
-  { extended = false, globstar = false, strict = false, filepath = false, flags = '' } = {}
-) {
+export function globrex(glob, opts = {}) {
+  let { extended = false, globstar = false, strict = false, filepath = false, flags = '' } = opts
   let regex = ''
   let segment = ''
   let path = { regex: '', segments: [] }
