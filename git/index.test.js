@@ -36,8 +36,14 @@ async function initGitRepo() {
   await writeFile('README.md', '# Test\n## Test')
 }
 
-await makeDir()
-await initGitRepo()
+test.before(async () => {
+  await makeDir()
+  await initGitRepo()
+})
+
+test.after(async () => {
+  await fs.rm(cwd, { recursive: true })
+})
 
 test('gitWorker: diffPatch', async () => {
   let git = gitWorker({ cwd })
@@ -88,13 +94,8 @@ test('gitWorker: checkPatch', async () => {
   let git = gitWorker({ cwd })
 
   equal(await git.checkPatch(patchPath), true)
-
   await writeFile(patchPath, '')
   equal(await git.checkPatch(patchPath), false)
-})
-
-test('', async () => {
-  await fs.rm(cwd, { recursive: true })
 })
 
 test.run()
