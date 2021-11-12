@@ -1,4 +1,4 @@
-import { ok } from 'uvu/assert'
+import { equal } from 'uvu/assert'
 import { join } from 'path'
 import { test } from 'uvu'
 
@@ -8,12 +8,19 @@ let cwd = join(process.cwd(), 'test/fixtures/config')
 
 test('track load config correctly', async () => {
   let config = await loadConfig(cwd)
-  ok(config)
+  equal(config, {
+    '*': 'my-tasks',
+  })
+})
+
+test('track fail load config', async () => {
+  let config = await loadConfig()
+  equal(config, undefined)
 })
 
 test('track valid config correctly', async () => {
   let config = await loadConfig(cwd)
-  ok(validConfig(config))
+  equal(validConfig(config), true)
 })
 
 test.run()
