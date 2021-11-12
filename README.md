@@ -2,7 +2,7 @@
 
 A tiny pipeliner on git staged files.
 
-- 📦 **Tiny**: 80x+ lighter than **lint-staged**.
+- 📦 **Small**: 80x+ lighter than **lint-staged**.
 - 🥇 **Single dependency** (Picocolors).
 
 ## Motivation
