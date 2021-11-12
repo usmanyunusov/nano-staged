@@ -23,7 +23,7 @@ const DIFF_ARGS = [
   '--submodule=short',
 ]
 
-async function execGit(args, opts) {
+export async function execGit(args, opts) {
   try {
     return await spawn('git', args, opts)
   } catch (err) {
