@@ -16,14 +16,6 @@ export function toRelative(file, cwd) {
   return normalize(relative(cwd, file))
 }
 
-export async function git(args, opts) {
-  try {
-    return await spawn('git', args, opts)
-  } catch (err) {
-    throw err
-  }
-}
-
 export function findUp(dir, name) {
   while (!existsSync(join(dir, name))) {
     let parentDir = resolve(dir, '..')
@@ -99,28 +91,4 @@ export function stringToArgv(str) {
   } while (match !== null)
 
   return args
-}
-
-export function normalizePath(path, stripTrailing) {
-  if (path === '\\' || path === '/') return '/'
-
-  let len = path.length
-  if (len <= 1) return path
-
-  let prefix = ''
-  if (len > 4 && path[3] === '\\') {
-    let ch = path[2]
-
-    if ((ch === '?' || ch === '.') && path.slice(0, 2) === '\\\\') {
-      path = path.slice(2)
-      prefix = '//'
-    }
-  }
-
-  let segs = path.split(/[/\\]+/)
-  if (stripTrailing !== false && segs[segs.length - 1] === '') {
-    segs.pop()
-  }
-
-  return prefix + segs.join('/')
 }

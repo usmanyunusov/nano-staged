@@ -1,4 +1,5 @@
-import { git, spawn, normalizePath } from '../../utils/index.js'
+import { spawn } from '../../utils/index.js'
+import normalizePath from 'normalize-path'
 import { fileURLToPath } from 'url'
 import { nanoid } from 'nanoid'
 import fs from 'fs-extra'
@@ -19,7 +20,11 @@ async function appendFile(filename, content, dir = cwd) {
 }
 
 async function execGit(args) {
-  await git(args, { cwd })
+  try {
+    return await spawn('git', args, { cwd })
+  } catch (err) {
+    throw err
+  }
 }
 
 async function initGitRepo() {
