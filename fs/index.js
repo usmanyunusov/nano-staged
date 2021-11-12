@@ -16,18 +16,18 @@ export function fileSystem() {
     async read(files) {
       files = toArray(files)
 
-      return await Promise.all(
-        files
-          .map(async (path) => {
-            try {
-              let source = await fs.readFile(path)
-              return { path, source }
-            } catch (err) {
-              return null
-            }
-          })
-          .filter(Boolean)
+      let promises = await Promise.all(
+        files.map(async (path) => {
+          try {
+            let source = await fs.readFile(path)
+            return { path, source }
+          } catch (err) {
+            return null
+          }
+        })
       )
+
+      return promises.filter(Boolean)
     },
 
     async write(files) {
