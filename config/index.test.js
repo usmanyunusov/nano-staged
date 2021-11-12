@@ -1,26 +1,28 @@
+import { dirname, resolve } from 'path'
 import { fileURLToPath } from 'url'
 import { equal } from 'uvu/assert'
-import { dirname, resolve } from 'path'
 import { test } from 'uvu'
 
 import { loadConfig, validConfig } from './index.js'
 
-let currentDir = dirname(fileURLToPath(import.meta.url))
-let cwd = resolve(currentDir, '../test/fixtures/config')
+test.before(async (context) => {
+  let dir = dirname(fileURLToPath(import.meta.url))
+  context.cwd = resolve(dir, '../test/fixtures/config')
+})
 
-test('track load config correctly', async () => {
+test('should load config correctly', async ({ cwd }) => {
   let config = await loadConfig(cwd)
   equal(config, {
     '*': 'my-tasks',
   })
 })
 
-test('track fail load config', async () => {
+test('should failed load config', async () => {
   let config = await loadConfig()
   equal(config, undefined)
 })
 
-test('track valid config correctly', async () => {
+test('should validate config correctly', async () => {
   equal(validConfig({}), false)
 
   equal(

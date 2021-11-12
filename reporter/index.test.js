@@ -8,20 +8,29 @@ stdout.write = (symbols) => {
   stdout.out += symbols
 }
 
-test('track reporter correctly', () => {
-  let { log, info, step } = reporter({ stream: stdout })
-
-  log('Run test')
-  equal(stdout.out, 'Run test\n')
+test.after.each(() => {
   stdout.out = ''
+})
 
-  info('Run test')
-  equal(stdout.out, '\x1B[36m-\x1B[39m Run test\n')
-  stdout.out = ''
+test('should reported log correctly', () => {
+  let { log } = reporter({ stream: stdout })
 
-  step('Run test')
-  equal(stdout.out, '\x1B[32m-\x1B[39m Run test...\n')
-  stdout.out = ''
+  log('Run log')
+  equal(stdout.out, 'Run log\n')
+})
+
+test('should reported info correctly', () => {
+  let { info } = reporter({ stream: stdout })
+
+  info('Run info')
+  equal(stdout.out, '\x1B[36m-\x1B[39m Run info\n')
+})
+
+test('should reported step correctly', () => {
+  let { step } = reporter({ stream: stdout })
+
+  step('Run step')
+  equal(stdout.out, '\x1B[32m-\x1B[39m Run step...\n')
 })
 
 test.run()

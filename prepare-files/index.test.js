@@ -12,7 +12,7 @@ let entries = [
   { path: 'e.css', type: 4 },
 ]
 
-test(`track prepareFiles on '*.{css,js}': ['prettier --write']`, () => {
+test(`shoulds prepare correctly files`, () => {
   let files = prepareFiles(entries, config)
 
   equal(files, {

@@ -3,9 +3,15 @@ import { test } from 'uvu'
 
 import { createCache } from './index.js'
 
-test('track cache correctly', () => {
-  let cache = createCache()
+test.before(async (context) => {
+  context.cache = createCache()
+})
 
+test.after(async ({ cache }) => {
+  cache.clear()
+})
+
+test('should cache correctly', async ({ cache }) => {
   cache.set('a.js', 1)
   equal(cache.get('a.js'), 1)
 
