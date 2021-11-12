@@ -1,0 +1,5 @@
+{
+  "nano-staged": {
+    "*": "my-tasks"
+  }
+}
