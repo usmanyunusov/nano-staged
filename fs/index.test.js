@@ -1,16 +1,18 @@
-import { ok, equal } from 'uvu/assert'
+import { fileURLToPath } from 'url'
+import { equal } from 'uvu/assert'
 import { test } from 'uvu'
-import { join } from 'path'
+import { dirname, resolve } from 'path'
 
 import { fileSystem } from './index.js'
 
+let currentDir = dirname(fileURLToPath(import.meta.url))
 let example = [
   {
-    path: join(process.cwd(), 'test/fixtures/fs/a.js.test'),
+    path: resolve(currentDir, '../test/fixtures/fs/a.js.test'),
     source: 'let a = 1;',
   },
   {
-    path: join(process.cwd(), 'test/fixtures/fs/b.css.test'),
+    path: resolve(currentDir, '../test/fixtures/fs/b.css.test'),
     source: 'a {color: red;}',
   },
 ]
@@ -21,8 +23,8 @@ test('track fs correctly', async () => {
   await fs.write(example)
 
   let sources = await fs.read([
-    join(process.cwd(), 'test/fixtures/fs/a.js'),
-    join(process.cwd(), 'test/fixtures/fs/b.css'),
+    resolve(currentDir, '../test/fixtures/fs/a.js'),
+    resolve(currentDir, '../test/fixtures/fs/b.css'),
   ])
   equal(sources.length, 2)
 
@@ -42,8 +44,8 @@ test('track fs read not file', async () => {
   let fs = fileSystem()
 
   let sources = await fs.read([
-    join(process.cwd(), 'test/fixtures/fs/a_null.js'),
-    join(process.cwd(), 'test/fixtures/fs/b_null.css'),
+    resolve(currentDir, '../test/fixtures/fs/a_null.js'),
+    resolve(currentDir, '../test/fixtures/fs/b_null.css'),
   ])
 
   equal(sources, [])

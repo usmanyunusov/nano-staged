@@ -1,10 +1,12 @@
+import { fileURLToPath } from 'url'
 import { equal } from 'uvu/assert'
-import { join } from 'path'
+import { dirname, resolve } from 'path'
 import { test } from 'uvu'
 
 import { loadConfig, validConfig } from './index.js'
 
-let cwd = join(process.cwd(), 'test/fixtures/config')
+let currentDir = dirname(fileURLToPath(import.meta.url))
+let cwd = resolve(currentDir, '../test/fixtures/config')
 
 test('track load config correctly', async () => {
   let config = await loadConfig(cwd)
