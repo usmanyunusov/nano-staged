@@ -19,8 +19,50 @@ test('track fail load config', async () => {
 })
 
 test('track valid config correctly', async () => {
-  let config = await loadConfig(cwd)
-  equal(validConfig(config), true)
+  equal(validConfig({}), false)
+
+  equal(
+    validConfig({
+      '*': 'my-tasks',
+    }),
+    true
+  )
+
+  equal(
+    validConfig({
+      '*': ['my-tasks'],
+    }),
+    true
+  )
+
+  equal(
+    validConfig({
+      '': ['my-tasks'],
+    }),
+    false
+  )
+
+  equal(
+    validConfig({
+      '*': 1,
+    }),
+    false
+  )
+
+  equal(
+    validConfig({
+      '*': '',
+    }),
+    false
+  )
+
+  equal(
+    validConfig({
+      '*': '',
+      '*.js': 'my-task',
+    }),
+    false
+  )
 })
 
 test.run()

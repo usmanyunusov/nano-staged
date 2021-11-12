@@ -8,7 +8,7 @@ const CONFIG_NAME = 'nano-staged'
 export async function loadConfig(cwd = '') {
   let pkgDir = findUp(cwd, NODE_PACKAGE_JSON)
 
-  if (pkgDir === undefined) {
+  if (!pkgDir) {
     return undefined
   }
 
@@ -20,7 +20,7 @@ export async function loadConfig(cwd = '') {
 }
 
 export function validConfig(config) {
-  return (
+  return !!(
     config &&
     Object.keys(config).length &&
     Object.keys(config).every(
