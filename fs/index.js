@@ -1,9 +1,10 @@
+import { toArray } from '../utils/index.js'
 import { promises as fs } from 'fs'
 
 export function fileSystem() {
   return {
     async delete(files) {
-      files = Array.isArray(files) ? files : [files]
+      files = toArray(files)
 
       return await Promise.all(
         files.map(async (path) => {
@@ -13,7 +14,7 @@ export function fileSystem() {
     },
 
     async read(files) {
-      files = Array.isArray(files) ? files : [files]
+      files = toArray(files)
 
       return await Promise.all(
         files
@@ -30,10 +31,10 @@ export function fileSystem() {
     },
 
     async write(files) {
-      files = Array.isArray(files) ? files : [files]
+      files = toArray(files)
 
       return await Promise.all(
-        files.map(async ({ path, source }) => {
+        toArray(files).map(async ({ path, source }) => {
           return await fs.writeFile(path, source)
         })
       )

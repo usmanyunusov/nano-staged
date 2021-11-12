@@ -2,6 +2,10 @@ import { resolve, join, normalize, relative, isAbsolute } from 'path'
 import { spawn as _spawn } from 'child_process'
 import { existsSync } from 'fs'
 
+export function toArray(val) {
+  return Array.isArray(val) ? val : [val]
+}
+
 export function toAbsolute(file, cwd) {
   return isAbsolute(file) ? file : normalize(resolve(cwd, file))
 }

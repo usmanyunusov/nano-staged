@@ -1,4 +1,4 @@
-import { toAbsolute, toRelative, git as gitSpawn, findUp } from '../utils/index.js'
+import { toAbsolute, toRelative, git as gitSpawn, findUp, toArray } from '../utils/index.js'
 import { join } from 'path'
 
 const ADDED = 'A'.charCodeAt(0)
@@ -50,18 +50,18 @@ export function gitWorker(opts = {}) {
     },
 
     async add(paths) {
-      let list = Array.isArray(paths) ? paths : [paths]
+      paths = toArray(paths)
 
-      if (list.length) {
-        await gitSpawn(['add', '-A', '--', ...list], opts)
+      if (paths.length) {
+        await gitSpawn(['add', '-A', '--', ...paths], opts)
       }
     },
 
     async checkout(paths) {
-      let list = Array.isArray(paths) ? paths : [paths]
+      paths = toArray(paths)
 
-      if (list.length) {
-        await gitSpawn(['checkout', '-q', '--force', '--', ...list], opts)
+      if (paths.length) {
+        await gitSpawn(['checkout', '-q', '--force', '--', ...paths], opts)
       }
     },
 
