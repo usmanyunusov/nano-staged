@@ -1,6 +1,8 @@
 import { resolve, join, normalize, relative, isAbsolute } from 'path'
 import { spawn as _spawn } from 'child_process'
-import { existsSync } from 'fs'
+import { existsSync, readFileSync } from 'fs'
+import { fileURLToPath } from 'url'
+import pico from 'picocolors'
 
 export function toArray(val) {
   return Array.isArray(val) ? val : [val]
@@ -36,8 +38,10 @@ export function findUp(dir, name) {
   return dir
 }
 
-export async function getVersion() {
-  return '0.1.0'
+export function showVersion(print) {
+  let pkg = readFileSync(join(fileURLToPath(import.meta.url), '../..', 'package.json'))
+  let pkgJson = JSON.parse(pkg.toString())
+  print(`Nano Staged ${pico.bold(`v${pkgJson.version}`)}`)
 }
 
 export async function spawn(program, args, opts = {}) {
