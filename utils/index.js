@@ -4,6 +4,8 @@ import { existsSync, readFileSync } from 'fs'
 import { fileURLToPath } from 'url'
 import pico from 'picocolors'
 
+const REG_STR = /([^\s'"]([^\s'"]*(['"])([^\3]*?)\3)+[^\s'"]*)|[^\s'"]+|(['"])([^\5]*?)\5/gi
+
 export function toArray(val) {
   return Array.isArray(val) ? val : [val]
 }
@@ -70,25 +72,21 @@ export async function spawn(program, args, opts = {}) {
   return promise
 }
 
-function firstString(...args) {
-  for (let i = 0; i < args.length; i++) {
-    if (typeof args[i] === 'string') {
-      return args[i]
-    }
-  }
-}
-
-export function stringToArgv(str) {
-  let REG_STR = /([^\s'"]([^\s'"]*(['"])([^\3]*?)\3)+[^\s'"]*)|[^\s'"]+|(['"])([^\5]*?)\5/gi
+export function stringToArgv(str = '') {
   let args = []
   let match
 
-  do {
+  while (true) {
     match = REG_STR.exec(str)
-    if (match !== null) {
-      args.push(firstString(match[1], match[6], match[0]))
-    }
-  } while (match !== null)
 
-  return args
+    if (!match) {
+      return args
+    }
+
+    for (let arg of [match[1], match[6], match[0]]) {
+      if (typeof arg === 'string') {
+        args.push(arg)
+      }
+    }
+  }
 }

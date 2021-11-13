@@ -26,6 +26,7 @@ test('util: toArray', () => {
 
 test('util: toAbsolute', () => {
   equal(toAbsolute('../index.css', '/app/src'), '/app/index.css')
+  equal(toAbsolute('/app/src/index.css', '/app/src'), '/app/src/index.css')
 })
 
 test('util: toRelative', () => {
@@ -47,8 +48,9 @@ test('util: showVersion', () => {
 })
 
 test('util: stringToArgv', () => {
-  let argv = stringToArgv('cmd --test config --test')
-  equal(argv, ['cmd', '--test', 'config', '--test'])
+  equal(stringToArgv('cmd --test config --test'), ['cmd', '--test', 'config', '--test'])
+  equal(stringToArgv(''), [])
+  equal(stringToArgv(), [])
 })
 
 test('util: spawn', async () => {
