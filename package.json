@@ -1,26 +1,18 @@
 {
   "name": "nano-staged",
   "version": "0.1.0",
-  "description": "Pipeliner for git staged files",
-  "keywords": [
-    "runner",
-    "lint",
-    "git",
-    "staged",
-    "eslint",
-    "prettier",
-    "stylelint"
-  ],
-  "author": "Usman Yunusov",
+  "description": "A tiny pipeliner on git staged files.",
+  "author": "Usman Yunusov <usman.iunusov@gmail.com>",
   "license": "MIT",
-  "repository": "https://github.com/usmanyunusov/nano-staged",
+  "repository": "usmanyunusov/nano-staged",
   "type": "module",
-  "main": "./run/index.js",
   "bin": "./bin/index.js",
+  "exports": "./run/index.js",
   "scripts": {
     "lint": "prettier --write **/*.js",
     "unit": "node_modules/uvu/bin.js . '\\.test\\.js$'",
-    "test": "c8 yarn unit"
+    "test": "c8 yarn unit",
+    "bench": "node benchmarks/running-time/index.js"
   },
   "dependencies": {
     "picocolors": "^1.0.0"
@@ -47,5 +39,14 @@
     ],
     "lines": 100,
     "check-coverage": true
-  }
+  },
+  "keywords": [
+    "runner",
+    "lint",
+    "git",
+    "staged",
+    "eslint",
+    "prettier",
+    "stylelint"
+  ]
 }

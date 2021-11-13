@@ -7,7 +7,7 @@ A tiny pipeliner on git staged files.
 
 ## Motivation
 
-**Nano Staged** allows you to run commands only on git staged files, **speeding up** the validation/formatting processes. It is for working with git-hooks tools like an [simple-git-hooks](https://github.com/toplenboren/simple-git-hooks) and [husky](https://github.com/typicode/husky).
+**Nano Staged** allows you to run commands only on git staged files, **speeding up** the validation/formatting processes. It is for working with **git hooks** tools like an [simple-git-hooks](https://github.com/toplenboren/simple-git-hooks) and [husky](https://github.com/typicode/husky).
 
 ## Benchmarks
 
@@ -25,6 +25,8 @@ Running time for 3 files
 + nano-staged 1.905 ms
 ```
 
+The performance results were generated on a MBP Late 2013, 2,3 GHz Intel Core i7 by running `npm run benchmark` in the library folder. See [benchmarks/running-time/index.js](https://github.com/usmanyunusov/nano-staged/blob/master/benchmarks/running-time/index.js)
+
 ## Usage
 
 1. Install `nano-staged` as a dev dependency:
@@ -37,20 +39,20 @@ Running time for 3 files
 
    For example:
 
-   ```diff
+   ```json
    "nano-staged": {
-   +  "*.js": "prettier --write",
-   +  "*.css": ["stylelint", "eslint --fix"]
+     "*.js": "prettier --write",
+     "*.css": ["stylelint", "eslint --fix"]
    },
    ```
 
-3. Add the `simple-git-hooks` section and fill in the `pre-commit` for the `npx nano-staged` to your `package.json`.
+3. Add the `simple-git-hooks` section to your `package.json` and fill in the `pre-commit` for the `npx nano-staged`.
 
    For example:
 
-   ```diff
+   ```json
    "simple-git-hooks": {
-   +  "pre-commit": "npx nano-staged"
+     "pre-commit": "npx nano-staged"
    }
    ```
 
