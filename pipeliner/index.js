@@ -8,11 +8,17 @@ import pico from 'picocolors'
 
 const PATCH_ORIGIN = 'nano-staged.patch'
 
-export function pipeliner({ process, files, gitConfigDir, gitDir }) {
+export function pipeliner({
+  process,
+  files,
+  gitConfigDir,
+  gitDir,
+  logger = reporter({ stream: process.stderr }),
+}) {
   let patchPath = resolve(gitConfigDir, `./${PATCH_ORIGIN}`)
-  let { log, step } = reporter({ stream: process.stderr })
   let { changed, deleted, tasks, staged } = files
   let git = gitWorker({ cwd: gitDir })
+  let { log, step } = logger
   let cache = createCache()
   let fs = fileSystem()
 

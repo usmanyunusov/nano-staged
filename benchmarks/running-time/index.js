@@ -1,11 +1,10 @@
-import { execFile } from 'child_process'
 import { gitWorker } from '../../git/index.js'
-import normalizePath from 'normalize-path'
-import { fileURLToPath } from 'url'
-import { nanoid } from 'nanoid'
-import { resolve, dirname, join } from 'path'
+import { execFile } from 'child_process'
+import { resolve, dirname } from 'path'
 import { promises as fs } from 'fs'
+import { fileURLToPath } from 'url'
 import { promisify } from 'util'
+import { nanoid } from 'nanoid'
 
 let spawn = promisify(execFile)
 let currentDir = dirname(fileURLToPath(import.meta.url))
