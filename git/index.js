@@ -23,27 +23,27 @@ const DIFF_ARGS = [
   '--submodule=short',
 ]
 
-export async function execGit(args, opts) {
-  try {
-    return await spawn('git', args, opts)
-  } catch (err) {
-    throw err
-  }
-}
-
 export function gitWorker(opts = {}) {
-  return {
+  let git = {
+    async exec(args, opts) {
+      try {
+        return await spawn('git', args, opts)
+      } catch (err) {
+        throw err
+      }
+    },
+
     async diffPatch(patchPath) {
-      await execGit(['diff', ...DIFF_ARGS, '--output', patchPath], opts)
+      await git.exec(['diff', ...DIFF_ARGS, '--output', patchPath], opts)
     },
 
     async applyPatch(patchPath) {
-      await execGit(['apply', ...APPLY_ARGS, patchPath], opts)
+      await git.exec(['apply', ...APPLY_ARGS, patchPath], opts)
     },
 
     async checkPatch(patchPath) {
       try {
-        await execGit(['apply', '--check', ...APPLY_ARGS, patchPath], opts)
+        await git.exec(['apply', '--check', ...APPLY_ARGS, patchPath], opts)
         return true
       } catch (error) {
         return false
@@ -61,7 +61,7 @@ export function gitWorker(opts = {}) {
       paths = toArray(paths)
 
       if (paths.length) {
-        await execGit(['add', '-A', '--', ...paths], opts)
+        await git.exec(['add', '-A', '--', ...paths], opts)
       }
     },
 
@@ -69,7 +69,7 @@ export function gitWorker(opts = {}) {
       paths = toArray(paths)
 
       if (paths.length) {
-        await execGit(['checkout', '-q', '--force', '--', ...paths], opts)
+        await git.exec(['checkout', '-q', '--force', '--', ...paths], opts)
       }
     },
 
@@ -79,7 +79,7 @@ export function gitWorker(opts = {}) {
       try {
         let i = 0
         let lastIndex
-        let raw = await execGit(['status', '-z'], opts)
+        let raw = await git.exec(['status', '-z'], opts)
 
         while (i < raw.length) {
           let code = raw.charCodeAt(i)
@@ -153,4 +153,6 @@ export function gitWorker(opts = {}) {
       }
     },
   }
+
+  return git
 }

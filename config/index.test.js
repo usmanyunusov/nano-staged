@@ -23,6 +23,8 @@ test('should failed load config', async () => {
 })
 
 test('should validate config correctly', async () => {
+  equal(validConfig(), false)
+
   equal(validConfig({}), false)
 
   equal(
@@ -56,6 +58,13 @@ test('should validate config correctly', async () => {
   equal(
     validConfig({
       '*': '',
+    }),
+    false
+  )
+
+  equal(
+    validConfig({
+      '': '',
     }),
     false
   )

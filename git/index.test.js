@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url'
 import { equal } from 'uvu/assert'
 import { test } from 'uvu'
 
-import { execGit as baseExecGit, gitWorker } from './index.js'
+import { gitWorker } from './index.js'
 
 let currentDir = dirname(fileURLToPath(import.meta.url))
 let cwd = resolve(currentDir, '../test/fixtures/git/nano-staged-test')
@@ -23,7 +23,8 @@ async function makeDir(dir = cwd) {
 }
 
 async function execGit(args) {
-  await baseExecGit(args, { cwd })
+  let git = gitWorker({ cwd })
+  await git.exec(args, { cwd })
 }
 
 async function initGitRepo() {
