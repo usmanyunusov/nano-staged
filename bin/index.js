@@ -52,7 +52,9 @@ async function run() {
 }
 
 run()
-  .then(() => {})
+  .then(() => {
+    process.exitCode = 0
+  })
   .catch((err) => {
     if (err.cmds) {
       log('\n' + err.cmds)
