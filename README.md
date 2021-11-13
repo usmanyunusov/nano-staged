@@ -7,7 +7,7 @@ A tiny pipeliner on git staged files.
 
 ## Motivation
 
-**Nano Staged** allows you to run commands only on git staged files, **speeding up** the validation/formatting processes. It is for working with git-hooks tools like an **simple-git-hooks**.
+**Nano Staged** allows you to run commands only on git staged files, **speeding up** the validation/formatting processes. It is for working with git-hooks tools like an **simple-git-hooks** and **husky** ([examples]("#")).
 
 ## Benchmarks
 
