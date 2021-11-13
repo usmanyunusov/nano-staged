@@ -1,30 +1,30 @@
-import { spawn } from '../../utils/index.js'
+import { execFile } from 'child_process'
+import { gitWorker } from '../../git/index.js'
 import normalizePath from 'normalize-path'
 import { fileURLToPath } from 'url'
 import { nanoid } from 'nanoid'
-import fs from 'fs-extra'
-import path from 'path'
+import { resolve, dirname, join } from 'path'
+import { promises as fs } from 'fs'
+import { promisify } from 'util'
 
-let tmpDir, cwd, before
+let spawn = promisify(execFile)
+let currentDir = dirname(fileURLToPath(import.meta.url))
+let cwd = resolve(currentDir, `nano-staged-${nanoid()}`)
+let files = [['index.js'], ['index.js', 'index.css', 'bootstrap.css']]
+let runners = ['lint-staged', 'nano-staged']
+let before
 
-async function makeDir() {
-  let currentDir = path.dirname(fileURLToPath(import.meta.url))
-  let dirname = path.resolve(currentDir, `nano-staged-${nanoid()}`)
-
-  await fs.ensureDir(dirname)
-  return dirname
+async function makeDir(dir = cwd) {
+  await fs.mkdir(dir)
 }
 
 async function appendFile(filename, content, dir = cwd) {
-  fs.appendFile(path.resolve(dir, filename), content)
+  await fs.appendFile(resolve(dir, filename), content)
 }
 
 async function execGit(args) {
-  try {
-    return await spawn('git', args, { cwd })
-  } catch (err) {
-    throw err
-  }
+  let git = gitWorker({ cwd })
+  await git.exec(args, { cwd })
 }
 
 async function initGitRepo() {
@@ -53,7 +53,7 @@ async function initProject() {
   )
 
   await spawn('yarn', ['add', 'lint-staged'], { cwd })
-  await spawn('yarn', ['add', path.resolve(cwd, '../../../')], {
+  await spawn('yarn', ['add', resolve(cwd, '../../../')], {
     cwd,
   })
   await appendFile('index.js', 'var test = {};')
@@ -61,14 +61,8 @@ async function initProject() {
   await appendFile('bootstrap.css', 'body {color: red;}')
 }
 
-tmpDir = await makeDir()
-cwd = normalizePath(tmpDir)
-
-await initGitRepo()
-await initProject()
-
 function showTime(name) {
-  let prefix = name === 'nano-staged' ? '+ ' : '  '
+  let prefix = name === 'nano-staged' ? '+ ' : '- '
   let after = performance.now()
   let time = (Math.round(after - before) / 1000)
     .toString()
@@ -77,29 +71,25 @@ function showTime(name) {
   process.stdout.write(prefix + name + '\x1B[1m' + time.padStart(6) + '\x1B[22m ms\n')
 }
 
-// Running time for index.js
-process.stdout.write('Running time for index.js\n')
-await execGit(['add', 'index.js'])
+await makeDir()
+await initGitRepo()
+await initProject()
 
-before = performance.now()
-await spawn('npx', ['lint-staged'], { cwd })
-showTime('lint-staged')
+async function run(names = [], files = []) {
+  process.stdout.write(`Running time for ${files.length} files\n`)
+  await execGit(['add', ...files])
 
-before = performance.now()
-await spawn('npx', ['nano-staged'], { cwd })
-showTime('nano-staged')
+  for (let name of names) {
+    before = performance.now()
+    await spawn('npx', [name], { cwd })
+    showTime(name)
+  }
 
-// Running time for index.js, index.css, bootstrap.css
-process.stdout.write('Running time for index.js, index.css, bootstrap.css\n')
-await execGit(['add', 'index.css', 'bootstrap.css'])
+  await execGit(['checkout', '.'])
+}
 
-before = performance.now()
-await spawn('npx', ['lint-staged'], { cwd })
-showTime('lint-staged')
+for (let i = 0; i < runners.length; i++) {
+  await run(runners, files[i])
+}
 
-before = performance.now()
-await spawn('npx', ['nano-staged'], { cwd })
-showTime('nano-staged')
-
-// Remove dir
-await fs.remove(tmpDir)
+await fs.rm(cwd, { recursive: true })

@@ -11,20 +11,18 @@ A tiny pipeliner on git staged files.
 
 ## Benchmarks
 
-Running time for `index.js`
-
 ```diff
 $ node benchmarks/running-time/index.js
-  lint-staged 1.789 ms
-+ nano-staged 1.235 ms
+Running time for 1 files
+- lint-staged 1.602 ms
++ nano-staged 1.219 ms
 ```
 
-Running time for `index.js`, `index.css`, `bootstrap.css`
-
 ```diff
 $ node benchmarks/running-time/index.js
-  lint-staged 2.403 ms
-+ nano-staged 1.815 ms
+Running time for 3 files
+- lint-staged 2.277 ms
++ nano-staged 1.905 ms
 ```
 
 ## Quickstart
