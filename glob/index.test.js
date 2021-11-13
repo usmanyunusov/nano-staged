@@ -1,7 +1,7 @@
 import { equal } from 'uvu/assert'
 import { test } from 'uvu'
 
-import { globrex } from './index.js'
+import { glob as baseGlob } from './index.js'
 
 let files = [
   'a.js',
@@ -24,7 +24,7 @@ let files = [
 ]
 
 let match = (glob, str, opts = {}) => {
-  let res = globrex(glob, opts)
+  let res = baseGlob(glob, opts)
   return res.regex.test(str)
 }
 
