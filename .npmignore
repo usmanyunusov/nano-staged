@@ -1,7 +1,8 @@
-node_modules/
 yarn-error.log
 yarn.lock
 
+coverage/
 benchmarks/
 test/
-coverage/
+
+**/*.test.*

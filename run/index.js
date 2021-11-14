@@ -1,10 +1,11 @@
+import pico from 'picocolors'
+
 import { loadConfig, validConfig } from '../config/index.js'
 import { prepareFiles } from '../prepare-files/index.js'
 import { pipeliner } from '../pipeliner/index.js'
 import { reporter } from '../reporter/index.js'
 import { showVersion } from '../utils/index.js'
 import { gitWorker } from '../git/index.js'
-import pico from 'picocolors'
 
 export default async function run(options = {}, logger = reporter({ stream: process.stderr })) {
   let { log, info } = logger
@@ -13,8 +14,8 @@ export default async function run(options = {}, logger = reporter({ stream: proc
   showVersion(log)
 
   let git = gitWorker({ cwd })
-  let { gitDir, gitConfigDir } = await git.resolveDir(cwd)
-  if (!gitDir) {
+  let { gitRootPath, gitConfigPath } = await git.resolveDir(cwd)
+  if (!gitRootPath) {
     info('Nano Staged didn’t find git directory')
     return
   }
@@ -31,19 +32,19 @@ export default async function run(options = {}, logger = reporter({ stream: proc
     return
   }
 
-  let stagedFiles = await git.getStagedFiles({ gitDir, cwd })
+  let stagedFiles = await git.getStagedFiles()
   if (!stagedFiles.length) {
     info(`Git staging area is empty.`)
     return
   }
 
-  let files = prepareFiles(stagedFiles, config)
+  let files = prepareFiles({ entries: stagedFiles, config, gitRootPath, cwd })
   if (files.tasks.every((subTasks) => subTasks.every((task) => !task.files.length))) {
     info(`No staged files match any configured task.`)
     return
   }
 
-  let pl = pipeliner({ process, files, gitConfigDir, gitDir, logger })
+  let pl = pipeliner({ process, files, gitRootPath, gitConfigPath, logger })
 
   try {
     await pl.run()

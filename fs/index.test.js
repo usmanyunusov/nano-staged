@@ -1,8 +1,8 @@
+import { promises as baseFs } from 'fs'
+import { dirname, resolve } from 'path'
 import { fileURLToPath } from 'url'
 import { equal } from 'uvu/assert'
 import { test } from 'uvu'
-import { dirname, resolve } from 'path'
-import { promises as baseFs } from 'fs'
 
 import { fileSystem } from './index.js'
 

@@ -1,5 +1,6 @@
-import { toAbsolute, toRelative, spawn, findUp, toArray } from '../utils/index.js'
 import { join } from 'path'
+
+import { spawn, findUp, toArray } from '../utils/index.js'
 
 const ADDED = 'A'.charCodeAt(0)
 const COPIED = 'C'.charCodeAt(0)
@@ -51,10 +52,10 @@ export function gitWorker(opts = {}) {
     },
 
     async resolveDir(cwd = '') {
-      let gitDir = findUp(cwd, '.git')
-      let gitConfigDir = join(gitDir, '.git')
+      let gitRootPath = findUp('.git', cwd)
+      let gitConfigPath = join(gitRootPath, '.git')
 
-      return { gitDir, gitConfigDir }
+      return { gitRootPath, gitConfigPath }
     },
 
     async add(paths) {
@@ -73,7 +74,7 @@ export function gitWorker(opts = {}) {
       }
     },
 
-    async getStagedFiles({ gitDir, cwd }) {
+    async getStagedFiles() {
       let entries = []
 
       try {
@@ -84,6 +85,10 @@ export function gitWorker(opts = {}) {
         while (i < raw.length) {
           let code = raw.charCodeAt(i)
 
+          if (i + 4 >= raw.length) {
+            break
+          }
+
           switch (code) {
             case ADDED:
             case MODIFIED:
@@ -93,6 +98,7 @@ export function gitWorker(opts = {}) {
               let y = raw.charCodeAt(i++)
               let entry = {
                 path: '',
+                rename: undefined,
                 type: STAGED_CODE,
               }
 
@@ -102,17 +108,17 @@ export function gitWorker(opts = {}) {
                 lastIndex = raw.indexOf('\0', i)
 
                 if (!~lastIndex) {
-                  return
+                  break
                 }
 
-                entry.path = raw.substring(i, lastIndex)
+                entry.rename = raw.substring(i, lastIndex)
                 i = lastIndex + 1
               }
 
               lastIndex = raw.indexOf('\0', i)
 
               if (!~lastIndex) {
-                return
+                break
               }
 
               entry.path = raw.substring(i, lastIndex)
@@ -126,7 +132,6 @@ export function gitWorker(opts = {}) {
                   entry.type = DELETED_CODE
                 }
 
-                entry.path = toRelative(toAbsolute(entry.path, gitDir), cwd)
                 entries.push(entry)
               }
 

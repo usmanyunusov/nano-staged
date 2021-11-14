@@ -1,10 +1,11 @@
-import { gitWorker } from '../../git/index.js'
 import { execFile } from 'child_process'
 import { resolve, dirname } from 'path'
 import { promises as fs } from 'fs'
 import { fileURLToPath } from 'url'
 import { promisify } from 'util'
 import { nanoid } from 'nanoid'
+
+import { gitWorker } from '../../git/index.js'
 
 let spawn = promisify(execFile)
 let currentDir = dirname(fileURLToPath(import.meta.url))

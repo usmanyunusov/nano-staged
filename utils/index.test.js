@@ -1,6 +1,6 @@
+import { dirname, resolve } from 'path'
 import { fileURLToPath } from 'url'
 import { equal } from 'uvu/assert'
-import { dirname, resolve } from 'path'
 import { test } from 'uvu'
 
 import {
@@ -35,11 +35,11 @@ test('util: toRelative', () => {
 
 test('util: findUp', () => {
   let cwd = resolve(currentDir, '../test/fixtures/config')
-  let pkgDir = findUp(cwd, 'package.json')
-  let noPkgDir = findUp(cwd, 'packasge.json')
+  let rootPath = findUp('package.json', cwd)
+  let noRootPath = findUp('not-package.json', cwd)
 
-  equal(!!pkgDir, true)
-  equal(noPkgDir, undefined)
+  equal(!!rootPath, true)
+  equal(!!noRootPath, false)
 })
 
 test('util: showVersion', () => {

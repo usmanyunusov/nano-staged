@@ -1,23 +1,24 @@
+import { resolve } from 'path'
+import pico from 'picocolors'
+
 import { spawn, stringToArgv } from '../utils/index.js'
 import { createCache } from '../cache/index.js'
 import { reporter } from '../reporter/index.js'
 import { fileSystem } from '../fs/index.js'
 import { gitWorker } from '../git/index.js'
-import { resolve } from 'path'
-import pico from 'picocolors'
 
 const PATCH_ORIGIN = 'nano-staged.patch'
 
 export function pipeliner({
   process,
   files,
-  gitConfigDir,
-  gitDir,
+  gitRootPath,
+  gitConfigPath,
   logger = reporter({ stream: process.stderr }),
 }) {
-  let patchPath = resolve(gitConfigDir, `./${PATCH_ORIGIN}`)
+  let patchPath = resolve(gitConfigPath, `./${PATCH_ORIGIN}`)
   let { changed, deleted, tasks, staged } = files
-  let git = gitWorker({ cwd: gitDir })
+  let git = gitWorker({ cwd: gitRootPath })
   let { log, step } = logger
   let cache = createCache()
   let fs = fileSystem()
@@ -70,7 +71,7 @@ export function pipeliner({
 
           try {
             await spawn(cmd, [...args, ...task.files], {
-              cwd: gitDir,
+              cwd: gitRootPath,
               env: { ...process.env, FORCE_COLOR: '1' },
             })
             log(`  ${pico.bold(pico.green(task.pattern))} ${task.cmd}`)

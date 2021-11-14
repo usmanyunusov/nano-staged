@@ -3,6 +3,7 @@ import { promises as fs } from 'fs'
 import { fileURLToPath } from 'url'
 import { equal } from 'uvu/assert'
 import { test } from 'uvu'
+import sinon from 'sinon'
 
 import { gitWorker } from './index.js'
 
@@ -46,6 +47,16 @@ test.after(async () => {
   await fs.rm(cwd, { recursive: true })
 })
 
+test('gitWorker: find git repo', async () => {
+  let cwd = resolve(currentDir, '../test/fixtures/git')
+  let git = gitWorker({ cwd })
+
+  let { gitRootPath, gitConfigPath } = await git.resolveDir(cwd)
+
+  equal(!!gitRootPath, true)
+  equal(!!gitConfigPath, true)
+})
+
 test('gitWorker: diffPatch', async () => {
   let git = gitWorker({ cwd })
 
@@ -69,7 +80,7 @@ test('gitWorker: checkout', async () => {
 
   await git.checkout(['.'])
 
-  let files = await git.getStagedFiles({ gitDir: cwd, cwd })
+  let files = await git.getStagedFiles({ gitRootPath: cwd, cwd })
   equal(files, [])
 })
 
@@ -87,7 +98,7 @@ test('gitWorker: add', async () => {
 
   await git.add(['.'])
 
-  let files = await git.getStagedFiles({ gitDir: cwd, cwd })
+  let files = await git.getStagedFiles({ gitRootPath: cwd, cwd })
   equal(files.length, 2)
 })
 
@@ -97,6 +108,47 @@ test('gitWorker: checkPatch', async () => {
   equal(await git.checkPatch(patchPath), true)
   await writeFile(patchPath, '')
   equal(await git.checkPatch(patchPath), false)
+})
+
+test('getStagedFiles: should return array of file names', async () => {
+  let git = gitWorker()
+  sinon
+    .mock(git)
+    .expects('exec')
+    .callsFake(
+      async () =>
+        'MM mod.js\x00AM test/add.js\x00RM rename.js\x00origin.js\x00CM copy.js\x00base.js\x00MD remove.js\x00D  delete.js\x00'
+    )
+
+  equal(await git.getStagedFiles(), [
+    { path: 'mod.js', rename: undefined, type: 2 },
+    { path: 'test/add.js', rename: undefined, type: 2 },
+    { path: 'origin.js', rename: 'rename.js', type: 2 },
+    { path: 'base.js', rename: 'copy.js', type: 2 },
+    { path: 'remove.js', rename: undefined, type: 4 },
+  ])
+})
+
+test('getStagedFiles: should return empty array when no staged files', async () => {
+  let git = gitWorker()
+  sinon
+    .mock(git)
+    .expects('exec')
+    .callsFake(async () => '')
+
+  equal(await git.getStagedFiles(), [])
+})
+
+test('getStagedFiles: should return null in case of error', async () => {
+  let git = gitWorker()
+  sinon
+    .mock(git)
+    .expects('exec')
+    .callsFake(async () => {
+      throw new Error('fatal: not a git repository (or any of the parent directories): .git')
+    })
+
+  equal(await git.getStagedFiles(), [])
 })
 
 test.run()

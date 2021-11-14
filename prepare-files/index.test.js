@@ -13,7 +13,7 @@ let entries = [
 ]
 
 test(`shoulds prepare correctly files`, () => {
-  let files = prepareFiles(entries, config)
+  let files = prepareFiles({ entries, config })
 
   equal(files, {
     tasks: [

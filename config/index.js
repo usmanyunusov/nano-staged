@@ -1,18 +1,19 @@
-import { findUp } from '../utils/index.js'
 import { readFile } from 'fs/promises'
 import { resolve } from 'path'
+
+import { findUp } from '../utils/index.js'
 
 const NODE_PACKAGE_JSON = 'package.json'
 const CONFIG_NAME = 'nano-staged'
 
 export async function loadConfig(cwd = '') {
-  let pkgDir = findUp(cwd, NODE_PACKAGE_JSON)
+  let rootPath = findUp(NODE_PACKAGE_JSON, cwd)
 
-  if (!pkgDir) {
+  if (!rootPath) {
     return undefined
   }
 
-  let pkgPath = resolve(pkgDir, NODE_PACKAGE_JSON)
+  let pkgPath = resolve(rootPath, NODE_PACKAGE_JSON)
   let pkgJson = JSON.parse(await readFile(pkgPath, 'utf8'))
   let config = pkgJson[CONFIG_NAME]
 

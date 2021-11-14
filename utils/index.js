@@ -1,4 +1,4 @@
-import { resolve, join, normalize, relative, isAbsolute } from 'path'
+import { resolve, join, normalize, relative, isAbsolute, parse, dirname } from 'path'
 import { spawn as _spawn } from 'child_process'
 import { existsSync, readFileSync } from 'fs'
 import { fileURLToPath } from 'url'
@@ -18,18 +18,18 @@ export function toRelative(file, cwd) {
   return normalize(relative(cwd, file))
 }
 
-export function findUp(dir, name) {
-  while (!existsSync(join(dir, name))) {
-    let parentDir = resolve(dir, '..')
+export function findUp(name, cwd = '') {
+  let directory = resolve(cwd)
+  let { root } = parse(directory)
 
-    if (parentDir === dir) {
-      return undefined
-    }
+  while (true) {
+    let foundPath = resolve(directory, name)
 
-    dir = parentDir
+    if (existsSync(foundPath)) return directory
+    if (directory === root) return undefined
+
+    directory = dirname(directory)
   }
-
-  return dir
 }
 
 export function showVersion(print) {

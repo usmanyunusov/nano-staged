@@ -1,5 +1,6 @@
-import { toArray } from '../utils/index.js'
 import { promises as fs } from 'fs'
+
+import { toArray } from '../utils/index.js'
 
 export function fileSystem() {
   return {
