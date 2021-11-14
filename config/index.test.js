@@ -5,9 +5,14 @@ import { test } from 'uvu'
 
 import { loadConfig, validConfig } from './index.js'
 
+const DIRNAME = dirname(fileURLToPath(import.meta.url))
+
+function fixture(name) {
+  return resolve(DIRNAME, '../test/fixtures', name)
+}
+
 test.before(async (context) => {
-  let dir = dirname(fileURLToPath(import.meta.url))
-  context.cwd = resolve(dir, '../test/fixtures/config')
+  context.cwd = fixture('config')
 })
 
 test('should load config correctly', async ({ cwd }) => {
