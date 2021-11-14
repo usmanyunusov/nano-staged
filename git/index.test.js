@@ -7,8 +7,13 @@ import sinon from 'sinon'
 
 import { gitWorker } from './index.js'
 
-let currentDir = dirname(fileURLToPath(import.meta.url))
-let cwd = resolve(currentDir, '../test/fixtures/git/nano-staged-test')
+const DIRNAME = dirname(fileURLToPath(import.meta.url))
+
+function fixture(name) {
+  return resolve(DIRNAME, '../test/fixtures', name)
+}
+
+let cwd = fixture('git/nano-staged-test')
 let patchPath = join(cwd, 'nano-staged.patch')
 
 async function appendFile(filename, content, dir = cwd) {
@@ -48,7 +53,7 @@ test.after(async () => {
 })
 
 test('gitWorker: find git repo', async () => {
-  let cwd = resolve(currentDir, '../test/fixtures/git')
+  let cwd = fixture('git')
   let git = gitWorker({ cwd })
 
   let { gitRootPath, gitConfigPath } = await git.resolveDir(cwd)
