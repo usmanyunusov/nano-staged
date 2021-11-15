@@ -69,6 +69,20 @@ test('should validate config correctly', async () => {
 
   equal(
     validConfig({
+      '*': ['', ''],
+    }),
+    false
+  )
+
+  equal(
+    validConfig({
+      '*': ['', ''],
+    }),
+    false
+  )
+
+  equal(
+    validConfig({
       '': '',
     }),
     false

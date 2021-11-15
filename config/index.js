@@ -24,7 +24,9 @@ export function validConfig(config) {
         key &&
         typeof key === 'string' &&
         config[key] &&
-        (typeof config[key] === 'string' || Array.isArray(config[key]))
+        (typeof config[key] === 'string' ||
+          (Array.isArray(config[key]) &&
+            config[key].every((cmd) => cmd && typeof cmd === 'string')))
     )
   )
 }
