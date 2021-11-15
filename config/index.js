@@ -1,12 +1,12 @@
 import { readFile } from 'fs/promises'
-import { resolve } from 'path'
+import { resolve, dirname } from 'path'
 
 import { findUp } from '../utils/index.js'
 
 const NODE_PACKAGE_JSON = 'package.json'
 const CONFIG_NAME = 'nano-staged'
 
-export async function loadConfig(cwd = '') {
+export async function loadConfig(cwd = process.cwd()) {
   let rootPath = findUp(NODE_PACKAGE_JSON, cwd)
 
   if (!rootPath) {

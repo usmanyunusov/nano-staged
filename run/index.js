@@ -7,9 +7,9 @@ import { reporter } from '../reporter/index.js'
 import { showVersion } from '../utils/index.js'
 import { gitWorker } from '../git/index.js'
 
-export default async function run(options = {}, logger = reporter({ stream: process.stderr })) {
+export default async function run(opts = {}, logger = reporter({ stream: process.stderr })) {
   let { log, info } = logger
-  let { cwd = process.cwd() } = options
+  let { cwd = process.cwd() } = opts
 
   showVersion(log)
 

@@ -11,19 +11,19 @@ function fixture(name) {
   return resolve(DIRNAME, '../test/fixtures', name)
 }
 
-test.before(async (context) => {
-  context.cwd = fixture('config')
-})
-
-test('should load config correctly', async ({ cwd }) => {
+test('should load config correctly', async () => {
+  let cwd = fixture('config/has')
   let config = await loadConfig(cwd)
+
   equal(config, {
     '*': 'my-tasks',
   })
 })
 
-test('should failed load config', async () => {
-  let config = await loadConfig()
+test('should fail load config', async () => {
+  let cwd = fixture('config/not')
+  let config = await loadConfig(cwd)
+
   equal(config, undefined)
 })
 
