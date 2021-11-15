@@ -1,5 +1,5 @@
 import { readFile } from 'fs/promises'
-import { resolve, dirname } from 'path'
+import { resolve } from 'path'
 
 import { findUp } from '../utils/index.js'
 
