@@ -1,6 +1,6 @@
+import { equal, type, is } from 'uvu/assert'
 import { dirname, resolve } from 'path'
 import { fileURLToPath } from 'url'
-import { equal } from 'uvu/assert'
 import { test } from 'uvu'
 
 import { loadConfig, validConfig } from './index.js'
@@ -24,71 +24,71 @@ test('should fail load config', async () => {
   let cwd = fixture('config/not')
   let config = await loadConfig(cwd)
 
-  equal(config, undefined)
+  type(config, 'undefined')
 })
 
 test('should validate config correctly', async () => {
-  equal(validConfig(), false)
+  is(validConfig(), false)
 
-  equal(validConfig({}), false)
+  is(validConfig({}), false)
 
-  equal(
+  is(
     validConfig({
       '*': 'my-tasks',
     }),
     true
   )
 
-  equal(
+  is(
     validConfig({
       '*': ['my-tasks'],
     }),
     true
   )
 
-  equal(
+  is(
     validConfig({
       '': ['my-tasks'],
     }),
     false
   )
 
-  equal(
+  is(
     validConfig({
       '*': 1,
     }),
     false
   )
 
-  equal(
+  is(
     validConfig({
       '*': '',
     }),
     false
   )
 
-  equal(
+  is(
     validConfig({
       '*': ['', ''],
     }),
     false
   )
 
-  equal(
+  is(
     validConfig({
       '*': ['', ''],
     }),
     false
   )
 
-  equal(
+  is(
     validConfig({
       '': '',
     }),
     false
   )
 
-  equal(
+  is(
     validConfig({
       '*': '',
       '*.js': 'my-task',

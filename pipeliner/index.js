@@ -44,10 +44,10 @@ export function pipeliner({
 
         try {
           if (changed.length) {
-            for (let sources of await fs.read(changed)) {
-              if (sources) {
-                let { path, source } = sources
-                cache.set(path, source)
+            for (let files of await fs.read(changed)) {
+              if (files) {
+                let { path, content } = files
+                cache.set(path, content)
               }
             }
           }
@@ -130,8 +130,8 @@ export function pipeliner({
           }
 
           if (changed.length) {
-            let sources = changed.map((path) => ({ path, source: cache.get(path) }))
-            await fs.write(sources)
+            let files = changed.map((path) => ({ path, content: cache.get(path) }))
+            await fs.write(files)
           }
 
           log(pico.dim(`  ${pico.green('»')} Done deleting removed and restoring changed files`))

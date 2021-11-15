@@ -1,7 +1,7 @@
 import { dirname, join, resolve } from 'path'
 import { promises as fs } from 'fs'
 import { fileURLToPath } from 'url'
-import { equal } from 'uvu/assert'
+import { equal, is } from 'uvu/assert'
 import { test } from 'uvu'
 import sinon from 'sinon'
 
@@ -58,8 +58,8 @@ test('gitWorker: should find git repo', async () => {
 
   let { gitRootPath, gitConfigPath } = await git.repoRoot()
 
-  equal(!!gitRootPath, true)
-  equal(!!gitConfigPath, true)
+  is(!!gitRootPath, true)
+  is(!!gitConfigPath, true)
 })
 
 test('gitWorker: should create diff patch file', async () => {
@@ -68,7 +68,7 @@ test('gitWorker: should create diff patch file', async () => {
   await git.diffPatch(patchPath)
 
   let source = await fs.readFile(patchPath)
-  equal(
+  is(
     source.toString(),
     'diff --git a/README.md b/README.md\n' +
       'index 8ae0569..a07c500 100644\n' +
@@ -95,7 +95,7 @@ test('gitWorker: should apply patch file', async () => {
   await git.applyPatch(patchPath)
 
   let source = await fs.readFile(join(cwd, 'README.md'))
-  equal(source.toString(), '# Test\n## Test')
+  is(source.toString(), '# Test\n## Test')
 })
 
 test('gitWorker: should add files', async () => {
@@ -104,15 +104,15 @@ test('gitWorker: should add files', async () => {
   await git.add(['.'])
 
   let files = await git.getStagedFiles({ gitRootPath: cwd, cwd })
-  equal(files.length, 2)
+  is(files.length, 2)
 })
 
 test('gitWorker: should check patch file', async () => {
   let git = gitWorker(cwd)
 
-  equal(await git.checkPatch(patchPath), true)
+  is(await git.checkPatch(patchPath), true)
   await writeFile(patchPath, '')
-  equal(await git.checkPatch(patchPath), false)
+  is(await git.checkPatch(patchPath), false)
 })
 
 test('getStagedFiles: should return array of file names', async () => {
@@ -122,14 +122,14 @@ test('getStagedFiles: should return array of file names', async () => {
     .expects('exec')
     .callsFake(
       async () =>
-        'MM mod.js\x00AM test/add.js\x00RM rename.js\x00origin.js\x00CM copy.js\x00base.js\x00MD remove.js\x00D  delete.js\x00'
+        'MM mod.js\x00AM test/add.js\x00RM rename.js\x00origin.js\x00CM test/copy.js\x00test/base.js\x00MD remove.js\x00D  delete.js\x00'
     )
 
   equal(await git.getStagedFiles(), [
     { path: 'mod.js', rename: undefined, type: 2 },
     { path: 'test/add.js', rename: undefined, type: 2 },
     { path: 'origin.js', rename: 'rename.js', type: 2 },
-    { path: 'base.js', rename: 'copy.js', type: 2 },
+    { path: 'test/base.js', rename: 'test/copy.js', type: 2 },
     { path: 'remove.js', rename: undefined, type: 4 },
   ])
 })
@@ -149,7 +149,7 @@ test('getStagedFiles: should return empty array when no staged files', async () 
   sinon
     .mock(git)
     .expects('exec')
-    .callsFake(async () => '   ')
+    .callsFake(async () => ' ')
 
   equal(await git.getStagedFiles(), [])
 })
@@ -159,7 +159,7 @@ test('getStagedFiles: should return empty array when fail parse', async () => {
   sinon
     .mock(git)
     .expects('exec')
-    .callsFake(async () => 'M  rename.js')
+    .callsFake(async () => 'M   rename.js')
 
   equal(await git.getStagedFiles(), [])
   sinon.restore()
@@ -167,7 +167,7 @@ test('getStagedFiles: should return empty array when fail parse', async () => {
   sinon
     .mock(git)
     .expects('exec')
-    .callsFake(async () => 'RM rename.js')
+    .callsFake(async () => 'RM  rename.js')
 
   equal(await git.getStagedFiles(), [])
   sinon.restore()
@@ -175,7 +175,7 @@ test('getStagedFiles: should return empty array when fail parse', async () => {
   sinon
     .mock(git)
     .expects('exec')
-    .callsFake(async () => '         ')
+    .callsFake(async () => '     ')
 
   equal(await git.getStagedFiles(), [])
   sinon.restore()

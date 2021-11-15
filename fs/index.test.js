@@ -12,45 +12,45 @@ function fixture(name) {
   return resolve(DIRNAME, '../test/fixtures', name)
 }
 
-let example = [
+let exampleFiles = [
   {
     path: fixture('fs/a.js.test'),
-    source: 'let a = 1;',
+    content: 'let a = 1;',
   },
   {
     path: fixture('fs/b.css.test'),
-    source: 'a {color: red;}',
+    content: 'a {color: red;}',
   },
 ]
 
 test('should write correctly files', async () => {
   let fs = fileSystem()
-  await fs.write(example)
-  let hasFiles = example.every(async ({ path }) => await baseFs.access(path))
+  await fs.write(exampleFiles)
+  let has = exampleFiles.every(async ({ path }) => await baseFs.access(path))
 
-  equal(hasFiles, true)
+  equal(has, true)
 })
 
 test('should read correctly files', async () => {
   let fs = fileSystem()
-  let sources = await fs.read([fixture('fs/a.js'), fixture('fs/b.css')])
+  let files = await fs.read([fixture('fs/a.js'), fixture('fs/b.css')])
 
-  equal(sources.length, 2)
+  equal(files.length, 2)
 })
 
 test('should delete correctly files', async () => {
   let fs = fileSystem()
-  await fs.delete(example.map(({ path }) => path))
-  let deleteFiles = await fs.read(example.map(({ path }) => path))
+  await fs.delete(exampleFiles.map(({ path }) => path))
+  let files = await fs.read(exampleFiles.map(({ path }) => path))
 
-  equal(deleteFiles.length, 0)
+  equal(files.length, 0)
 })
 
 test('should not read file', async () => {
   let fs = fileSystem()
-  let sources = await fs.read([fixture('fs/a_null.js'), fixture('fs/b_null.css')])
+  let files = await fs.read([fixture('fs/a_null.js'), fixture('fs/b_null.css')])
 
-  equal(sources.length, 0)
+  equal(files.length, 0)
 })
 
 test.run()

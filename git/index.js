@@ -80,7 +80,7 @@ export function gitWorker(cwd = process.cwd()) {
       try {
         let i = 0
         let lastIndex
-        let raw = await git.exec(['status', '-z'])
+        let raw = await git.exec(['status', '-z', '-u'])
 
         while (i < raw.length) {
           let code = raw.charCodeAt(i)

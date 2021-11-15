@@ -20,8 +20,8 @@ export function fileSystem() {
       let promises = await Promise.all(
         files.map(async (path) => {
           try {
-            let source = await fs.readFile(path)
-            return { path, source }
+            let content = await fs.readFile(path)
+            return { path, content }
           } catch (err) {
             return null
           }
@@ -35,8 +35,8 @@ export function fileSystem() {
       files = toArray(files)
 
       return await Promise.all(
-        toArray(files).map(async ({ path, source }) => {
-          return await fs.writeFile(path, source)
+        toArray(files).map(async ({ path, content }) => {
+          return await fs.writeFile(path, content)
         })
       )
     },
