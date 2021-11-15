@@ -2,9 +2,12 @@ import { toAbsolute, toRelative, toArray } from '../utils/index.js'
 import { CHANGED_CODE, DELETED_CODE } from '../git/index.js'
 import { glob } from '../glob/index.js'
 
-export function prepareFiles(opts = {}) {
-  let { entries, config, cwd = '', gitRootPath = '' } = opts
-
+export function prepareFiles({
+  gitRootPath = process.cwd(),
+  cwd = process.cwd(),
+  entries = [],
+  config = {},
+} = {}) {
   let deleted = []
   let changed = []
   let staged = []

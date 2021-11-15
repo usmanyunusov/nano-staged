@@ -23,7 +23,7 @@ async function appendFile(filename, content, dir = cwd) {
 }
 
 async function execGit(args) {
-  let git = gitWorker({ cwd })
+  let git = gitWorker(cwd)
   await git.exec(args, { cwd })
 }
 

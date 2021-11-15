@@ -29,7 +29,7 @@ async function makeDir(dir = cwd) {
 }
 
 async function execGit(args) {
-  let git = gitWorker({ cwd })
+  let git = gitWorker(cwd)
   await git.exec(args, { cwd })
 }
 
@@ -54,16 +54,16 @@ test.after(async () => {
 
 test('gitWorker: should find git repo', async () => {
   let cwd = fixture('git')
-  let git = gitWorker({ cwd })
+  let git = gitWorker(cwd)
 
-  let { gitRootPath, gitConfigPath } = await git.repoRoot(cwd)
+  let { gitRootPath, gitConfigPath } = await git.repoRoot()
 
   equal(!!gitRootPath, true)
   equal(!!gitConfigPath, true)
 })
 
 test('gitWorker: should create diff patch file', async () => {
-  let git = gitWorker({ cwd })
+  let git = gitWorker(cwd)
 
   await git.diffPatch(patchPath)
 
@@ -81,7 +81,7 @@ test('gitWorker: should create diff patch file', async () => {
 })
 
 test('gitWorker: should checkout files', async () => {
-  let git = gitWorker({ cwd })
+  let git = gitWorker(cwd)
 
   await git.checkout(['.'])
 
@@ -90,7 +90,7 @@ test('gitWorker: should checkout files', async () => {
 })
 
 test('gitWorker: should apply patch file', async () => {
-  let git = gitWorker({ cwd })
+  let git = gitWorker(cwd)
 
   await git.applyPatch(patchPath)
 
@@ -99,7 +99,7 @@ test('gitWorker: should apply patch file', async () => {
 })
 
 test('gitWorker: should add files', async () => {
-  let git = gitWorker({ cwd })
+  let git = gitWorker(cwd)
 
   await git.add(['.'])
 
@@ -108,7 +108,7 @@ test('gitWorker: should add files', async () => {
 })
 
 test('gitWorker: should check patch file', async () => {
-  let git = gitWorker({ cwd })
+  let git = gitWorker(cwd)
 
   equal(await git.checkPatch(patchPath), true)
   await writeFile(patchPath, '')

@@ -8,9 +8,9 @@ const WILDCARD_SEGMENT = `([^${SEP_ESC}]*)`
 
 export function glob(glob, opts = {}) {
   let { extended = false, globstar = false, strict = false, filepath = false, flags = '' } = opts
-  let regex = ''
-  let segment = ''
   let path = { regex: '', segments: [] }
+  let segment = ''
+  let regex = ''
 
   let inGroup = false
   let inRange = false

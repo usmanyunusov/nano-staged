@@ -13,8 +13,8 @@ export default async function run(opts = {}, logger = reporter({ stream: process
 
   showVersion(log)
 
-  let git = gitWorker({ cwd })
-  let { gitRootPath, gitConfigPath } = await git.repoRoot(cwd)
+  let git = gitWorker(cwd)
+  let { gitRootPath, gitConfigPath } = await git.repoRoot()
   if (!gitRootPath) {
     info('Nano Staged didn’t find git directory')
     return
@@ -44,10 +44,8 @@ export default async function run(opts = {}, logger = reporter({ stream: process
     return
   }
 
-  let pl = pipeliner({ files, gitRootPath, gitConfigPath, logger })
-
   try {
-    await pl.run()
+    await pipeliner({ files, gitRootPath, gitConfigPath, logger }).run()
   } catch (err) {
     if (err.cmds) {
       log('\n' + err.cmds)

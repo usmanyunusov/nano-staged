@@ -24,34 +24,34 @@ const DIFF_ARGS = [
   '--submodule=short',
 ]
 
-export function gitWorker(opts = {}) {
+export function gitWorker(cwd = process.cwd()) {
   let git = {
-    async exec(args, opts) {
+    async exec(args = [], opts = {}) {
       try {
-        return await spawn('git', args, opts)
+        return await spawn('git', args, { cwd, ...opts })
       } catch (err) {
         throw err
       }
     },
 
     async diffPatch(patchPath) {
-      await git.exec(['diff', ...DIFF_ARGS, '--output', patchPath], opts)
+      await git.exec(['diff', ...DIFF_ARGS, '--output', patchPath])
     },
 
     async applyPatch(patchPath) {
-      await git.exec(['apply', ...APPLY_ARGS, patchPath], opts)
+      await git.exec(['apply', ...APPLY_ARGS, patchPath])
     },
 
     async checkPatch(patchPath) {
       try {
-        await git.exec(['apply', '--check', ...APPLY_ARGS, patchPath], opts)
+        await git.exec(['apply', '--check', ...APPLY_ARGS, patchPath])
         return true
       } catch (error) {
         return false
       }
     },
 
-    async repoRoot(cwd = process.cwd()) {
+    async repoRoot() {
       let gitRootPath = findUp('.git', cwd)
       let gitConfigPath = join(gitRootPath, '.git')
 
@@ -62,7 +62,7 @@ export function gitWorker(opts = {}) {
       paths = toArray(paths)
 
       if (paths.length) {
-        await git.exec(['add', '-A', '--', ...paths], opts)
+        await git.exec(['add', '-A', '--', ...paths])
       }
     },
 
@@ -70,7 +70,7 @@ export function gitWorker(opts = {}) {
       paths = toArray(paths)
 
       if (paths.length) {
-        await git.exec(['checkout', '-q', '--force', '--', ...paths], opts)
+        await git.exec(['checkout', '-q', '--force', '--', ...paths])
       }
     },
 
@@ -80,7 +80,7 @@ export function gitWorker(opts = {}) {
       try {
         let i = 0
         let lastIndex
-        let raw = await git.exec(['status', '-z'], opts)
+        let raw = await git.exec(['status', '-z'])
 
         while (i < raw.length) {
           let code = raw.charCodeAt(i)

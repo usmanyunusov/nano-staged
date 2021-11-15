@@ -18,7 +18,7 @@ export function pipeliner({
   let { changed = [], deleted = [], tasks = [], staged = [] } = files
   let patchPath = resolve(gitConfigPath, `./${PATCH_ORIGIN}`)
 
-  let git = gitWorker({ cwd: gitRootPath })
+  let git = gitWorker(gitRootPath)
   let { log, step } = logger
   let cache = createCache()
   let fs = fileSystem()
