@@ -8,6 +8,11 @@ const CONFIG_NAME = 'nano-staged'
 
 export async function loadConfig(cwd = process.cwd()) {
   let rootPath = findUp(NODE_PACKAGE_JSON, cwd)
+
+  if (!rootPath) {
+    return undefined
+  }
+
   let pkgPath = resolve(rootPath, NODE_PACKAGE_JSON)
   let pkgJson = JSON.parse(await readFile(pkgPath, 'utf8'))
   let config = pkgJson[CONFIG_NAME]
