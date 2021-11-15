@@ -86,7 +86,7 @@ export function gitWorker(opts = {}) {
           let code = raw.charCodeAt(i)
 
           if (i + 4 >= raw.length) {
-            break
+            return []
           }
 
           switch (code) {
@@ -108,7 +108,7 @@ export function gitWorker(opts = {}) {
                 lastIndex = raw.indexOf('\0', i)
 
                 if (!~lastIndex) {
-                  break
+                  return []
                 }
 
                 entry.rename = raw.substring(i, lastIndex)
@@ -118,7 +118,7 @@ export function gitWorker(opts = {}) {
               lastIndex = raw.indexOf('\0', i)
 
               if (!~lastIndex) {
-                break
+                return []
               }
 
               entry.path = raw.substring(i, lastIndex)
@@ -143,7 +143,7 @@ export function gitWorker(opts = {}) {
               lastIndex = raw.indexOf('\0', i)
 
               if (!~lastIndex) {
-                return
+                return []
               }
 
               i = lastIndex + 1

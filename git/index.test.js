@@ -52,7 +52,7 @@ test.after(async () => {
   await fs.rm(cwd, { recursive: true })
 })
 
-test('gitWorker: find git repo', async () => {
+test('gitWorker: should find git repo', async () => {
   let cwd = fixture('git')
   let git = gitWorker({ cwd })
 
@@ -62,7 +62,7 @@ test('gitWorker: find git repo', async () => {
   equal(!!gitConfigPath, true)
 })
 
-test('gitWorker: diffPatch', async () => {
+test('gitWorker: should create diff patch file', async () => {
   let git = gitWorker({ cwd })
 
   await git.diffPatch(patchPath)
@@ -80,7 +80,7 @@ test('gitWorker: diffPatch', async () => {
   )
 })
 
-test('gitWorker: checkout', async () => {
+test('gitWorker: should checkout files', async () => {
   let git = gitWorker({ cwd })
 
   await git.checkout(['.'])
@@ -89,7 +89,7 @@ test('gitWorker: checkout', async () => {
   equal(files, [])
 })
 
-test('gitWorker: applyPatch', async () => {
+test('gitWorker: should apply patch file', async () => {
   let git = gitWorker({ cwd })
 
   await git.applyPatch(patchPath)
@@ -98,7 +98,7 @@ test('gitWorker: applyPatch', async () => {
   equal(source.toString(), '# Test\n## Test')
 })
 
-test('gitWorker: add', async () => {
+test('gitWorker: should add files', async () => {
   let git = gitWorker({ cwd })
 
   await git.add(['.'])
@@ -107,7 +107,7 @@ test('gitWorker: add', async () => {
   equal(files.length, 2)
 })
 
-test('gitWorker: checkPatch', async () => {
+test('gitWorker: should check patch file', async () => {
   let git = gitWorker({ cwd })
 
   equal(await git.checkPatch(patchPath), true)
@@ -144,8 +144,42 @@ test('getStagedFiles: should return empty array when no staged files', async () 
   equal(await git.getStagedFiles(), [])
 })
 
-test('getStagedFiles: should return null in case of error', async () => {
+test('getStagedFiles: should return empty array when no staged files', async () => {
   let git = gitWorker()
+  sinon
+    .mock(git)
+    .expects('exec')
+    .callsFake(async () => '   ')
+
+  equal(await git.getStagedFiles(), [])
+})
+
+test('getStagedFiles: should return empty array when fail parse', async () => {
+  let git = gitWorker()
+  sinon
+    .mock(git)
+    .expects('exec')
+    .callsFake(async () => 'M  rename.js')
+
+  equal(await git.getStagedFiles(), [])
+  sinon.restore()
+
+  sinon
+    .mock(git)
+    .expects('exec')
+    .callsFake(async () => 'RM rename.js')
+
+  equal(await git.getStagedFiles(), [])
+  sinon.restore()
+
+  sinon
+    .mock(git)
+    .expects('exec')
+    .callsFake(async () => '         ')
+
+  equal(await git.getStagedFiles(), [])
+  sinon.restore()
+
   sinon
     .mock(git)
     .expects('exec')
@@ -154,6 +188,7 @@ test('getStagedFiles: should return null in case of error', async () => {
     })
 
   equal(await git.getStagedFiles(), [])
+  sinon.restore()
 })
 
 test.run()
