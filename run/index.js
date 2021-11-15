@@ -44,7 +44,7 @@ export default async function run(opts = {}, logger = reporter({ stream: process
     return
   }
 
-  let pl = pipeliner({ process, files, gitRootPath, gitConfigPath, logger })
+  let pl = pipeliner({ files, gitRootPath, gitConfigPath, logger })
 
   try {
     await pl.run()

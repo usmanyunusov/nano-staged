@@ -10,14 +10,14 @@ import { gitWorker } from '../git/index.js'
 const PATCH_ORIGIN = 'nano-staged.patch'
 
 export function pipeliner({
-  process,
-  files,
-  gitRootPath,
-  gitConfigPath,
   logger = reporter({ stream: process.stderr }),
+  gitConfigPath = null,
+  gitRootPath = null,
+  files = {},
 }) {
+  let { changed = [], deleted = [], tasks = [], staged = [] } = files
   let patchPath = resolve(gitConfigPath, `./${PATCH_ORIGIN}`)
-  let { changed, deleted, tasks, staged } = files
+
   let git = gitWorker({ cwd: gitRootPath })
   let { log, step } = logger
   let cache = createCache()
