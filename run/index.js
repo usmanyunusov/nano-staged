@@ -14,7 +14,7 @@ export default async function run(options = {}, logger = reporter({ stream: proc
   showVersion(log)
 
   let git = gitWorker({ cwd })
-  let { gitRootPath, gitConfigPath } = await git.resolveDir(cwd)
+  let { gitRootPath, gitConfigPath } = await git.repoRoot(cwd)
   if (!gitRootPath) {
     info('Nano Staged didn’t find git directory')
     return

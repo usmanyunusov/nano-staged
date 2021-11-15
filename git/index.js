@@ -1,4 +1,4 @@
-import { join } from 'path'
+import { join, normalize } from 'path'
 
 import { spawn, findUp, toArray } from '../utils/index.js'
 
@@ -51,7 +51,7 @@ export function gitWorker(opts = {}) {
       }
     },
 
-    async resolveDir(cwd = '') {
+    async repoRoot(cwd = process.cwd()) {
       let gitRootPath = findUp('.git', cwd)
       let gitConfigPath = join(gitRootPath, '.git')
 

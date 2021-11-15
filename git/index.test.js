@@ -56,7 +56,7 @@ test('gitWorker: find git repo', async () => {
   let cwd = fixture('git')
   let git = gitWorker({ cwd })
 
-  let { gitRootPath, gitConfigPath } = await git.resolveDir(cwd)
+  let { gitRootPath, gitConfigPath } = await git.repoRoot(cwd)
 
   equal(!!gitRootPath, true)
   equal(!!gitConfigPath, true)
