@@ -18,18 +18,15 @@ export function toRelative(file, cwd) {
   return normalize(relative(cwd, file))
 }
 
-export function findUp(name, cwd = '') {
-  let directory = resolve(cwd)
-  let { root } = parse(directory)
+export function findUp(name, cwd = process.cwd()) {
+  let dir = resolve(cwd)
 
-  while (true) {
-    let foundPath = resolve(directory, name)
-
-    if (existsSync(foundPath)) return directory
-    if (directory === root) return undefined
-
-    directory = dirname(directory)
-  }
+  do {
+    cwd = dir
+    const foundPath = resolve(cwd, name)
+    if (existsSync(foundPath)) return cwd
+    dir = resolve(cwd, '../')
+  } while (dir !== cwd)
 }
 
 export function showVersion(print) {

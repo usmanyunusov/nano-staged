@@ -14,7 +14,7 @@ export function prepareFiles({
   let tasks = []
 
   for (let [pattern, cmd] of Object.entries(config)) {
-    let matches = glob(pattern, { extended: true })
+    let matches = glob(pattern, { filepath: true, extended: true })
     let cmds = toArray(cmd)
     let subTasks = []
 
