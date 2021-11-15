@@ -2,7 +2,6 @@ import { resolve } from 'path'
 import pico from 'picocolors'
 
 import { spawn, stringToArgv } from '../utils/index.js'
-import { createCache } from '../cache/index.js'
 import { reporter } from '../reporter/index.js'
 import { fileSystem } from '../fs/index.js'
 import { gitWorker } from '../git/index.js'
@@ -15,13 +14,14 @@ export function pipeliner({
   gitRootPath = null,
   files = {},
 }) {
-  let { changed = [], deleted = [], tasks = [], staged = [] } = files
   let patchPath = resolve(gitConfigPath, `./${PATCH_ORIGIN}`)
-
   let git = gitWorker(gitRootPath)
-  let { log, step } = logger
-  let cache = createCache()
   let fs = fileSystem()
+
+  let { changed = [], deleted = [], tasks = [], staged = [] } = files
+  let { log, step } = logger
+
+  let cache = new Map()
 
   return {
     async run() {
