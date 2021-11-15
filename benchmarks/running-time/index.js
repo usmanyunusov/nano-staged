@@ -85,7 +85,7 @@ async function run(names = [], files = []) {
     showTime(name)
   }
 
-  await execGit(['checkout', '.'])
+  await execGit(['checkout', ...files])
 }
 
 for (let i = 0; i < runners.length; i++) {
