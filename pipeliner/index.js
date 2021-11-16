@@ -1,9 +1,9 @@
 import { resolve } from 'path'
 import pico from 'picocolors'
 
-import { spawn, stringToArgv } from '../utils/index.js'
 import { createReporter } from '../create-reporter/index.js'
-import { fileSystem } from '../fs/index.js'
+import { spawn, stringToArgv } from '../utils/index.js'
+import { fileSystem } from '../file-system/index.js'
 import { gitWorker } from '../git/index.js'
 
 const PATCH_ORIGIN = 'nano-staged.patch'
