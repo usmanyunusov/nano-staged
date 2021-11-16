@@ -52,8 +52,8 @@ async function run(opts = {}, logger = reporter({ stream: process.stderr })) {
   try {
     await pipeliner({ files, gitRootPath, gitConfigPath, logger }).run()
   } catch (err) {
-    if (err.cmds) {
-      log('\n' + err.cmds)
+    if (err.tasks) {
+      log('\n' + err.tasks)
     } else if (err.own) {
       log('\n' + pico.red(err.message))
     } else if (err.stack) {
@@ -61,6 +61,8 @@ async function run(opts = {}, logger = reporter({ stream: process.stderr })) {
     } else {
       log('\n' + pico.red(err))
     }
+
+    throw err
   }
 }
 

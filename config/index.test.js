@@ -1,15 +1,8 @@
 import { equal, type, is } from 'uvu/assert'
-import { dirname, resolve } from 'path'
-import { fileURLToPath } from 'url'
 import { test } from 'uvu'
 
 import { loadConfig, validConfig } from './index.js'
-
-const DIRNAME = dirname(fileURLToPath(import.meta.url))
-
-function fixture(name) {
-  return resolve(DIRNAME, '../test/fixtures', name)
-}
+import { fixture } from '../test/utils/index.js'
 
 test('should load config correctly', async () => {
   let cwd = fixture('config/has')

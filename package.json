@@ -1,13 +1,13 @@
 {
   "name": "nano-staged",
   "version": "0.1.0",
-  "description": "A tiny pipeliner on git staged files.",
+  "description": "Tool to run commands only on git staged files",
   "author": "Usman Yunusov <usman.iunusov@gmail.com>",
   "license": "MIT",
   "repository": "usmanyunusov/nano-staged",
   "type": "module",
   "bin": "./bin/index.js",
-  "exports": "./run/index.js",
+  "exports": "./bin/index.js",
   "engines": {
     "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
   },

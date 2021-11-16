@@ -1,32 +1,14 @@
-import { dirname, join, resolve } from 'path'
+import { join } from 'path'
 import { promises as fs } from 'fs'
-import { fileURLToPath } from 'url'
 import { equal, is } from 'uvu/assert'
 import { test } from 'uvu'
 import sinon from 'sinon'
 
+import { writeFile, makeDir, appendFile, fixture, removeFile } from '../test/utils/index.js'
 import { gitWorker } from './index.js'
-
-const DIRNAME = dirname(fileURLToPath(import.meta.url))
-
-function fixture(name) {
-  return resolve(DIRNAME, '../test/fixtures', name)
-}
 
 let cwd = fixture('git/nano-staged-test')
 let patchPath = join(cwd, 'nano-staged.patch')
-
-async function appendFile(filename, content, dir = cwd) {
-  await fs.appendFile(resolve(dir, filename), content)
-}
-
-async function writeFile(filename, content, dir = cwd) {
-  await fs.writeFile(resolve(dir, filename), content)
-}
-
-async function makeDir(dir = cwd) {
-  await fs.mkdir(dir)
-}
 
 async function execGit(args) {
   let git = gitWorker(cwd)
@@ -37,23 +19,23 @@ async function initGitRepo() {
   await execGit(['init'])
   await execGit(['config', 'user.name', '"test"'])
   await execGit(['config', 'user.email', '"test@test.com"'])
-  await appendFile('README.md', '# Test\n')
+  await appendFile('README.md', '# Test\n', cwd)
   await execGit(['add', 'README.md'])
   await execGit(['commit', '-m initial commit'])
-  await writeFile('README.md', '# Test\n## Test')
+  await writeFile('README.md', '# Test\n## Test', cwd)
 }
 
 test.before(async () => {
-  await makeDir()
+  await makeDir(cwd)
   await initGitRepo()
 })
 
 test.after(async () => {
-  await fs.rm(cwd, { recursive: true })
+  await removeFile(cwd)
 })
 
 test('gitWorker: should find git repo', async () => {
-  let cwd = fixture('git')
+  let cwd = fixture('.')
   let git = gitWorker(cwd)
 
   let { gitRootPath, gitConfigPath } = await git.repoRoot()
@@ -111,7 +93,7 @@ test('gitWorker: should check patch file', async () => {
   let git = gitWorker(cwd)
 
   is(await git.checkPatch(patchPath), true)
-  await writeFile(patchPath, '')
+  await writeFile(patchPath, '', cwd)
   is(await git.checkPatch(patchPath), false)
 })
 

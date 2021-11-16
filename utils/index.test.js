@@ -18,7 +18,7 @@ stdout.write = (symbols) => {
   stdout.out += symbols
 }
 
-let currentDir = dirname(fileURLToPath(import.meta.url))
+let DIRNAME = dirname(fileURLToPath(import.meta.url))
 
 test('util: toArray', () => {
   equal(toArray('path'), ['path'])
@@ -34,7 +34,7 @@ test('util: toRelative', () => {
 })
 
 test('util: findUp', () => {
-  let cwd = resolve(currentDir, '../test/fixtures/config')
+  let cwd = resolve(DIRNAME, '../test/fixtures/config')
   let rootPath = findUp('package.json', cwd)
   let noRootPath = findUp('not-package.json', cwd)
 
@@ -54,7 +54,7 @@ test('util: stringToArgv', () => {
 })
 
 test('util: spawn', async () => {
-  let cwd = resolve(currentDir, '../test/fixtures/utils/spawn.js')
+  let cwd = resolve(DIRNAME, '../test/fixtures/utils/spawn.js')
 
   let output = await spawn('node', [cwd])
   is(output, 'Spawn test\n')

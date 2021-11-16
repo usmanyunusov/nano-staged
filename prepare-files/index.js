@@ -17,35 +17,33 @@ export function prepareFiles({
     let matches = glob(pattern, { filepath: true, extended: true })
     let cmds = toArray(cmd)
     let subTasks = []
+    let files = []
 
-    let files = entries
-      .map(({ path, rename, ...entry }) => ({
-        ...entry,
-        path: toRelative(toAbsolute(rename || path, gitRootPath), cwd),
-      }))
-      .filter(({ path, type }) => {
-        if (matches.regex.test(path)) {
-          if (staged.indexOf(path) === -1) {
-            if (type === CHANGED_CODE) {
-              changed.push(path)
-            }
+    for (let { path, type, rename } of entries) {
+      path = toRelative(toAbsolute(rename || path, gitRootPath), cwd)
 
-            if (type === DELETED_CODE) {
-              deleted.push(path)
-            }
-
-            staged.push(path)
+      if (matches.regex.test(path)) {
+        if (staged.indexOf(path) === -1) {
+          if (type === CHANGED_CODE) {
+            changed.push(path)
           }
 
-          return true
+          if (type === DELETED_CODE) {
+            deleted.push(path)
+          }
+
+          staged.push(path)
         }
-      })
+
+        files.push(path)
+      }
+    }
 
     for (let cmd of cmds) {
       subTasks.push({
         pattern,
         cmd,
-        files: files.map(({ path }) => path),
+        files,
       })
     }
 

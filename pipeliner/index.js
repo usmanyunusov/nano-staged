@@ -94,7 +94,7 @@ export function pipeliner({
 
         if (errors.length) {
           let err = new Error()
-          err.cmds = errors.map((e) => e.reason).join('\n')
+          err.tasks = errors.map((e) => e.reason).join('\n')
           throw err
         }
       } catch (err) {

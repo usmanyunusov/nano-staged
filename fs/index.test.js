@@ -1,16 +1,9 @@
 import { promises as baseFs } from 'fs'
-import { dirname, resolve } from 'path'
-import { fileURLToPath } from 'url'
 import { equal } from 'uvu/assert'
 import { test } from 'uvu'
 
+import { fixture } from '../test/utils/index.js'
 import { fileSystem } from './index.js'
-
-const DIRNAME = dirname(fileURLToPath(import.meta.url))
-
-function fixture(name) {
-  return resolve(DIRNAME, '../test/fixtures', name)
-}
 
 let exampleFiles = [
   {
