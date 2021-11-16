@@ -35,13 +35,13 @@ test.after(async () => {
 })
 
 test('gitWorker: should find git repo', async () => {
-  let cwd = fixture('.')
+  let cwd = fixture('/')
   let git = gitWorker(cwd)
 
   let { gitRootPath, gitConfigPath } = await git.repoRoot()
 
-  is(!!gitRootPath, true)
-  is(!!gitConfigPath, true)
+  is(!!gitRootPath, false)
+  is(!!gitConfigPath, false)
 })
 
 test('gitWorker: should create diff patch file', async () => {

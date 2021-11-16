@@ -52,14 +52,13 @@ export function gitWorker(cwd = process.cwd()) {
     },
 
     async repoRoot() {
-      let gitConfigPath
-      let gitRootPath = findUp('.git', cwd)
+      let result = {}
+      let rootPath = findUp('.git', cwd)
 
-      if (gitRootPath) {
-        gitConfigPath = join(gitRootPath, '.git')
-      }
+      result['gitRootPath'] = rootPath || null
+      result['gitConfigPath'] = rootPath ? join(rootPath, '.git') : null
 
-      return { gitRootPath, gitConfigPath }
+      return result
     },
 
     async add(paths) {
