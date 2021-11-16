@@ -5,14 +5,14 @@ import pico from 'picocolors'
 import { loadConfig, validConfig } from '../config/index.js'
 import { prepareFiles } from '../prepare-files/index.js'
 import { pipeliner } from '../pipeliner/index.js'
-import { reporter } from '../reporter/index.js'
+import { createReporter } from '../create-reporter/index.js'
 import { showVersion } from '../utils/index.js'
 import { gitWorker } from '../git/index.js'
 
 // Do not terminate main process on SIGINT
 process.on('SIGINT', () => {})
 
-async function run(opts = {}, logger = reporter({ stream: process.stderr })) {
+async function run(opts = {}, logger = createReporter({ stream: process.stderr })) {
   let { log, info } = logger
   let { cwd = process.cwd() } = opts
 

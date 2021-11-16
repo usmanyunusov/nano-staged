@@ -2,14 +2,14 @@ import { resolve } from 'path'
 import pico from 'picocolors'
 
 import { spawn, stringToArgv } from '../utils/index.js'
-import { reporter } from '../reporter/index.js'
+import { createReporter } from '../create-reporter/index.js'
 import { fileSystem } from '../fs/index.js'
 import { gitWorker } from '../git/index.js'
 
 const PATCH_ORIGIN = 'nano-staged.patch'
 
 export function pipeliner({
-  logger = reporter({ stream: process.stderr }),
+  logger = createReporter({ stream: process.stderr }),
   gitConfigPath = null,
   gitRootPath = null,
   files = {},
