@@ -149,7 +149,10 @@ export function pipeliner({
 
       try {
         await git.checkout('.')
-        await git.applyPatch(patchPath)
+        
+        if (await git.checkPatch(patchPath)) {
+          await git.applyPatch(patchPath)
+        }
 
         log(pico.dim(`  ${pico.green('»')} Done restoring`))
       } catch (err) {

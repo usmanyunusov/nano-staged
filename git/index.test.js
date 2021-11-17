@@ -82,6 +82,14 @@ test('gitWorker: should checkout files', async () => {
   equal(files, [])
 })
 
+test('gitWorker: should check patch file', async () => {
+  let git = gitWorker(cwd)
+
+  is(await git.checkPatch(patchPath), true)
+  await writeFile(patchPath, '', cwd)
+  is(await git.checkPatch(patchPath), false)
+})
+
 test('gitWorker: should apply patch file', async () => {
   let git = gitWorker(cwd)
 

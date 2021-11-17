@@ -185,7 +185,30 @@ test('run cmd error', async () => {
   try {
     await run({ cwd, reporter })
   } catch (error) {
-    is(error, 'error: unrecognized input\n')
+    is(!!error, true)
+  }
+})
+
+test('run cmd error', async () => {
+  let reporter = createReporter({ stream: stdout })
+
+  await initGitRepo()
+  await appendFile(
+    'package.json',
+    `{
+      "nano-staged": {
+        "*.js": "prettier --write"
+      }
+    }`,
+    cwd
+  )
+  await appendFile('index.js', 'as sadsad', cwd)
+  await execGit(['add', 'index.js'])
+
+  try {
+    await run({ cwd, reporter })
+  } catch (error) {
+    is(!!error.tasks, true)
   }
 })
 

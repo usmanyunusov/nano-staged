@@ -47,6 +47,17 @@ export function gitWorker(cwd = process.cwd()) {
       await git.exec(args, opts)
     },
 
+    async checkPatch(patchPath) {
+      const args = ['apply', '--check', ...APPLY_ARGS, patchPath]
+
+      try {
+        await git.exec(args)
+        return true
+      } catch (error) {
+        return false
+      }
+    },
+
     async getRepoAndDotGitPaths(opts = {}) {
       let result = {}
       let repoPath = findUp('.git', opts.cwd || cwd)
