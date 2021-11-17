@@ -1,5 +1,5 @@
-import { resolve } from 'path'
 import pico from 'picocolors'
+import { resolve } from 'path'
 
 import { createReporter } from '../create-reporter/index.js'
 import { spawn, stringToArgv } from '../utils/index.js'
@@ -9,18 +9,17 @@ import { gitWorker } from '../git/index.js'
 const PATCH_ORIGIN = 'nano-staged.patch'
 
 export function pipeliner({
-  logger = createReporter({ stream: process.stderr }),
-  dotGitPath = null,
-  repoPath = null,
+  reporter = createReporter({ stream: process.stderr }),
+  cwd = process.cwd(),
+  dotGitPath = '',
   files = {},
 }) {
-  let patchPath = resolve(dotGitPath, `./${PATCH_ORIGIN}`)
-  let git = gitWorker(repoPath)
+  let { log, step } = reporter
+  let git = gitWorker(cwd)
   let fs = fileSystem()
 
-  let { changed = [], deleted = [], tasks = [], staged = [] } = files
-  let { log, step } = logger
-
+  let { changedFiles = [], deletedFiles = [], allTasks = [], stagedFiles = [] } = files
+  let patchPath = resolve(dotGitPath, `./${PATCH_ORIGIN}`)
   let cache = new Map()
 
   return {
@@ -39,12 +38,12 @@ export function pipeliner({
     },
 
     async backupUnstagedFiles() {
-      if (changed.length || deleted.length) {
+      if (changedFiles.length || deletedFiles.length) {
         step('Backing up unstaged changes for staged files')
 
         try {
-          if (changed.length) {
-            for (let files of await fs.read(changed)) {
+          if (changedFiles.length) {
+            for (let files of await fs.read(changedFiles)) {
               if (files) {
                 let { path, content } = files
                 cache.set(path, content)
@@ -52,7 +51,7 @@ export function pipeliner({
             }
           }
 
-          await git.checkout([...changed, ...deleted])
+          await git.checkout([...changedFiles, ...deletedFiles])
           log(pico.dim(`  ${pico.green('»')} Done caching and removing unstaged changes`))
         } catch (err) {
           log(pico.dim(`  ${pico.red('»')} Fail caching and removing unstaged changes`))
@@ -71,7 +70,7 @@ export function pipeliner({
 
           try {
             await spawn(cmd, [...args, ...task.files], {
-              cwd: repoPath,
+              cwd,
               env: { ...process.env, FORCE_COLOR: '1' },
             })
             log(`  ${pico.bold(pico.green(task.pattern))} ${task.cmd}`)
@@ -80,7 +79,7 @@ export function pipeliner({
             throw `${pico.red(`${task.cmd}:\n`) + err}`
           }
         } else {
-          log(`  ${pico.yellow(task.pattern)} no staged files match`)
+          log(`  ${pico.yellow(task.pattern)} no staged files matching the pattern were found`)
         }
       }
     },
@@ -89,7 +88,7 @@ export function pipeliner({
       step('Running tasks')
 
       try {
-        let result = await Promise.allSettled(tasks.map((subTasks) => this.runTask(subTasks)))
+        let result = await Promise.allSettled(allTasks.map((subTasks) => this.runTask(subTasks)))
         let errors = result.filter((i) => i.status === 'rejected')
 
         if (errors.length) {
@@ -109,7 +108,7 @@ export function pipeliner({
       step('Applying modifications')
 
       try {
-        await git.add(staged)
+        await git.add(stagedFiles)
         log(pico.dim(`  ${pico.green('»')} Done adding all task modifications to index`))
       } catch (err) {
         log(pico.dim(`  ${pico.red('»')} Fail adding all task modifications to index`))
@@ -121,16 +120,16 @@ export function pipeliner({
     },
 
     async restoreUnstagedFiles() {
-      if (changed.length || deleted.length) {
+      if (changedFiles.length || deletedFiles.length) {
         step('Restoring unstaged changes for staged files')
 
         try {
-          if (deleted.length) {
-            await fs.delete(deleted)
+          if (deletedFiles.length) {
+            await fs.delete(deletedFiles)
           }
 
-          if (changed.length) {
-            let files = changed.map((path) => ({ path, content: cache.get(path) }))
+          if (changedFiles.length) {
+            let files = changedFiles.map((path) => ({ path, content: cache.get(path) }))
             await fs.write(files)
           }
 
@@ -150,10 +149,7 @@ export function pipeliner({
 
       try {
         await git.checkout('.')
-
-        if (await git.checkPatch(patchPath)) {
-          await git.applyPatch(patchPath)
-        }
+        await git.applyPatch(patchPath)
 
         log(pico.dim(`  ${pico.green('»')} Done restoring`))
       } catch (err) {

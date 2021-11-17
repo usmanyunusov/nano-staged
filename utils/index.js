@@ -1,4 +1,4 @@
-import { resolve, join, normalize, relative, isAbsolute, parse, dirname } from 'path'
+import { resolve, join, normalize, relative, isAbsolute } from 'path'
 import { spawn as _spawn } from 'child_process'
 import { existsSync, readFileSync } from 'fs'
 import { fileURLToPath } from 'url'
@@ -8,14 +8,6 @@ const REG_STR = /([^\s'"]([^\s'"]*(['"])([^\3]*?)\3)+[^\s'"]*)|[^\s'"]+|(['"])([
 
 export function toArray(val) {
   return Array.isArray(val) ? val : [val]
-}
-
-export function toAbsolute(file, cwd) {
-  return isAbsolute(file) ? file : normalize(resolve(cwd, file))
-}
-
-export function toRelative(file, cwd) {
-  return normalize(relative(cwd, file))
 }
 
 export function findUp(name, cwd = process.cwd()) {

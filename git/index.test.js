@@ -1,14 +1,16 @@
-import { join } from 'path'
-import { promises as fs } from 'fs'
+import { promises as fs, realpathSync } from 'fs'
 import { equal, is } from 'uvu/assert'
+import { join, resolve } from 'path'
 import { test } from 'uvu'
 import sinon from 'sinon'
+import os from 'os'
 
 import { writeFile, makeDir, appendFile, fixture, removeFile } from '../test/utils/index.js'
 import { gitWorker } from './index.js'
 
 let cwd = fixture('git/nano-staged-test')
 let patchPath = join(cwd, 'nano-staged.patch')
+let osTmpDir = process.env.APPVEYOR ? 'C:\\projects' : realpathSync(os.tmpdir())
 
 async function execGit(args) {
   let git = gitWorker(cwd)
@@ -34,14 +36,23 @@ test.after(async () => {
   await removeFile(cwd)
 })
 
-test('gitWorker: should find git repo', async () => {
-  let cwd = fixture('/')
+test('gitWorker: fail find git repo', async () => {
+  let cwd = resolve(osTmpDir, `nano-staged`)
   let git = gitWorker(cwd)
 
   let { repoPath, dotGitPath } = await git.getRepoAndDotGitPaths()
 
   is(!!repoPath, false)
   is(!!dotGitPath, false)
+})
+
+test('gitWorker: should find git repo', async () => {
+  let git = gitWorker(process.cwd())
+
+  let { repoPath, dotGitPath } = await git.getRepoAndDotGitPaths()
+
+  is(!!repoPath, true)
+  is(!!dotGitPath, true)
 })
 
 test('gitWorker: should create diff patch file', async () => {
@@ -80,6 +91,16 @@ test('gitWorker: should apply patch file', async () => {
   is(source.toString(), '# Test\n## Test')
 })
 
+test('gitWorker: fail apply patch file', async () => {
+  let git = gitWorker(cwd)
+
+  try {
+    await git.applyPatch('test.patch')
+  } catch (error) {
+    is(error, "error: can't open patch 'test.patch': No such file or directory\n")
+  }
+})
+
 test('gitWorker: should add files', async () => {
   let git = gitWorker(cwd)
 
@@ -89,16 +110,8 @@ test('gitWorker: should add files', async () => {
   is(files.length, 2)
 })
 
-test('gitWorker: should check patch file', async () => {
-  let git = gitWorker(cwd)
-
-  is(await git.checkPatch(patchPath), true)
-  await writeFile(patchPath, '', cwd)
-  is(await git.checkPatch(patchPath), false)
-})
-
 test('getStagedFiles: should return array of file names', async () => {
-  let git = gitWorker()
+  let git = gitWorker(cwd)
   sinon
     .mock(git)
     .expects('exec')
@@ -117,7 +130,7 @@ test('getStagedFiles: should return array of file names', async () => {
 })
 
 test('getStagedFiles: should return empty array when no staged files', async () => {
-  let git = gitWorker()
+  let git = gitWorker(cwd)
   sinon
     .mock(git)
     .expects('exec')
@@ -127,7 +140,7 @@ test('getStagedFiles: should return empty array when no staged files', async () 
 })
 
 test('getStagedFiles: should return empty array when no staged files', async () => {
-  let git = gitWorker()
+  let git = gitWorker(cwd)
   sinon
     .mock(git)
     .expects('exec')
@@ -137,7 +150,7 @@ test('getStagedFiles: should return empty array when no staged files', async () 
 })
 
 test('getStagedFiles: should return empty array when fail parse', async () => {
-  let git = gitWorker()
+  let git = gitWorker(cwd)
   sinon
     .mock(git)
     .expects('exec')

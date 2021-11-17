@@ -1,4 +1,5 @@
 import { equal } from 'uvu/assert'
+import { resolve } from 'path'
 import { test } from 'uvu'
 
 import { prepareFiles } from './index.js'
@@ -11,25 +12,38 @@ let entries = [
   { path: 'd.md', type: 2 },
   { path: 'e.css', type: 4 },
   { path: 'f.ts', type: 1 },
+  { path: '../j.txt', type: 1 },
 ]
 
 test(`shoulds prepare correctly files`, () => {
-  let files = prepareFiles({ entries, config })
+  let files = prepareFiles({
+    entries,
+    config,
+  })
 
+  function resolvePaths(paths) {
+    return paths.map((path) => resolve(process.cwd(), path))
+  }
   equal(files, {
-    tasks: [
+    allTasks: [
       [
         {
           pattern: '*.{css,js}',
           cmd: 'prettier --write',
-          files: ['a.js', 'b.js', 'c.css', 'e.css'],
+          files: resolvePaths(['a.js', 'b.js', 'c.css', 'e.css']),
         },
       ],
-      [{ pattern: '*.md', cmd: 'prettier --write', files: ['d.md'] }],
+      [
+        {
+          pattern: '*.md',
+          cmd: 'prettier --write',
+          files: resolvePaths(['d.md']),
+        },
+      ],
     ],
-    staged: ['a.js', 'b.js', 'c.css', 'e.css', 'd.md'],
-    deleted: ['e.css'],
-    changed: ['b.js', 'd.md'],
+    stagedFiles: resolvePaths(['a.js', 'b.js', 'c.css', 'e.css', 'd.md']),
+    deletedFiles: resolvePaths(['e.css']),
+    changedFiles: resolvePaths(['b.js', 'd.md']),
   })
 })
 

@@ -1,73 +1,12 @@
 #!/usr/bin/env node
 
-import pico from 'picocolors'
-
-import { loadConfig, validConfig } from '../config/index.js'
-import { prepareFiles } from '../prepare-files/index.js'
-import { pipeliner } from '../pipeliner/index.js'
-import { createReporter } from '../create-reporter/index.js'
-import { showVersion } from '../utils/index.js'
-import { gitWorker } from '../git/index.js'
+import run from '../run/index.js'
 
 // Do not terminate main process on SIGINT
 process.on('SIGINT', () => {})
 
-async function run(opts = {}, logger = createReporter({ stream: process.stderr })) {
-  let { log, info } = logger
-  let { cwd = process.cwd() } = opts
+let options = {}
 
-  showVersion(log)
-
-  let git = gitWorker(cwd)
-  let { repoPath, dotGitPath } = await git.getRepoAndDotGitPaths()
-  if (!repoPath) {
-    info('Nano Staged didn’t find git directory')
-    return
-  }
-
-  let config = await loadConfig(cwd)
-  if (!config) {
-    info(`Create Nano Staged config in package.json`)
-    return
-  }
-
-  let isValid = validConfig(config)
-  if (!isValid) {
-    info(`Nano Staged config invalid`)
-    return
-  }
-
-  let stagedFiles = await git.getStagedFiles()
-  if (!stagedFiles.length) {
-    info(`Git staging area is empty.`)
-    return
-  }
-
-  let files = prepareFiles({ entries: stagedFiles, config, repoPath, cwd })
-  if (files.tasks.every((subTasks) => subTasks.every((task) => !task.files.length))) {
-    info(`No staged files match any configured task.`)
-    return
-  }
-
-  try {
-    await pipeliner({ files, repoPath, dotGitPath, logger }).run()
-  } catch (err) {
-    if (err.tasks) {
-      log('\n' + err.tasks)
-    } else if (err.own) {
-      log('\n' + pico.red(err.message))
-    } else if (err.stack) {
-      log('\n' + pico.red(err.stack))
-    } else {
-      log('\n' + pico.red(err))
-    }
-
-    throw err
-  }
-}
-
-run().catch(() => {
+run(options).catch(() => {
   process.exitCode = 1
 })
-
-export default run

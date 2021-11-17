@@ -1,8 +1,13 @@
 import { equal, type, is } from 'uvu/assert'
 import { test } from 'uvu'
+import { realpathSync } from 'fs'
+import { resolve } from 'path'
+import os from 'os'
 
 import { loadConfig, validConfig } from './index.js'
 import { fixture } from '../test/utils/index.js'
+
+let osTmpDir = process.env.APPVEYOR ? 'C:\\projects' : realpathSync(os.tmpdir())
 
 test('should load config correctly', async () => {
   let cwd = fixture('config/has')
@@ -14,7 +19,7 @@ test('should load config correctly', async () => {
 })
 
 test('should fail load config', async () => {
-  let cwd = fixture('config/not')
+  let cwd = resolve(osTmpDir, `nano-staged`)
   let config = await loadConfig(cwd)
 
   type(config, 'undefined')

@@ -3,15 +3,7 @@ import { fileURLToPath } from 'url'
 import { equal, is } from 'uvu/assert'
 import { test } from 'uvu'
 
-import {
-  toArray,
-  toAbsolute,
-  toRelative,
-  findUp,
-  showVersion,
-  stringToArgv,
-  spawn,
-} from './index.js'
+import { toArray, findUp, showVersion, stringToArgv, spawn } from './index.js'
 
 let stdout = { out: '' }
 stdout.write = (symbols) => {
@@ -22,15 +14,6 @@ let DIRNAME = dirname(fileURLToPath(import.meta.url))
 
 test('util: toArray', () => {
   equal(toArray('path'), ['path'])
-})
-
-test('util: toAbsolute', () => {
-  is(toAbsolute('../index.css', '/app/src'), '/app/index.css')
-  is(toAbsolute('/app/src/index.css', '/app/src'), '/app/src/index.css')
-})
-
-test('util: toRelative', () => {
-  is(toRelative('./app/test/index.css', './app'), 'test/index.css')
 })
 
 test('util: findUp', () => {

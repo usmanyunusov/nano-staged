@@ -1,17 +1,18 @@
-import { toAbsolute, toRelative, toArray } from '../utils/index.js'
+import { toArray } from '../utils/index.js'
+import { normalize, relative, resolve, isAbsolute } from 'path'
 import { CHANGED_CODE, DELETED_CODE } from '../git/index.js'
 import { glob } from '../glob/index.js'
 
 export function prepareFiles({
-  repoPath = process.cwd(),
+  repoPath = '',
   cwd = process.cwd(),
   entries = [],
   config = {},
 } = {}) {
-  let deleted = []
-  let changed = []
-  let staged = []
-  let tasks = []
+  let deletedFiles = []
+  let changedFiles = []
+  let stagedFiles = []
+  let allTasks = []
 
   for (let [pattern, cmd] of Object.entries(config)) {
     let matches = glob(pattern, { filepath: true, extended: true })
@@ -20,19 +21,25 @@ export function prepareFiles({
     let files = []
 
     for (let { path, type, rename } of entries) {
-      path = toRelative(toAbsolute(rename || path, repoPath), cwd)
+      path = normalize(relative(cwd, normalize(resolve(repoPath, rename || path))))
+
+      if (!pattern.startsWith('../') && (path.startsWith('..') || isAbsolute(path))) {
+        continue
+      }
 
       if (matches.regex.test(path)) {
-        if (staged.indexOf(path) === -1) {
+        path = resolve(cwd, path)
+
+        if (stagedFiles.indexOf(path) === -1) {
           if (type === CHANGED_CODE) {
-            changed.push(path)
+            changedFiles.push(path)
           }
 
           if (type === DELETED_CODE) {
-            deleted.push(path)
+            deletedFiles.push(path)
           }
 
-          staged.push(path)
+          stagedFiles.push(path)
         }
 
         files.push(path)
@@ -47,8 +54,8 @@ export function prepareFiles({
       })
     }
 
-    tasks.push(subTasks)
+    allTasks.push(subTasks)
   }
 
-  return { tasks, staged, deleted, changed }
+  return { allTasks, stagedFiles, deletedFiles, changedFiles }
 }
