@@ -185,30 +185,21 @@ test('run cmd error', async () => {
   try {
     await run({ cwd, reporter })
   } catch (error) {
-    is(!!error, true)
-  }
-})
-
-test('run cmd error', async () => {
-  let reporter = createReporter({ stream: stdout })
-
-  await initGitRepo()
-  await appendFile(
-    'package.json',
-    `{
-      "nano-staged": {
-        "*.js": "prettier --write"
-      }
-    }`,
-    cwd
-  )
-  await appendFile('index.js', 'as sadsad', cwd)
-  await execGit(['add', 'index.js'])
-
-  try {
-    await run({ cwd, reporter })
-  } catch (error) {
-    is(!!error.tasks, true)
+    is(
+      stdout.out,
+      'Nano Staged \x1B[1mv0.1.0\x1B[22m\n' +
+        '\x1B[32m-\x1B[39m Preparing pipeliner...\n' +
+        '\x1B[2m  \x1B[32m»\x1B[39m Done backing up original repo state.\x1B[22m\n' +
+        '\x1B[32m-\x1B[39m Running tasks...\n' +
+        '  \x1B[1m\x1B[31m*.js\x1B[39m\x1B[22m psrettier --write\n' +
+        '\x1B[32m-\x1B[39m Restoring original state...\n' +
+        '\x1B[2m  \x1B[32m»\x1B[39m Done restoring\x1B[22m\n' +
+        '\x1B[32m-\x1B[39m Removing patch file...\n' +
+        '\x1B[2m  \x1B[32m»\x1B[39m Done clearing cache and removing patch file\x1B[22m\n' +
+        '\n' +
+        '\x1B[31mpsrettier --write:\n' +
+        '\x1B[39mError: spawn psrettier ENOENT\n'
+    )
   }
 })
 
