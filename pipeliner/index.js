@@ -14,13 +14,13 @@ export function pipeliner({
   dotGitPath = '',
   files = {},
 }) {
-  let { log, step } = reporter
+  let patchPath = resolve(dotGitPath, `./${PATCH_ORIGIN}`)
   let git = gitWorker(cwd)
   let fs = fileSystem()
+  let cache = new Map()
 
   let { changedFiles = [], deletedFiles = [], allTasks = [], stagedFiles = [] } = files
-  let patchPath = resolve(dotGitPath, `./${PATCH_ORIGIN}`)
-  let cache = new Map()
+  let { log, step } = reporter
 
   return {
     async run() {
