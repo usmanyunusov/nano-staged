@@ -51,8 +51,6 @@ export function gitWorker(cwd = process.cwd()) {
       let result = {}
       let repoPath = findUp('.git', opts.cwd || cwd)
 
-      console.log(repoPath)
-
       result['repoPath'] = repoPath || null
       result['dotGitPath'] = repoPath ? join(repoPath, '.git') : null
 
