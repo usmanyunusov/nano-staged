@@ -67,7 +67,7 @@ test('gitWorker: should checkout files', async () => {
 
   await git.checkout(['.'])
 
-  let files = await git.getStagedFiles({ repoPath: cwd, cwd })
+  let files = await git.getStagedFiles()
   equal(files, [])
 })
 
@@ -85,7 +85,7 @@ test('gitWorker: should add files', async () => {
 
   await git.add(['.'])
 
-  let files = await git.getStagedFiles({ repoPath: cwd, cwd })
+  let files = await git.getStagedFiles()
   is(files.length, 2)
 })
 

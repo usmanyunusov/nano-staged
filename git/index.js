@@ -26,25 +26,31 @@ const DIFF_ARGS = [
 
 export function gitWorker(cwd = process.cwd()) {
   let git = {
+    repositoryRoot: cwd,
+
     async exec(args = [], opts = {}) {
       try {
-        return await spawn('git', args, { cwd, ...opts })
+        return await spawn('git', args, { cwd: this.repositoryRoot, ...opts })
       } catch (err) {
         throw err
       }
     },
 
     async diffPatch(patchPath) {
-      await git.exec(['diff', ...DIFF_ARGS, '--output', patchPath])
+      const args = ['diff', ...DIFF_ARGS, '--output', patchPath]
+      await git.exec(args)
     },
 
     async applyPatch(patchPath) {
-      await git.exec(['apply', ...APPLY_ARGS, patchPath])
+      const args = ['apply', ...APPLY_ARGS, patchPath]
+      await git.exec(args)
     },
 
     async checkPatch(patchPath) {
+      const args = ['apply', '--check', ...APPLY_ARGS, patchPath]
+
       try {
-        await git.exec(['apply', '--check', ...APPLY_ARGS, patchPath])
+        await git.exec(args)
         return true
       } catch (error) {
         return false
@@ -53,7 +59,7 @@ export function gitWorker(cwd = process.cwd()) {
 
     async getRepoAndDotGitPaths() {
       let result = {}
-      let repoPath = findUp('.git', cwd)
+      let repoPath = findUp('.git', this.repositoryRoot)
 
       result['repoPath'] = repoPath || null
       result['dotGitPath'] = repoPath ? join(repoPath, '.git') : null
@@ -65,7 +71,8 @@ export function gitWorker(cwd = process.cwd()) {
       paths = toArray(paths)
 
       if (paths.length) {
-        await git.exec(['add', '-A', '--', ...paths])
+        const args = ['add', '-A', '--', ...paths]
+        await git.exec(args)
       }
     },
 
@@ -73,17 +80,19 @@ export function gitWorker(cwd = process.cwd()) {
       paths = toArray(paths)
 
       if (paths.length) {
-        await git.exec(['checkout', '-q', '--force', '--', ...paths])
+        const args = ['checkout', '-q', '--force', '--', ...paths]
+        await git.exec(args)
       }
     },
 
     async getStagedFiles() {
-      let entries = []
+      const args = ['status', '-z', '-u']
+      const entries = []
 
       try {
         let i = 0
         let lastIndex
-        let raw = await git.exec(['status', '-z', '-u'])
+        let raw = await git.exec(args)
 
         while (i < raw.length) {
           let code = raw.charCodeAt(i)
