@@ -3,7 +3,7 @@ import { CHANGED_CODE, DELETED_CODE } from '../git/index.js'
 import { glob } from '../glob/index.js'
 
 export function prepareFiles({
-  gitRootPath = process.cwd(),
+  repoPath = process.cwd(),
   cwd = process.cwd(),
   entries = [],
   config = {},
@@ -20,7 +20,7 @@ export function prepareFiles({
     let files = []
 
     for (let { path, type, rename } of entries) {
-      path = toRelative(toAbsolute(rename || path, gitRootPath), cwd)
+      path = toRelative(toAbsolute(rename || path, repoPath), cwd)
 
       if (matches.regex.test(path)) {
         if (staged.indexOf(path) === -1) {

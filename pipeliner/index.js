@@ -10,12 +10,12 @@ const PATCH_ORIGIN = 'nano-staged.patch'
 
 export function pipeliner({
   logger = createReporter({ stream: process.stderr }),
-  gitConfigPath = null,
-  gitRootPath = null,
+  dotGitPath = null,
+  repoPath = null,
   files = {},
 }) {
-  let patchPath = resolve(gitConfigPath, `./${PATCH_ORIGIN}`)
-  let git = gitWorker(gitRootPath)
+  let patchPath = resolve(dotGitPath, `./${PATCH_ORIGIN}`)
+  let git = gitWorker(repoPath)
   let fs = fileSystem()
 
   let { changed = [], deleted = [], tasks = [], staged = [] } = files
@@ -71,7 +71,7 @@ export function pipeliner({
 
           try {
             await spawn(cmd, [...args, ...task.files], {
-              cwd: gitRootPath,
+              cwd: repoPath,
               env: { ...process.env, FORCE_COLOR: '1' },
             })
             log(`  ${pico.bold(pico.green(task.pattern))} ${task.cmd}`)

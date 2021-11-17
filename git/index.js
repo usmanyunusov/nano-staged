@@ -51,12 +51,12 @@ export function gitWorker(cwd = process.cwd()) {
       }
     },
 
-    async repoRoot() {
+    async getRepoAndDotGitPaths() {
       let result = {}
-      let rootPath = findUp('.git', cwd)
+      let repoPath = findUp('.git', cwd)
 
-      result['gitRootPath'] = rootPath || null
-      result['gitConfigPath'] = rootPath ? join(rootPath, '.git') : null
+      result['repoPath'] = repoPath || null
+      result['dotGitPath'] = repoPath ? join(repoPath, '.git') : null
 
       return result
     },

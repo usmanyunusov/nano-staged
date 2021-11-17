@@ -38,10 +38,10 @@ test('gitWorker: should find git repo', async () => {
   let cwd = fixture('/')
   let git = gitWorker(cwd)
 
-  let { gitRootPath, gitConfigPath } = await git.repoRoot()
+  let { repoPath, dotGitPath } = await git.getRepoAndDotGitPaths()
 
-  is(!!gitRootPath, false)
-  is(!!gitConfigPath, false)
+  is(!!repoPath, false)
+  is(!!dotGitPath, false)
 })
 
 test('gitWorker: should create diff patch file', async () => {
@@ -67,7 +67,7 @@ test('gitWorker: should checkout files', async () => {
 
   await git.checkout(['.'])
 
-  let files = await git.getStagedFiles({ gitRootPath: cwd, cwd })
+  let files = await git.getStagedFiles({ repoPath: cwd, cwd })
   equal(files, [])
 })
 
@@ -85,7 +85,7 @@ test('gitWorker: should add files', async () => {
 
   await git.add(['.'])
 
-  let files = await git.getStagedFiles({ gitRootPath: cwd, cwd })
+  let files = await git.getStagedFiles({ repoPath: cwd, cwd })
   is(files.length, 2)
 })
 

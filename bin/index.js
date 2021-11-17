@@ -19,8 +19,8 @@ async function run(opts = {}, logger = createReporter({ stream: process.stderr }
   showVersion(log)
 
   let git = gitWorker(cwd)
-  let { gitRootPath, gitConfigPath } = await git.repoRoot()
-  if (!gitRootPath) {
+  let { repoPath, dotGitPath } = await git.getRepoAndDotGitPaths()
+  if (!repoPath) {
     info('Nano Staged didn’t find git directory')
     return
   }
@@ -43,14 +43,14 @@ async function run(opts = {}, logger = createReporter({ stream: process.stderr }
     return
   }
 
-  let files = prepareFiles({ entries: stagedFiles, config, gitRootPath, cwd })
+  let files = prepareFiles({ entries: stagedFiles, config, repoPath, cwd })
   if (files.tasks.every((subTasks) => subTasks.every((task) => !task.files.length))) {
     info(`No staged files match any configured task.`)
     return
   }
 
   try {
-    await pipeliner({ files, gitRootPath, gitConfigPath, logger }).run()
+    await pipeliner({ files, repoPath, dotGitPath, logger }).run()
   } catch (err) {
     if (err.tasks) {
       log('\n' + err.tasks)
