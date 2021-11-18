@@ -50,7 +50,7 @@ export default async function run({ cwd = process.cwd(), stream = process.stderr
     if (err.tasks) {
       log('\n' + err.tasks)
     } else {
-      log('\n' + pico.red(err))
+      log('\n' + pico.red(err.stack || err.message || err))
     }
 
     throw err
