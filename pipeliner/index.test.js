@@ -42,7 +42,6 @@ test.after.each(async () => {
 })
 
 test('pipeliner run without unstaged files', async () => {
-  let reporter = createReporter({ stream: stdout })
   let git = gitWorker(cwd)
 
   await initGitRepo()
@@ -54,7 +53,7 @@ test('pipeliner run without unstaged files', async () => {
   let files = prepareFiles({ entries, config, repoPath: cwd, cwd })
 
   let pl = pipeliner({
-    reporter,
+    stream: stdout,
     cwd,
     dotGitPath: resolve(cwd, '.git'),
     files,
@@ -76,7 +75,6 @@ test('pipeliner run without unstaged files', async () => {
 })
 
 test('pipeliner run with deleted files', async () => {
-  let reporter = createReporter({ stream: stdout })
   let git = gitWorker(cwd)
 
   await initGitRepo()
@@ -89,7 +87,7 @@ test('pipeliner run with deleted files', async () => {
   let files = prepareFiles({ entries, config, repoPath: cwd, cwd })
 
   let pl = pipeliner({
-    reporter,
+    stream: stdout,
     cwd,
     dotGitPath: resolve(cwd, '.git'),
     files,
@@ -115,7 +113,6 @@ test('pipeliner run with deleted files', async () => {
 })
 
 test('pipeliner run restor original state', async () => {
-  let reporter = createReporter({ stream: stdout })
   let git = gitWorker(cwd)
 
   await initGitRepo()
@@ -129,7 +126,7 @@ test('pipeliner run restor original state', async () => {
   await removeFile(resolve(cwd, 'index.js'))
 
   let pl = pipeliner({
-    reporter,
+    stream: stdout,
     cwd,
     dotGitPath: resolve(cwd, '.git'),
     files,
@@ -153,7 +150,6 @@ test('pipeliner run restor original state', async () => {
 })
 
 test('pipeliner run with changed files', async () => {
-  let reporter = createReporter({ stream: stdout })
   let git = gitWorker(cwd)
 
   await initGitRepo()
@@ -166,7 +162,7 @@ test('pipeliner run with changed files', async () => {
   let files = prepareFiles({ entries, config, repoPath: cwd, cwd })
 
   let pl = pipeliner({
-    reporter,
+    stream: stdout,
     cwd,
     dotGitPath: resolve(cwd, '.git'),
     files,

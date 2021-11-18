@@ -7,8 +7,8 @@ import { pipeliner } from '../pipeliner/index.js'
 import { showVersion } from '../utils/index.js'
 import { gitWorker } from '../git/index.js'
 
-export default async function run({ cwd = process.cwd(), reporter } = {}) {
-  let { log, info } = reporter || createReporter({ stream: process.stderr })
+export default async function run({ cwd = process.cwd(), stream = process.stderr } = {}) {
+  let { log, info } = createReporter({ stream })
 
   try {
     let git = gitWorker(cwd)
@@ -45,12 +45,12 @@ export default async function run({ cwd = process.cwd(), reporter } = {}) {
       return
     }
 
-    await pipeliner({ cwd: repoPath, files, dotGitPath, reporter }).run()
+    await pipeliner({ cwd: repoPath, files, dotGitPath, stream }).run()
   } catch (err) {
     if (err.tasks) {
       log('\n' + err.tasks)
+      /* c8 ignore next 3 */
     } else {
-      /* c8 ignore next 2 */
       log('\n' + pico.red(err))
     }
 

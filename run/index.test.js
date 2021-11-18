@@ -4,18 +4,13 @@ import { resolve } from 'path'
 import { test } from 'uvu'
 import os from 'os'
 
-import { makeDir, appendFile, removeFile } from '../test/utils/index.js'
-import { createReporter } from '../create-reporter/index.js'
+import { makeDir, appendFile, removeFile, createStdout } from '../test/utils/index.js'
 import { gitWorker } from '../git/index.js'
 import run from './index.js'
 
 let osTmpDir = process.env.APPVEYOR ? 'C:\\projects' : realpathSync(os.tmpdir())
 let cwd = resolve(osTmpDir, `nano-staged-run`)
-
-let stdout = { out: '' }
-stdout.write = (symbols) => {
-  stdout.out += symbols
-}
+let stdout = createStdout()
 
 async function execGit(args) {
   let git = gitWorker(cwd)
@@ -41,9 +36,7 @@ test.after.each(async () => {
 })
 
 test('didn’t find git directory', async () => {
-  let reporter = createReporter({ stream: stdout })
-
-  await run({ cwd, reporter })
+  await run({ cwd, stream: stdout })
 
   is(
     stdout.out,
@@ -53,10 +46,8 @@ test('didn’t find git directory', async () => {
 })
 
 test('create config in package.json', async () => {
-  let reporter = createReporter({ stream: stdout })
-
   await initGitRepo()
-  await run({ cwd, reporter })
+  await run({ cwd, stream: stdout })
 
   is(
     stdout.out,
@@ -66,8 +57,6 @@ test('create config in package.json', async () => {
 })
 
 test('config invalid', async () => {
-  let reporter = createReporter({ stream: stdout })
-
   await initGitRepo()
   await appendFile(
     'package.json',
@@ -79,7 +68,7 @@ test('config invalid', async () => {
     cwd
   )
 
-  await run({ cwd, reporter })
+  await run({ cwd, stream: stdout })
 
   is(
     stdout.out,
@@ -88,8 +77,6 @@ test('config invalid', async () => {
 })
 
 test('staging area is empty', async () => {
-  let reporter = createReporter({ stream: stdout })
-
   await initGitRepo()
   await appendFile(
     'package.json',
@@ -101,7 +88,7 @@ test('staging area is empty', async () => {
     cwd
   )
 
-  await run({ cwd, reporter })
+  await run({ cwd, stream: stdout })
 
   is(
     stdout.out,
@@ -110,8 +97,6 @@ test('staging area is empty', async () => {
 })
 
 test('staging area is empty', async () => {
-  let reporter = createReporter({ stream: stdout })
-
   await initGitRepo()
   await appendFile(
     'package.json',
@@ -125,7 +110,7 @@ test('staging area is empty', async () => {
   await appendFile('index.js', 'var test = {};', cwd)
   await execGit(['add', 'index.js'])
 
-  await run({ cwd, reporter })
+  await run({ cwd, stream: stdout })
 
   is(
     stdout.out,
@@ -135,8 +120,6 @@ test('staging area is empty', async () => {
 })
 
 test('run success', async () => {
-  let reporter = createReporter({ stream: stdout })
-
   await initGitRepo()
   await appendFile(
     'package.json',
@@ -150,7 +133,7 @@ test('run success', async () => {
   await appendFile('index.js', 'var test = {};', cwd)
   await execGit(['add', 'index.js'])
 
-  await run({ cwd, reporter })
+  await run({ cwd, stream: stdout })
 
   is(
     stdout.out,
@@ -167,8 +150,6 @@ test('run success', async () => {
 })
 
 test('run cmd error', async () => {
-  let reporter = createReporter({ stream: stdout })
-
   await initGitRepo()
   await appendFile(
     'package.json',
@@ -183,7 +164,7 @@ test('run cmd error', async () => {
   await execGit(['add', 'index.js'])
 
   try {
-    await run({ cwd, reporter })
+    await run({ cwd, stream: stdout })
   } catch (error) {
     is(
       stdout.out,

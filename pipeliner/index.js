@@ -9,7 +9,7 @@ import { gitWorker } from '../git/index.js'
 const PATCH_ORIGIN = 'nano-staged.patch'
 
 export function pipeliner({
-  reporter = createReporter({ stream: process.stderr }),
+  stream = process.stderr,
   cwd = process.cwd(),
   dotGitPath = '',
   files = {},
@@ -20,7 +20,7 @@ export function pipeliner({
   let cache = new Map()
 
   let { changedFiles = [], deletedFiles = [], allTasks = [], stagedFiles = [] } = files
-  let { log, step } = reporter
+  let { log, step } = createReporter({ stream })
 
   return {
     async run() {
@@ -30,6 +30,7 @@ export function pipeliner({
         await git.diffPatch(patchPath)
         log(pico.dim(`  ${pico.green('»')} Done backing up original repo state.`))
       } catch (err) {
+        /* c8 ignore next 3 */
         log(pico.dim(`  ${pico.red('»')} Fail backing up original repo state.`))
         throw err
       }
@@ -54,6 +55,7 @@ export function pipeliner({
           await git.checkout([...changedFiles, ...deletedFiles])
           log(pico.dim(`  ${pico.green('»')} Done caching and removing unstaged changes`))
         } catch (err) {
+          /* c8 ignore next 4 */
           log(pico.dim(`  ${pico.red('»')} Fail caching and removing unstaged changes`))
           await this.restoreOriginalState()
           throw err
@@ -75,10 +77,12 @@ export function pipeliner({
             })
             log(`  ${pico.bold(pico.green(task.pattern))} ${task.cmd}`)
           } catch (err) {
+            /* c8 ignore next 2 */
             log(`  ${pico.bold(pico.red(task.pattern))} ${task.cmd}`)
             throw `${pico.red(`${task.cmd}:\n`) + err}`
           }
         } else {
+          /* c8 ignore next 2 */
           log(`  ${pico.yellow(task.pattern)} no staged files matching the pattern were found`)
         }
       }
@@ -111,6 +115,7 @@ export function pipeliner({
         await git.add(stagedFiles)
         log(pico.dim(`  ${pico.green('»')} Done adding all task modifications to index`))
       } catch (err) {
+        /* c8 ignore next 4 */
         log(pico.dim(`  ${pico.red('»')} Fail adding all task modifications to index`))
         await this.restoreOriginalState()
         throw err
@@ -135,6 +140,7 @@ export function pipeliner({
 
           log(pico.dim(`  ${pico.green('»')} Done deleting removed and restoring changed files`))
         } catch (err) {
+          /* c8 ignore next 4 */
           log(pico.dim(`  ${pico.red('»')} Fail deleting removed and restoring changed files`))
           await this.restoreOriginalState()
           throw err
@@ -157,6 +163,7 @@ export function pipeliner({
 
         log(pico.dim(`  ${pico.green('»')} Done restoring`))
       } catch (err) {
+        /* c8 ignore next 3 */
         log(pico.dim(`  ${pico.red('»')} Fail restoring`))
         throw err
       }
@@ -172,6 +179,7 @@ export function pipeliner({
         await fs.delete(patchPath)
         log(pico.dim(`  ${pico.green('»')} Done clearing cache and removing patch file`))
       } catch (err) {
+        /* c8 ignore next 3 */
         log(pico.dim(`  ${pico.red('»')} Fail clearing cache and removing patch file`))
         throw err
       }

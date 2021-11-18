@@ -1,18 +1,11 @@
 import { is } from 'uvu/assert'
 import { test } from 'uvu'
 
+import { createStdout } from '../test/utils/index.js'
 import { createReporter } from './index.js'
 
-let stdout = { out: '' }
-stdout.write = (symbols) => {
-  stdout.out += symbols
-}
-
-test.after.each(() => {
-  stdout.out = ''
-})
-
 test('should reported log correctly', () => {
+  let stdout = createStdout()
   let { log } = createReporter({ stream: stdout })
 
   log('Run log')
@@ -20,6 +13,7 @@ test('should reported log correctly', () => {
 })
 
 test('should reported info correctly', () => {
+  let stdout = createStdout()
   let { info } = createReporter({ stream: stdout })
 
   info('Run info')
@@ -27,6 +21,7 @@ test('should reported info correctly', () => {
 })
 
 test('should reported step correctly', () => {
+  let stdout = createStdout()
   let { step } = createReporter({ stream: stdout })
 
   step('Run step')

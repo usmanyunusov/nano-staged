@@ -25,3 +25,13 @@ export async function removeFile(dir) {
 export function fixture(name) {
   return resolve(DIRNAME, '../fixtures', name)
 }
+
+export function createStdout() {
+  let result = { out: '' }
+
+  result.write = (symbols) => {
+    result.out += symbols
+  }
+
+  return result
+}

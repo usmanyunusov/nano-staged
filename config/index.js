@@ -7,17 +7,21 @@ const NODE_PACKAGE_JSON = 'package.json'
 const CONFIG_NAME = 'nano-staged'
 
 export async function loadConfig(cwd = process.cwd()) {
-  let rootPath = findUp(NODE_PACKAGE_JSON, cwd)
+  try {
+    let rootPath = findUp(NODE_PACKAGE_JSON, cwd)
 
-  if (!rootPath) {
+    if (!rootPath) {
+      return undefined
+    }
+
+    let pkgPath = resolve(rootPath, NODE_PACKAGE_JSON)
+    let pkgJson = JSON.parse(await fs.readFile(pkgPath, 'utf8'))
+    let config = pkgJson[CONFIG_NAME]
+
+    return config
+  } catch (error) {
     return undefined
   }
-
-  let pkgPath = resolve(rootPath, NODE_PACKAGE_JSON)
-  let pkgJson = JSON.parse(await fs.readFile(pkgPath, 'utf8'))
-  let config = pkgJson[CONFIG_NAME]
-
-  return config
 }
 
 export function validConfig(config) {

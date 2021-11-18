@@ -28,35 +28,36 @@ let match = (glob, str, opts = {}) => {
   return res.regex.test(str)
 }
 
-test('track globrex on *.ext', () => {
-  let jsFiles = files.filter((path) => match('*.js', path, { extended: true }))
-  equal(jsFiles, ['a.js', 'test/a.js', 'test/a1.js', 'even/test/a.js', '.hidden/test.js'])
+test('find file to *.ext', () => {
+  let matches = files.filter((path) =>
+    match('*.js', path, { globstar: true, filepath: true, extended: true })
+  )
+
+  equal(matches, ['a.js'])
 })
 
-test('track globrex on **/*.ext', () => {
-  let jsFiles = files.filter((path) => match('**/*.js', path, { extended: true }))
-  equal(jsFiles, ['test/a.js', 'test/a1.js', 'even/test/a.js', '.hidden/test.js'])
+test('find file to **/*.ext', () => {
+  let matches = files.filter((path) =>
+    match('**/*.js', path, { globstar: true, filepath: true, extended: true })
+  )
+
+  equal(matches, ['a.js', 'test/a.js', 'test/a1.js', 'even/test/a.js', '.hidden/test.js'])
 })
 
-test('track globrex on *.{css,js}', () => {
-  let jsCssFiles = files.filter((path) => match('*.{css,js}', path, { extended: true }))
-  equal(jsCssFiles, [
-    'a.js',
-    'test/a.js',
-    'test/a1.js',
-    'even/test/a.js',
-    '.hidden/test.js',
-    'b.css',
-    'test/b.css',
-    'test/b1.css',
-    'even/test/b.css',
-    '.hidden/test.css',
-  ])
+test('find file to *.{css,js}', () => {
+  let matches = files.filter((path) =>
+    match('*.{css,js,md}', path, { globstar: true, filepath: true, extended: true })
+  )
+
+  equal(matches, ['a.js', 'b.css', 'c.md'])
 })
 
-test('track globrex on .hidden/*.js', () => {
-  let jsCssFiles = files.filter((path) => match('.hidden/*.js', path, { extended: true }))
-  equal(jsCssFiles, ['.hidden/test.js'])
+test('find file to .hidden/*.js', () => {
+  let matches = files.filter((path) =>
+    match('.hidden/*.js', path, { globstar: true, filepath: true, extended: true })
+  )
+
+  equal(matches, ['.hidden/test.js'])
 })
 
 test.run()

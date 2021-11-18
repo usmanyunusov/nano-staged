@@ -1,23 +1,22 @@
-import { promises as fs, realpathSync } from 'fs'
 import { equal, is } from 'uvu/assert'
-import { join, resolve } from 'path'
+import { promises as fs } from 'fs'
+import { join } from 'path'
+import esmock from 'esmock'
 import { test } from 'uvu'
-import sinon from 'sinon'
-import os from 'os'
 
 import { writeFile, makeDir, appendFile, fixture, removeFile } from '../test/utils/index.js'
 import { gitWorker } from './index.js'
 
-let cwd = fixture('git/nano-staged-test')
+let cwd = fixture('git/nano-staged-git')
 let patchPath = join(cwd, 'nano-staged.patch')
-let osTmpDir = process.env.APPVEYOR ? 'C:\\projects' : realpathSync(os.tmpdir())
 
 async function execGit(args) {
   let git = gitWorker(cwd)
   await git.exec(args, { cwd })
 }
 
-async function initGitRepo() {
+test.before(async () => {
+  await makeDir(cwd)
   await execGit(['init'])
   await execGit(['config', 'user.name', '"test"'])
   await execGit(['config', 'user.email', '"test@test.com"'])
@@ -25,37 +24,41 @@ async function initGitRepo() {
   await execGit(['add', 'README.md'])
   await execGit(['commit', '-m initial commit'])
   await writeFile('README.md', '# Test\n## Test', cwd)
-}
-
-test.before(async () => {
-  await makeDir(cwd)
-  await initGitRepo()
 })
 
 test.after(async () => {
   await removeFile(cwd)
 })
 
-test('gitWorker: fail find git repo', async () => {
-  let cwd = resolve(osTmpDir, `nano-staged`)
+test('not found git dir', async () => {
+  const { gitWorker } = await esmock('./index.js', {
+    '../utils/index.js': {
+      findUp: () => undefined,
+    },
+  })
+
   let git = gitWorker(cwd)
-
   let { repoPath, dotGitPath } = await git.getRepoAndDotGitPaths()
 
-  is(!!repoPath, false)
-  is(!!dotGitPath, false)
+  is(repoPath, null)
+  is(dotGitPath, null)
 })
 
-test('gitWorker: should find git repo', async () => {
-  let git = gitWorker(process.cwd())
+test('found git dir', async () => {
+  const { gitWorker } = await esmock('./index.js', {
+    '../utils/index.js': {
+      findUp: () => 'test',
+    },
+  })
 
+  let git = gitWorker(cwd)
   let { repoPath, dotGitPath } = await git.getRepoAndDotGitPaths()
 
-  is(!!repoPath, true)
-  is(!!dotGitPath, true)
+  is(repoPath, 'test')
+  is(dotGitPath, 'test/.git')
 })
 
-test('gitWorker: should create diff patch file', async () => {
+test('create patch file', async () => {
   let git = gitWorker(cwd)
 
   await git.diffPatch(patchPath)
@@ -73,7 +76,7 @@ test('gitWorker: should create diff patch file', async () => {
   )
 })
 
-test('gitWorker: should checkout files', async () => {
+test('checkout files', async () => {
   let git = gitWorker(cwd)
 
   await git.checkout(['.'])
@@ -82,7 +85,7 @@ test('gitWorker: should checkout files', async () => {
   equal(files, [])
 })
 
-test('gitWorker: should apply patch file', async () => {
+test('apply patch file', async () => {
   let git = gitWorker(cwd)
 
   await git.applyPatch(patchPath)
@@ -91,15 +94,7 @@ test('gitWorker: should apply patch file', async () => {
   is(source.toString(), '# Test\n## Test')
 })
 
-test('gitWorker: should check patch file', async () => {
-  let git = gitWorker(cwd)
-
-  is(await git.checkPatch(patchPath), true)
-  await writeFile(patchPath, '', cwd)
-  is(await git.checkPatch(patchPath), false)
-})
-
-test('gitWorker: fail apply patch file', async () => {
+test('not apply patch file', async () => {
   let git = gitWorker(cwd)
 
   try {
@@ -109,7 +104,7 @@ test('gitWorker: fail apply patch file', async () => {
   }
 })
 
-test('gitWorker: should add files', async () => {
+test('add files', async () => {
   let git = gitWorker(cwd)
 
   await git.add(['.'])
@@ -118,15 +113,13 @@ test('gitWorker: should add files', async () => {
   is(files.length, 2)
 })
 
-test('getStagedFiles: should return array of file names', async () => {
+test('parse status', async () => {
   let git = gitWorker(cwd)
-  sinon
-    .mock(git)
-    .expects('exec')
-    .callsFake(
-      async () =>
-        'MM mod.js\x00AM test/add.js\x00RM rename.js\x00origin.js\x00CM test/copy.js\x00test/base.js\x00MD remove.js\x00D  delete.js\x00'
-    )
+  let status =
+    'MM mod.js\x00AM test/add.js\x00RM rename.js\x00origin.js\x00CM' +
+    ' test/copy.js\x00test/base.js\x00MD remove.js\x00D  delete.js\x00'
+
+  git.exec = async () => status
 
   equal(await git.getStagedFiles(), [
     { path: 'mod.js', rename: undefined, type: 2 },
@@ -137,61 +130,32 @@ test('getStagedFiles: should return array of file names', async () => {
   ])
 })
 
-test('getStagedFiles: should return empty array when no staged files', async () => {
+test('parse status empty', async () => {
   let git = gitWorker(cwd)
-  sinon
-    .mock(git)
-    .expects('exec')
-    .callsFake(async () => '')
 
+  git.exec = async () => ''
   equal(await git.getStagedFiles(), [])
 })
 
-test('getStagedFiles: should return empty array when no staged files', async () => {
+test('parse fail status', async () => {
   let git = gitWorker(cwd)
-  sinon
-    .mock(git)
-    .expects('exec')
-    .callsFake(async () => ' ')
 
+  git.exec = async () => ' '
   equal(await git.getStagedFiles(), [])
-})
 
-test('getStagedFiles: should return empty array when fail parse', async () => {
-  let git = gitWorker(cwd)
-  sinon
-    .mock(git)
-    .expects('exec')
-    .callsFake(async () => 'M   rename.js')
-
+  git.exec = async () => 'M   rename.js'
   equal(await git.getStagedFiles(), [])
-  sinon.restore()
 
-  sinon
-    .mock(git)
-    .expects('exec')
-    .callsFake(async () => 'RM  rename.js')
-
+  git.exec = async () => 'RM  rename.js'
   equal(await git.getStagedFiles(), [])
-  sinon.restore()
 
-  sinon
-    .mock(git)
-    .expects('exec')
-    .callsFake(async () => '     ')
-
+  git.exec = async () => '     '
   equal(await git.getStagedFiles(), [])
-  sinon.restore()
 
-  sinon
-    .mock(git)
-    .expects('exec')
-    .callsFake(async () => {
-      throw new Error('fatal: not a git repository (or any of the parent directories): .git')
-    })
-
+  git.exec = async () => {
+    throw new Error('fatal: not a git repository (or any of the parent directories): .git')
+  }
   equal(await git.getStagedFiles(), [])
-  sinon.restore()
 })
 
 test.run()

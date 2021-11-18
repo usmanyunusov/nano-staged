@@ -1,4 +1,4 @@
-import { join, normalize } from 'path'
+import { join } from 'path'
 
 import { spawn, findUp, toArray } from '../utils/index.js'
 
@@ -45,17 +45,6 @@ export function gitWorker(cwd = process.cwd()) {
     async applyPatch(patchPath, opts = {}) {
       const args = ['apply', ...APPLY_ARGS, patchPath]
       await git.exec(args, opts)
-    },
-
-    async checkPatch(patchPath) {
-      const args = ['apply', '--check', ...APPLY_ARGS, patchPath]
-
-      try {
-        await git.exec(args)
-        return true
-      } catch (error) {
-        return false
-      }
     },
 
     async getRepoAndDotGitPaths(opts = {}) {

@@ -1,46 +1,49 @@
-import { dirname, resolve } from 'path'
-import { fileURLToPath } from 'url'
 import { equal, is } from 'uvu/assert'
 import { test } from 'uvu'
 
 import { toArray, findUp, showVersion, stringToArgv, spawn } from './index.js'
+import { fixture, createStdout } from '../test/utils/index.js'
 
-let stdout = { out: '' }
-stdout.write = (symbols) => {
-  stdout.out += symbols
-}
-
-let DIRNAME = dirname(fileURLToPath(import.meta.url))
-
-test('util: toArray', () => {
+test('single to array', () => {
   equal(toArray('path'), ['path'])
 })
 
-test('util: findUp', () => {
-  let cwd = resolve(DIRNAME, '../test/fixtures/config')
-  let rootPath = findUp('package.json', cwd)
-  let noRootPath = findUp('not-package.json', cwd)
+test('found file dir', () => {
+  let cwd = fixture('config/pkg-with-config')
+  let pkgPath = findUp('package.json', cwd)
+  let pkgNotPath = findUp('not-package.json', cwd)
 
-  is(!!rootPath, true)
-  is(!!noRootPath, false)
+  is(pkgPath, cwd)
+  is(pkgNotPath, undefined)
 })
 
-test('util: showVersion', () => {
+test('print version', () => {
+  let stdout = createStdout()
   showVersion(stdout.write)
-  is(stdout.out, 'Nano Staged \x1B[1mv0.1.0\x1B[22m')
+  is(stdout.out.replace(/\d+\.\d+\.\d+/, '0.1.0'), 'Nano Staged \x1B[1mv0.1.0\x1B[22m')
 })
 
-test('util: stringToArgv', () => {
+test('string to args', () => {
   equal(stringToArgv('cmd --test config --test'), ['cmd', '--test', 'config', '--test'])
   equal(stringToArgv(''), [])
   equal(stringToArgv(), [])
 })
 
-test('util: spawn', async () => {
-  let cwd = resolve(DIRNAME, '../test/fixtures/utils/spawn.js')
+test('spawn success', async () => {
+  let cwd = fixture('utils/success.js')
 
   let output = await spawn('node', [cwd])
   is(output, 'Spawn test\n')
+})
+
+test('spawn fail', async () => {
+  let cwd = fixture('utils/fail.js')
+
+  try {
+    await spawn('node', [cwd])
+  } catch (error) {
+    is(!!error, true)
+  }
 })
 
 test.run()

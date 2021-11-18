@@ -1,3 +1,5 @@
+/* c8 ignore start */
+
 const isWin = process.platform === 'win32'
 const SEP = isWin ? `\\\\+` : `\\/`
 const SEP_ESC = isWin ? `\\\\` : `/`
@@ -247,3 +249,5 @@ export function glob(glob, opts = {}) {
 
   return result
 }
+
+/* c8 ignore stop */
