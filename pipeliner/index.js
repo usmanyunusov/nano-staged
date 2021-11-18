@@ -149,8 +149,9 @@ export function pipeliner({
 
       try {
         await git.checkout('.')
-        
-        if (await git.checkPatch(patchPath)) {
+
+        let hasPatch = await fs.read(patchPath)
+        if (hasPatch.toString()) {
           await git.applyPatch(patchPath)
         }
 

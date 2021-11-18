@@ -16,6 +16,18 @@ let exampleFiles = [
   },
 ]
 
+test('should correctly fs on file', async () => {
+  let fs = fileSystem()
+
+  await fs.write(fixture('fs/b.css.test.one'), 'a {color: red;}')
+  let buffer = await fs.read(fixture('fs/b.css.test.one'))
+  equal(buffer.toString(), 'a {color: red;}')
+
+  await fs.delete(fixture('fs/b.css.test.one'))
+  buffer = await fs.read(fixture('fs/b.css.test.one'))
+  equal(buffer, null)
+})
+
 test('should write correctly files', async () => {
   let fs = fileSystem()
   await fs.write(exampleFiles)
@@ -39,7 +51,14 @@ test('should delete correctly files', async () => {
   equal(files.length, 0)
 })
 
-test('should not read file', async () => {
+test('should not read files', async () => {
+  let fs = fileSystem()
+  let files = await fs.read([fixture('fs/a_null.js'), fixture('fs/b_null.css')])
+
+  equal(files.length, 0)
+})
+
+test('should not read files', async () => {
   let fs = fileSystem()
   let files = await fs.read([fixture('fs/a_null.js'), fixture('fs/b_null.css')])
 
