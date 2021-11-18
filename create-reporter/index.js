@@ -2,8 +2,12 @@ import pico from 'picocolors'
 
 export function createReporter({ stream }) {
   let reporter = {
+    print(msg) {
+      stream.write(`${msg}`)
+    },
+
     log(msg) {
-      stream.write(`${msg}\n`)
+      reporter.print(`${msg}\n`)
     },
 
     info(msg) {

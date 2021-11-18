@@ -4,8 +4,7 @@ import { resolve } from 'path'
 import { test } from 'uvu'
 import os from 'os'
 
-import { writeFile, makeDir, appendFile, removeFile } from '../test/utils/index.js'
-import { createReporter } from '../create-reporter/index.js'
+import { writeFile, makeDir, appendFile, removeFile, createStdout } from '../test/utils/index.js'
 import { prepareFiles } from '../prepare-files/index.js'
 import { gitWorker } from '../git/index.js'
 import { pipeliner } from './index.js'
@@ -13,10 +12,7 @@ import { pipeliner } from './index.js'
 let osTmpDir = process.env.APPVEYOR ? 'C:\\projects' : realpathSync(os.tmpdir())
 let cwd = resolve(osTmpDir, `nano-staged-run`)
 
-let stdout = { out: '' }
-stdout.write = (symbols) => {
-  stdout.out += symbols
-}
+let stdout = createStdout()
 
 async function execGit(args) {
   let git = gitWorker(cwd)
@@ -53,10 +49,11 @@ test('pipeliner run without unstaged files', async () => {
   let files = prepareFiles({ entries, config, repoPath: cwd, cwd })
 
   let pl = pipeliner({
-    stream: stdout,
-    cwd,
     dotGitPath: resolve(cwd, '.git'),
+    stream: stdout,
+    config,
     files,
+    cwd,
   })
 
   await pl.run()
@@ -66,7 +63,10 @@ test('pipeliner run without unstaged files', async () => {
     '\x1B[32m-\x1B[39m Preparing pipeliner...\n' +
       '\x1B[2m  \x1B[32m»\x1B[39m Done backing up original repo state.\x1B[22m\n' +
       '\x1B[32m-\x1B[39m Running tasks...\n' +
+      '\x1B[32m  •\x1B[39m\n' +
+      '\n' +
       '  \x1B[1m\x1B[32m*.js\x1B[39m\x1B[22m prettier --write\n' +
+      '\n' +
       '\x1B[32m-\x1B[39m Applying modifications...\n' +
       '\x1B[2m  \x1B[32m»\x1B[39m Done adding all task modifications to index\x1B[22m\n' +
       '\x1B[32m-\x1B[39m Removing patch file...\n' +
@@ -87,10 +87,11 @@ test('pipeliner run with deleted files', async () => {
   let files = prepareFiles({ entries, config, repoPath: cwd, cwd })
 
   let pl = pipeliner({
-    stream: stdout,
-    cwd,
     dotGitPath: resolve(cwd, '.git'),
+    stream: stdout,
+    config,
     files,
+    cwd,
   })
 
   await pl.run()
@@ -102,7 +103,10 @@ test('pipeliner run with deleted files', async () => {
       '\x1B[32m-\x1B[39m Backing up unstaged changes for staged files...\n' +
       '\x1B[2m  \x1B[32m»\x1B[39m Done caching and removing unstaged changes\x1B[22m\n' +
       '\x1B[32m-\x1B[39m Running tasks...\n' +
+      '\x1B[32m  •\x1B[39m\n' +
+      '\n' +
       '  \x1B[1m\x1B[32m*.js\x1B[39m\x1B[22m prettier --write\n' +
+      '\n' +
       '\x1B[32m-\x1B[39m Applying modifications...\n' +
       '\x1B[2m  \x1B[32m»\x1B[39m Done adding all task modifications to index\x1B[22m\n' +
       '\x1B[32m-\x1B[39m Restoring unstaged changes for staged files...\n' +
@@ -126,9 +130,10 @@ test('pipeliner run restor original state', async () => {
   await removeFile(resolve(cwd, 'index.js'))
 
   let pl = pipeliner({
+    dotGitPath: resolve(cwd, '.git'),
     stream: stdout,
     cwd,
-    dotGitPath: resolve(cwd, '.git'),
+    config,
     files,
   })
 
@@ -140,7 +145,10 @@ test('pipeliner run restor original state', async () => {
       '\x1B[32m-\x1B[39m Preparing pipeliner...\n' +
         '\x1B[2m  \x1B[32m»\x1B[39m Done backing up original repo state.\x1B[22m\n' +
         '\x1B[32m-\x1B[39m Running tasks...\n' +
+        '\x1B[31m  •\x1B[39m\n' +
+        '\n' +
         '  \x1B[1m\x1B[31m*.js\x1B[39m\x1B[22m prettier --write\n' +
+        '\n' +
         '\x1B[32m-\x1B[39m Restoring original state...\n' +
         '\x1B[2m  \x1B[32m»\x1B[39m Done restoring\x1B[22m\n' +
         '\x1B[32m-\x1B[39m Removing patch file...\n' +
@@ -162,10 +170,11 @@ test('pipeliner run with changed files', async () => {
   let files = prepareFiles({ entries, config, repoPath: cwd, cwd })
 
   let pl = pipeliner({
-    stream: stdout,
-    cwd,
     dotGitPath: resolve(cwd, '.git'),
+    stream: stdout,
+    config,
     files,
+    cwd,
   })
 
   await pl.run()
@@ -177,7 +186,10 @@ test('pipeliner run with changed files', async () => {
       '\x1B[32m-\x1B[39m Backing up unstaged changes for staged files...\n' +
       '\x1B[2m  \x1B[32m»\x1B[39m Done caching and removing unstaged changes\x1B[22m\n' +
       '\x1B[32m-\x1B[39m Running tasks...\n' +
+      '\x1B[32m  •\x1B[39m\n' +
+      '\n' +
       '  \x1B[1m\x1B[32m*.js\x1B[39m\x1B[22m prettier --write\n' +
+      '\n' +
       '\x1B[32m-\x1B[39m Applying modifications...\n' +
       '\x1B[2m  \x1B[32m»\x1B[39m Done adding all task modifications to index\x1B[22m\n' +
       '\x1B[32m-\x1B[39m Restoring unstaged changes for staged files...\n' +
@@ -185,6 +197,87 @@ test('pipeliner run with changed files', async () => {
       '\x1B[32m-\x1B[39m Removing patch file...\n' +
       '\x1B[2m  \x1B[32m»\x1B[39m Done clearing cache and removing patch file\x1B[22m\n'
   )
+})
+
+test('pipeliner run with skiped', async () => {
+  let git = gitWorker(cwd)
+
+  await initGitRepo()
+  await appendFile('index.js', 'var test = {};', cwd)
+  await execGit(['add', 'index.js'])
+  await writeFile('index.js', 'var a = { };', cwd)
+
+  let entries = await git.getStagedFiles()
+  let config = { '*.ts': 'prettier --write' }
+  let files = prepareFiles({ entries, config, repoPath: cwd, cwd })
+
+  let pl = pipeliner({
+    dotGitPath: resolve(cwd, '.git'),
+    stream: stdout,
+    config,
+    files,
+    cwd,
+  })
+
+  await pl.run()
+
+  is(
+    stdout.out,
+    '\x1B[32m-\x1B[39m Preparing pipeliner...\n' +
+      '\x1B[2m  \x1B[32m»\x1B[39m Done backing up original repo state.\x1B[22m\n' +
+      '\x1B[32m-\x1B[39m Running tasks...\n' +
+      '\x1B[33m  •\x1B[39m\n' +
+      '\n' +
+      '  \x1B[1m\x1B[33m*.ts\x1B[39m\x1B[22m no staged files matching the pattern were found\n' +
+      '\n' +
+      '\x1B[32m-\x1B[39m Applying modifications...\n' +
+      '\x1B[2m  \x1B[32m»\x1B[39m Done adding all task modifications to index\x1B[22m\n' +
+      '\x1B[32m-\x1B[39m Removing patch file...\n' +
+      '\x1B[2m  \x1B[32m»\x1B[39m Done clearing cache and removing patch file\x1B[22m\n'
+  )
+})
+
+test('pipeliner run with skiped', async () => {
+  let git = gitWorker(cwd)
+
+  await initGitRepo()
+  await appendFile('index.js', 'var test = {};', cwd)
+  await execGit(['add', 'index.js'])
+  await writeFile('index.js', 'var a = { };', cwd)
+
+  let entries = await git.getStagedFiles()
+  let config = { '*.js': ['pretstier --write', 'prettier --write'] }
+  let files = prepareFiles({ entries, config, repoPath: cwd, cwd })
+
+  let pl = pipeliner({
+    dotGitPath: resolve(cwd, '.git'),
+    stream: stdout,
+    config,
+    files,
+    cwd,
+  })
+
+  try {
+    await pl.run()
+  } catch (error) {
+    is(
+      stdout.out,
+      '\x1B[32m-\x1B[39m Preparing pipeliner...\n' +
+        '\x1B[2m  \x1B[32m»\x1B[39m Done backing up original repo state.\x1B[22m\n' +
+        '\x1B[32m-\x1B[39m Backing up unstaged changes for staged files...\n' +
+        '\x1B[2m  \x1B[32m»\x1B[39m Done caching and removing unstaged changes\x1B[22m\n' +
+        '\x1B[32m-\x1B[39m Running tasks...\n' +
+        '\x1B[31m  •\x1B[39m\x1B[90m  •\x1B[39m\n' +
+        '\n' +
+        '  \x1B[1m\x1B[31m*.js\x1B[39m\x1B[22m pretstier --write\n' +
+        '  \x1B[1m\x1B[90m*.js\x1B[39m\x1B[22m prettier --write\n' +
+        '\n' +
+        '\x1B[32m-\x1B[39m Restoring original state...\n' +
+        '\x1B[2m  \x1B[32m»\x1B[39m Done restoring\x1B[22m\n' +
+        '\x1B[32m-\x1B[39m Removing patch file...\n' +
+        '\x1B[2m  \x1B[32m»\x1B[39m Done clearing cache and removing patch file\x1B[22m\n'
+    )
+  }
 })
 
 test.run()

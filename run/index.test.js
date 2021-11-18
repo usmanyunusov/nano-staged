@@ -1,6 +1,7 @@
 import { realpathSync } from 'fs'
 import { is } from 'uvu/assert'
 import { resolve } from 'path'
+import esmock from 'esmock'
 import { test } from 'uvu'
 import os from 'os'
 
@@ -141,7 +142,10 @@ test('run success', async () => {
       '\x1B[32m-\x1B[39m Preparing pipeliner...\n' +
       '\x1B[2m  \x1B[32m»\x1B[39m Done backing up original repo state.\x1B[22m\n' +
       '\x1B[32m-\x1B[39m Running tasks...\n' +
+      '\x1B[32m  •\x1B[39m\n' +
+      '\n' +
       '  \x1B[1m\x1B[32m*.js\x1B[39m\x1B[22m prettier --write\n' +
+      '\n' +
       '\x1B[32m-\x1B[39m Applying modifications...\n' +
       '\x1B[2m  \x1B[32m»\x1B[39m Done adding all task modifications to index\x1B[22m\n' +
       '\x1B[32m-\x1B[39m Removing patch file...\n' +
@@ -172,15 +176,50 @@ test('run cmd error', async () => {
         '\x1B[32m-\x1B[39m Preparing pipeliner...\n' +
         '\x1B[2m  \x1B[32m»\x1B[39m Done backing up original repo state.\x1B[22m\n' +
         '\x1B[32m-\x1B[39m Running tasks...\n' +
+        '\x1B[31m  •\x1B[39m\n' +
+        '\n' +
         '  \x1B[1m\x1B[31m*.js\x1B[39m\x1B[22m psrettier --write\n' +
+        '\n' +
         '\x1B[32m-\x1B[39m Restoring original state...\n' +
         '\x1B[2m  \x1B[32m»\x1B[39m Done restoring\x1B[22m\n' +
         '\x1B[32m-\x1B[39m Removing patch file...\n' +
         '\x1B[2m  \x1B[32m»\x1B[39m Done clearing cache and removing patch file\x1B[22m\n' +
         '\n' +
         '\x1B[31mpsrettier --write:\n' +
-        '\x1B[39mError: spawn psrettier ENOENT\n'
+        '\x1B[39mError: spawn psrettier ENOENT\n' +
+        '\n'
     )
+  }
+})
+
+test('run cmd error', async () => {
+  const run = await esmock('./index.js', {
+    '../pipeliner/index.js': {
+      pipeliner: () => ({
+        run: async () => {
+          return Promise.reject(new Error('git'))
+        },
+      }),
+    },
+  })
+
+  await initGitRepo()
+  await appendFile(
+    'package.json',
+    `{
+      "nano-staged": {
+        "*.js": "psrettier --write"
+      }
+    }`,
+    cwd
+  )
+  await appendFile('index.js', 'var test = {};', cwd)
+  await execGit(['add', 'index.js'])
+
+  try {
+    await run({ cwd, stream: stdout })
+  } catch (error) {
+    is(stdout.out, 'Nano Staged \x1B[1mv0.1.0\x1B[22m\n\n\x1B[31mError: git\x1B[39m\n')
   }
 })
 

@@ -12,6 +12,7 @@ export function pipeliner({
   stream = process.stderr,
   cwd = process.cwd(),
   dotGitPath = '',
+  config = {},
   files = {},
 }) {
   let patchPath = resolve(dotGitPath, `./${PATCH_ORIGIN}`)
@@ -20,7 +21,7 @@ export function pipeliner({
   let cache = new Map()
 
   let { changedFiles = [], deletedFiles = [], allTasks = [], stagedFiles = [] } = files
-  let { log, step } = createReporter({ stream })
+  let { log, step, print } = createReporter({ stream })
 
   return {
     async run() {
@@ -65,25 +66,46 @@ export function pipeliner({
       await this.runTasks()
     },
 
-    async runTask(tasks) {
+    async runTask({ tasks, output }) {
+      let skiped = false
+
       for (let task of tasks) {
         if (task.files.length) {
           let [cmd, ...args] = stringToArgv(task.cmd)
 
           try {
+            if (skiped) {
+              print(pico.gray('  •'))
+              output.msg.push(
+                `  ${pico.bold(pico.gray(task.pattern.padEnd(output.size)))} ${task.cmd}`
+              )
+              continue
+            }
+
             await spawn(cmd, [...args, ...task.files], {
               cwd,
               env: { ...process.env, FORCE_COLOR: '1' },
             })
-            log(`  ${pico.bold(pico.green(task.pattern))} ${task.cmd}`)
+
+            print(pico.green('  •'))
+            output.msg.push(
+              `  ${pico.bold(pico.green(task.pattern.padEnd(output.size)))} ${task.cmd}`
+            )
           } catch (err) {
-            /* c8 ignore next 2 */
-            log(`  ${pico.bold(pico.red(task.pattern))} ${task.cmd}`)
-            throw `${pico.red(`${task.cmd}:\n`) + err}`
+            print(pico.red('  •'))
+            output.msg.push(
+              `  ${pico.bold(pico.red(task.pattern.padEnd(output.size)))} ${task.cmd}`
+            )
+            output.err.push(`${pico.red(`${task.cmd}:\n`) + err}\n`)
+            skiped = true
           }
         } else {
-          /* c8 ignore next 2 */
-          log(`  ${pico.yellow(task.pattern)} no staged files matching the pattern were found`)
+          print(pico.yellow('  •'))
+          output.msg.push(
+            `  ${pico.bold(
+              pico.yellow(task.pattern.padEnd(output.size))
+            )} no staged files matching the pattern were found`
+          )
         }
       }
     },
@@ -91,13 +113,19 @@ export function pipeliner({
     async runTasks() {
       step('Running tasks')
 
-      try {
-        let result = await Promise.allSettled(allTasks.map((subTasks) => this.runTask(subTasks)))
-        let errors = result.filter((i) => i.status === 'rejected')
+      let output = {
+        msg: [],
+        err: [],
+        size: Object.keys(config).reduce((acc, i) => (acc += i.length > acc ? i.length : 0), 0),
+      }
 
-        if (errors.length) {
+      try {
+        await Promise.all(allTasks.map((subTasks) => this.runTask({ tasks: subTasks, output })))
+        log('\n\n' + output.msg.join('\n') + '\n')
+
+        if (output.err.length) {
           let err = new Error()
-          err.tasks = errors.map((e) => e.reason).join('\n')
+          err.tasks = output.err.join('\n')
           throw err
         }
       } catch (err) {

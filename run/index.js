@@ -45,11 +45,10 @@ export default async function run({ cwd = process.cwd(), stream = process.stderr
       return
     }
 
-    await pipeliner({ cwd: repoPath, files, dotGitPath, stream }).run()
+    await pipeliner({ cwd: repoPath, files, dotGitPath, stream, config }).run()
   } catch (err) {
     if (err.tasks) {
       log('\n' + err.tasks)
-      /* c8 ignore next 3 */
     } else {
       log('\n' + pico.red(err))
     }

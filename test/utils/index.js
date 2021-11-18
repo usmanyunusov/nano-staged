@@ -1,6 +1,6 @@
-import { promises as fs } from 'fs'
 import { resolve, dirname } from 'path'
 import { fileURLToPath } from 'url'
+import fs from 'fs-extra'
 
 const DIRNAME = dirname(fileURLToPath(import.meta.url))
 
@@ -18,7 +18,7 @@ export async function writeFile(filename, content, dir = process.cwd()) {
 
 export async function removeFile(dir) {
   if (dir) {
-    await fs.rm(dir, { recursive: true })
+    await fs.remove(dir)
   }
 }
 
@@ -27,10 +27,11 @@ export function fixture(name) {
 }
 
 export function createStdout() {
-  let result = { out: '' }
-
-  result.write = (symbols) => {
-    result.out += symbols
+  let result = {
+    out: '',
+    write: (symbols) => {
+      result.out += symbols
+    },
   }
 
   return result
