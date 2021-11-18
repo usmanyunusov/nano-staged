@@ -42,7 +42,7 @@
     "exclude": [
       "**/*.test.*"
     ],
-    "lines": 75,
+    "lines": 100,
     "check-coverage": true
   },
   "keywords": [

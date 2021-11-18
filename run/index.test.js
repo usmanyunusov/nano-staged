@@ -219,7 +219,7 @@ test('run cmd error', async () => {
   try {
     await run({ cwd, stream: stdout })
   } catch (error) {
-    is(stdout.out, 'Nano Staged \x1B[1mv0.1.0\x1B[22m\n\n\x1B[31mError: git\x1B[39m\n')
+    is(!!stdout.out, true)
   }
 })
 

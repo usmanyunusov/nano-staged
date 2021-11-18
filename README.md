@@ -57,4 +57,19 @@ The performance results were generated on a MBP Late 2013, 2,3 GHz Intel Core i7
 
 ## Configuration
 
+<details>
+   <summary><b><code>.package.json</code> example</b></summary>
+   <br/>
+
+```json
+{
+  "nano-staged": {
+    "*": "your-cmd",
+    "*.ext": ["your-cmd", "your-cmd"]
+  }
+}
+```
+
+</details>
+
 ## Examples
