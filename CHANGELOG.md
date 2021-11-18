@@ -2,6 +2,6 @@
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## 0.1 "Test"
+## 0.1
 
 - Initial release.

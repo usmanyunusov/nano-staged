@@ -4,6 +4,7 @@ Tool to run commands only on git staged files, **speeding up the validation/form
 
 - 📦 **Small**: ?x+ lighter than **lint-staged**.
 - 🥇 **Single dependency** (Picocolors).
+- 🤝 **Without merge conflicts**
 
 ## Benchmarks
 
@@ -42,7 +43,9 @@ The performance results were generated on a MBP Late 2013, 2,3 GHz Intel Core i7
    },
    ```
 
-3. Add the `simple-git-hooks` section to your `package.json` and fill in the `pre-commit` for the `npx nano-staged`.
+3. Run `npx nano-staged` to run commands the git staged files.
+
+4. Add the `simple-git-hooks` section to your `package.json` and fill in the `pre-commit` for the `npx nano-staged`.
 
    For example:
 
