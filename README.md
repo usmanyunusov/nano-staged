@@ -81,5 +81,3 @@ The performance results were generated on a MBP Late 2013, 2,3 GHz Intel Core i7
 ```
 
 </details>
-
-## Examples
