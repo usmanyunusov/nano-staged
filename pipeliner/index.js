@@ -21,7 +21,7 @@ export function pipeliner({
   let cache = new Map()
 
   let { changedFiles = [], deletedFiles = [], stagedFiles = [], taskedFiles = [] } = files
-  let { log, step, print } = createReporter({ stream })
+  let { log, step } = createReporter({ stream })
 
   return {
     async run() {

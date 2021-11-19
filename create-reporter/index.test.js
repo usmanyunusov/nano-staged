@@ -28,12 +28,4 @@ test('should reported step correctly', () => {
   is(stdout.out, '\x1B[32m-\x1B[39m Run step...\n')
 })
 
-test('should reported print correctly', () => {
-  let stdout = createStdout()
-  let { print } = createReporter({ stream: stdout })
-
-  print('Run print')
-  is(stdout.out, 'Run print')
-})
-
 test.run()
