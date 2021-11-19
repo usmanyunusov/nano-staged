@@ -1,8 +1,8 @@
 import { resolve } from 'path'
 import pico from 'picocolors'
 
+import { spawn, stringToArgv, toArray } from '../utils/index.js'
 import { createReporter } from '../create-reporter/index.js'
-import { spawn, stringToArgv } from '../utils/index.js'
 import { fileSystem } from '../file-system/index.js'
 import { gitWorker } from '../git/index.js'
 
@@ -20,7 +20,7 @@ export function pipeliner({
   let fs = fileSystem()
   let cache = new Map()
 
-  let { changedFiles = [], deletedFiles = [], allTasks = [], stagedFiles = [] } = files
+  let { changedFiles = [], deletedFiles = [], stagedFiles = [], taskedFiles = [] } = files
   let { log, step, print } = createReporter({ stream })
 
   return {
@@ -66,16 +66,18 @@ export function pipeliner({
       await this.runTasks()
     },
 
-    async runTask({ tasks, output }) {
-      let skiped = false
+    async runTask({ task, output, skiped = false }) {
+      let [pattern = '', cmds = []] = task
 
-      for (let { pattern, cmd: stringCmd, files } of tasks) {
+      for (let stringCmd of toArray(cmds)) {
+        let files = taskedFiles.filter((file) => file[0] === pattern).map((file) => file[1])
+
         if (files.length) {
           let [cmd, ...args] = stringToArgv(stringCmd)
 
           try {
             if (skiped) {
-              print(pico.gray('  •'))
+              print(pico.gray('•  '))
               output.msg.push(`  ${pico.bold(pico.gray(pattern.padEnd(output.size)))} ${stringCmd}`)
               continue
             }
@@ -85,16 +87,16 @@ export function pipeliner({
               env: { ...process.env, FORCE_COLOR: '1' },
             })
 
-            print(pico.green('  •'))
+            print(pico.green('•  '))
             output.msg.push(`  ${pico.bold(pico.green(pattern.padEnd(output.size)))} ${stringCmd}`)
           } catch (err) {
-            print(pico.red('  •'))
+            print(pico.red('•  '))
             output.msg.push(`  ${pico.bold(pico.red(pattern.padEnd(output.size)))} ${stringCmd}`)
             output.err.push(pico.red(`${stringCmd}:\n`) + err)
             skiped = true
           }
         } else {
-          print(pico.yellow('  •'))
+          print(pico.yellow('•  '))
           output.msg.push(
             `  ${pico.bold(
               pico.yellow(pattern.padEnd(output.size))
@@ -110,11 +112,12 @@ export function pipeliner({
       let output = {
         msg: [],
         err: [],
-        size: Object.keys(config).reduce((acc, i) => (acc += i.length > acc ? i.length : 0), 0),
+        size: Math.max(...Object.keys(config).map((pattern) => pattern.length)),
       }
 
       try {
-        await Promise.all(allTasks.map((subTasks) => this.runTask({ tasks: subTasks, output })))
+        print('  ')
+        await Promise.all(Object.entries(config).map((task) => this.runTask({ task, output })))
         log('\n\n' + output.msg.join('\n') + '\n')
 
         if (output.err.length) {

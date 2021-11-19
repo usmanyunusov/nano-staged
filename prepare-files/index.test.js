@@ -25,21 +25,12 @@ test(`shoulds prepare correctly files`, () => {
     return paths.map((path) => resolve(process.cwd(), path))
   }
   equal(files, {
-    allTasks: [
-      [
-        {
-          pattern: '*.{css,js}',
-          cmd: 'prettier --write',
-          files: resolvePaths(['a.js', 'b.js', 'c.css', 'e.css']),
-        },
-      ],
-      [
-        {
-          pattern: '*.md',
-          cmd: 'prettier --write',
-          files: resolvePaths(['d.md']),
-        },
-      ],
+    taskedFiles: [
+      ['*.{css,js}', resolve(process.cwd(), 'a.js')],
+      ['*.{css,js}', resolve(process.cwd(), 'b.js')],
+      ['*.{css,js}', resolve(process.cwd(), 'c.css')],
+      ['*.{css,js}', resolve(process.cwd(), 'e.css')],
+      ['*.md', resolve(process.cwd(), 'd.md')],
     ],
     stagedFiles: resolvePaths(['a.js', 'b.js', 'c.css', 'e.css', 'd.md']),
     deletedFiles: resolvePaths(['e.css']),

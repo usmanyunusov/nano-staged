@@ -40,7 +40,7 @@ export default async function run({ cwd = process.cwd(), stream = process.stderr
     }
 
     let files = prepareFiles({ entries, config, repoPath, cwd })
-    if (files.allTasks.every((subTasks) => subTasks.every((task) => !task.files.length))) {
+    if (!files.taskedFiles.length) {
       info(`No staged files match any configured task.`)
       return
     }
