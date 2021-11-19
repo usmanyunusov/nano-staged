@@ -1,8 +1,8 @@
 import { equal, is } from 'uvu/assert'
-import { promises as fs } from 'fs'
 import { join } from 'path'
 import esmock from 'esmock'
 import { test } from 'uvu'
+import fs from 'fs-extra'
 
 import { writeFile, makeDir, appendFile, fixture, removeFile } from '../test/utils/index.js'
 import { gitWorker } from './index.js'
@@ -88,10 +88,8 @@ test('checkout files', async () => {
 test('apply patch file', async () => {
   let git = gitWorker(cwd)
 
-  await git.applyPatch(patchPath)
-
-  let source = await fs.readFile(join(cwd, 'README.md'))
-  is(source.toString(), '# Test\n## Test')
+  await git.applyPatch(patchPath, true)
+  is((await fs.stat(patchPath)).isFile(), true)
 })
 
 test('not apply patch file', async () => {

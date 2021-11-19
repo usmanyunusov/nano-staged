@@ -1,16 +1,14 @@
-import { realpathSync } from 'fs'
 import { is } from 'uvu/assert'
-import { resolve } from 'path'
+import { tmpdir } from 'os'
+import { join } from 'path'
 import esmock from 'esmock'
 import { test } from 'uvu'
-import os from 'os'
 
 import { makeDir, appendFile, removeFile, createStdout } from '../test/utils/index.js'
 import { gitWorker } from '../git/index.js'
 import run from './index.js'
 
-let osTmpDir = process.env.APPVEYOR ? 'C:\\projects' : realpathSync(os.tmpdir())
-let cwd = resolve(osTmpDir, `nano-staged-run`)
+let cwd = join(tmpdir(), 'nano-staged-' + Math.random())
 let stdout = createStdout()
 
 async function execGit(args) {
@@ -144,9 +142,9 @@ test('run success', async () => {
       '\x1B[32m-\x1B[39m Running tasks...\n' +
       '  \x1B[1m\x1B[32m*.js\x1B[39m\x1B[22m prettier --write\n' +
       '\x1B[32m-\x1B[39m Applying modifications...\n' +
-      '\x1B[2m  \x1B[32m»\x1B[39m Done adding all task modifications to index\x1B[22m\n' +
-      '\x1B[32m-\x1B[39m Removing patch file...\n' +
-      '\x1B[2m  \x1B[32m»\x1B[39m Done clearing cache and removing patch file\x1B[22m\n'
+      '\x1B[2m  \x1B[32m»\x1B[39m Done adding up all task modifications to index.\x1B[22m\n' +
+      '\x1B[32m-\x1B[39m Removing patch files...\n' +
+      '\x1B[2m  \x1B[32m»\x1B[39m Done removing up patch files.\x1B[22m\n'
   )
 })
 
@@ -174,10 +172,10 @@ test('run cmd error', async () => {
         '\x1B[2m  \x1B[32m»\x1B[39m Done backing up original repo state.\x1B[22m\n' +
         '\x1B[32m-\x1B[39m Running tasks...\n' +
         '  \x1B[1m\x1B[31m*.js\x1B[39m\x1B[22m psrettier --write\n' +
-        '\x1B[32m-\x1B[39m Restoring original state...\n' +
-        '\x1B[2m  \x1B[32m»\x1B[39m Done restoring\x1B[22m\n' +
-        '\x1B[32m-\x1B[39m Removing patch file...\n' +
-        '\x1B[2m  \x1B[32m»\x1B[39m Done clearing cache and removing patch file\x1B[22m\n' +
+        '\x1B[32m-\x1B[39m Restoring to its original state...\n' +
+        '\x1B[2m  \x1B[32m»\x1B[39m Done restoring up to its original state.\x1B[22m\n' +
+        '\x1B[32m-\x1B[39m Removing patch files...\n' +
+        '\x1B[2m  \x1B[32m»\x1B[39m Done removing up patch files.\x1B[22m\n' +
         '\n' +
         '\x1B[31mpsrettier --write:\n' +
         '\x1B[39mError: spawn psrettier ENOENT\n'

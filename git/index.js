@@ -37,13 +37,28 @@ export function gitWorker(cwd = process.cwd()) {
       }
     },
 
-    async diffPatch(patchPath, opts = {}) {
+    async diffPatch(patchPath, files = [], opts = {}) {
       const args = ['diff', ...DIFF_ARGS, '--output', patchPath]
+
+      if (files.length) {
+        args.push('--')
+        args.push(...files)
+      }
+
       await git.exec(args, opts)
     },
 
-    async applyPatch(patchPath, opts = {}) {
-      const args = ['apply', ...APPLY_ARGS, patchPath]
+    async applyPatch(patchPath, threeWay = false, opts = {}) {
+      const args = ['apply', ...APPLY_ARGS]
+
+      if (threeWay) {
+        args.push('--3way')
+      }
+
+      if (patchPath) {
+        args.push(patchPath)
+      }
+
       await git.exec(args, opts)
     },
 

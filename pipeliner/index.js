@@ -6,7 +6,8 @@ import { createReporter } from '../create-reporter/index.js'
 import { fileSystem } from '../file-system/index.js'
 import { gitWorker } from '../git/index.js'
 
-const PATCH_ORIGIN = 'nano-staged.patch'
+const ORIGIN_PATCH = 'nano-staged.patch'
+const PARTIAL_PATCH = 'nano-staged_partial.patch'
 
 export function pipeliner({
   stream = process.stderr,
@@ -15,10 +16,11 @@ export function pipeliner({
   config = {},
   files = {},
 }) {
-  let patchPath = resolve(dotGitPath, `./${PATCH_ORIGIN}`)
+  let originalPatch = resolve(dotGitPath, `./${ORIGIN_PATCH}`)
+  let partialPatch = resolve(dotGitPath, `./${PARTIAL_PATCH}`)
+
   let git = gitWorker(repoPath)
   let fs = fileSystem()
-  let cache = new Map()
 
   let { changedFiles = [], deletedFiles = [], stagedFiles = [], taskedFiles = [] } = files
   let { log, step } = createReporter({ stream })
@@ -28,7 +30,7 @@ export function pipeliner({
       step('Preparing pipeliner')
 
       try {
-        await git.diffPatch(patchPath)
+        await git.diffPatch(originalPatch)
         log(pico.dim(`  ${pico.green('»')} Done backing up original repo state.`))
       } catch (err) {
         /* c8 ignore next 3 */
@@ -41,23 +43,16 @@ export function pipeliner({
 
     async backupUnstagedFiles() {
       if (changedFiles.length || deletedFiles.length) {
-        step('Backing up unstaged changes for staged files')
+        step('Backing up unstaged changes for staged files.')
 
         try {
-          if (changedFiles.length) {
-            for (let files of await fs.read(changedFiles)) {
-              if (files) {
-                let { path, content } = files
-                cache.set(path, content)
-              }
-            }
-          }
-
+          await git.diffPatch(partialPatch, [...changedFiles, ...deletedFiles])
           await git.checkout([...changedFiles, ...deletedFiles])
-          log(pico.dim(`  ${pico.green('»')} Done caching and removing unstaged changes`))
+
+          log(pico.dim(`  ${pico.green('»')} Done backing up unstaged changes.`))
         } catch (err) {
           /* c8 ignore next 4 */
-          log(pico.dim(`  ${pico.red('»')} Fail caching and removing unstaged changes`))
+          log(pico.dim(`  ${pico.red('»')} Fail backing up unstaged changes.`))
           await this.restoreOriginalState()
           throw err
         }
@@ -68,7 +63,7 @@ export function pipeliner({
 
     async runTask({ task, output, skiped = false }) {
       let [pattern = '', cmds = []] = task
-      let noMatch = []
+      let notMatchingPatterns = []
 
       for (let stringCmd of toArray(cmds)) {
         let files = taskedFiles.filter((file) => file[0] === pattern).map((file) => file[1])
@@ -94,14 +89,13 @@ export function pipeliner({
             skiped = true
           }
         } else {
-          if (!noMatch.includes(pattern)) {
+          if (!notMatchingPatterns.includes(pattern)) {
             log(
               `  ${pico.bold(
                 pico.yellow(pattern.padEnd(output.size))
-              )} no staged files matching the pattern were found`
+              )} no staged files matching the pattern were found.`
             )
-
-            noMatch.push(pattern)
+            notMatchingPatterns.push(pattern)
           }
         }
       }
@@ -135,11 +129,18 @@ export function pipeliner({
       step('Applying modifications')
 
       try {
+        /* c8 ignore next 5 */
+        if (!(await git.exec(['diff', 'HEAD']))) {
+          let err = new Error()
+          err.tasks = pico.yellow('Prevented an empty git commit.')
+          throw err
+        }
+
         await git.add(stagedFiles)
-        log(pico.dim(`  ${pico.green('»')} Done adding all task modifications to index`))
+        log(pico.dim(`  ${pico.green('»')} Done adding up all task modifications to index.`))
       } catch (err) {
         /* c8 ignore next 4 */
-        log(pico.dim(`  ${pico.red('»')} Fail adding all task modifications to index`))
+        log(pico.dim(`  ${pico.red('»')} Fail adding up all task modifications to index.`))
         await this.restoreOriginalState()
         throw err
       }
@@ -149,24 +150,20 @@ export function pipeliner({
 
     async restoreUnstagedFiles() {
       if (changedFiles.length || deletedFiles.length) {
-        step('Restoring unstaged changes for staged files')
+        step('Restoring unstaged changes for staged files.')
 
         try {
-          if (deletedFiles.length) {
-            await fs.delete(deletedFiles)
-          }
-
-          if (changedFiles.length) {
-            let files = changedFiles.map((path) => ({ path, content: cache.get(path) }))
-            await fs.write(files)
-          }
-
-          log(pico.dim(`  ${pico.green('»')} Done deleting removed and restoring changed files`))
+          await git.applyPatch(partialPatch)
+          log(pico.dim(`  ${pico.green('»')} Done restoring up unstaged changes.`))
         } catch (err) {
-          /* c8 ignore next 4 */
-          log(pico.dim(`  ${pico.red('»')} Fail deleting removed and restoring changed files`))
-          await this.restoreOriginalState()
-          throw err
+          /* c8 ignore next 8 */
+          try {
+            await git.applyPatch(partialPatch, true)
+          } catch (error) {
+            log(pico.dim(`  ${pico.red('»')} Merge conflict!!! Unstaged changes not restored.`))
+            await this.restoreOriginalState()
+            throw err
+          }
         }
       }
 
@@ -174,20 +171,20 @@ export function pipeliner({
     },
 
     async restoreOriginalState() {
-      step('Restoring original state')
+      step('Restoring to its original state')
 
       try {
         await git.checkout('.')
 
-        let hasPatch = await fs.read(patchPath)
+        let hasPatch = await fs.read(originalPatch)
         if (hasPatch.toString()) {
-          await git.applyPatch(patchPath)
+          await git.applyPatch(originalPatch)
         }
 
-        log(pico.dim(`  ${pico.green('»')} Done restoring`))
+        log(pico.dim(`  ${pico.green('»')} Done restoring up to its original state.`))
       } catch (err) {
         /* c8 ignore next 3 */
-        log(pico.dim(`  ${pico.red('»')} Fail restoring`))
+        log(pico.dim(`  ${pico.red('»')} Fail restoring up to its original state.`))
         throw err
       }
 
@@ -195,15 +192,19 @@ export function pipeliner({
     },
 
     async cleanUp() {
-      step('Removing patch file')
+      step('Removing patch files')
 
       try {
-        cache.clear()
-        await fs.delete(patchPath)
-        log(pico.dim(`  ${pico.green('»')} Done clearing cache and removing patch file`))
+        await fs.delete(originalPatch)
+
+        if (changedFiles.length || deletedFiles.length) {
+          await fs.delete(partialPatch)
+        }
+
+        log(pico.dim(`  ${pico.green('»')} Done removing up patch files.`))
       } catch (err) {
         /* c8 ignore next 3 */
-        log(pico.dim(`  ${pico.red('»')} Fail clearing cache and removing patch file`))
+        log(pico.dim(`  ${pico.red('»')} Fail removing up patch files.`))
         throw err
       }
     },
