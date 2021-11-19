@@ -1,9 +1,9 @@
 import { execFile } from 'child_process'
 import { resolve, dirname } from 'path'
-import { promises as fs } from 'fs'
 import { fileURLToPath } from 'url'
 import { promisify } from 'util'
 import { nanoid } from 'nanoid'
+import fs from 'fs-extra'
 
 import { gitWorker } from '../../git/index.js'
 
@@ -92,4 +92,4 @@ for (let i = 0; i < runners.length; i++) {
   await run(runners, files[i])
 }
 
-await fs.rm(cwd, { recursive: true })
+await fs.remove(cwd)

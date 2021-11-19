@@ -51,9 +51,9 @@ test('pipeliner run without unstaged files', async () => {
   let pl = pipeliner({
     dotGitPath: resolve(cwd, '.git'),
     stream: stdout,
+    repoPath: cwd,
     config,
     files,
-    cwd,
   })
 
   await pl.run()
@@ -89,9 +89,9 @@ test('pipeliner run with deleted files', async () => {
   let pl = pipeliner({
     dotGitPath: resolve(cwd, '.git'),
     stream: stdout,
+    repoPath: cwd,
     config,
     files,
-    cwd,
   })
 
   await pl.run()
@@ -132,7 +132,7 @@ test('pipeliner run restor original state', async () => {
   let pl = pipeliner({
     dotGitPath: resolve(cwd, '.git'),
     stream: stdout,
-    cwd,
+    repoPath: cwd,
     config,
     files,
   })
@@ -172,9 +172,9 @@ test('pipeliner run with changed files', async () => {
   let pl = pipeliner({
     dotGitPath: resolve(cwd, '.git'),
     stream: stdout,
+    repoPath: cwd,
     config,
     files,
-    cwd,
   })
 
   await pl.run()
@@ -214,9 +214,9 @@ test('pipeliner run with skiped', async () => {
   let pl = pipeliner({
     dotGitPath: resolve(cwd, '.git'),
     stream: stdout,
+    repoPath: cwd,
     config,
     files,
-    cwd,
   })
 
   await pl.run()
@@ -252,9 +252,9 @@ test('pipeliner run with skiped', async () => {
   let pl = pipeliner({
     dotGitPath: resolve(cwd, '.git'),
     stream: stdout,
+    repoPath: cwd,
     config,
     files,
-    cwd,
   })
 
   try {

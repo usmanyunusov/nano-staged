@@ -45,7 +45,7 @@ export default async function run({ cwd = process.cwd(), stream = process.stderr
       return
     }
 
-    await pipeliner({ cwd: repoPath, files, dotGitPath, stream, config }).run()
+    await pipeliner({ repoPath, files, dotGitPath, stream, config }).run()
   } catch (err) {
     if (err.tasks) {
       log('\n' + err.tasks)

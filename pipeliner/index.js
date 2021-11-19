@@ -10,13 +10,13 @@ const PATCH_ORIGIN = 'nano-staged.patch'
 
 export function pipeliner({
   stream = process.stderr,
-  cwd = process.cwd(),
+  repoPath = process.cwd(),
   dotGitPath = '',
   config = {},
   files = {},
 }) {
   let patchPath = resolve(dotGitPath, `./${PATCH_ORIGIN}`)
-  let git = gitWorker(cwd)
+  let git = gitWorker(repoPath)
   let fs = fileSystem()
   let cache = new Map()
 
@@ -83,7 +83,7 @@ export function pipeliner({
             }
 
             await spawn(cmd, [...args, ...task.files], {
-              cwd,
+              cwd: repoPath,
               env: { ...process.env, FORCE_COLOR: '1' },
             })
 
