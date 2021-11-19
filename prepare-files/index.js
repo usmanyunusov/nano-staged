@@ -1,6 +1,7 @@
-import { toArray } from '../utils/index.js'
 import { normalize, relative, resolve, isAbsolute } from 'path'
+
 import { CHANGED_CODE, DELETED_CODE } from '../git/index.js'
+import { toArray } from '../utils/index.js'
 import { glob } from '../glob/index.js'
 
 export function prepareFiles({

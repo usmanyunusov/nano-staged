@@ -1,5 +1,5 @@
-import pico from 'picocolors'
 import { resolve } from 'path'
+import pico from 'picocolors'
 
 import { createReporter } from '../create-reporter/index.js'
 import { spawn, stringToArgv } from '../utils/index.js'
@@ -69,41 +69,35 @@ export function pipeliner({
     async runTask({ tasks, output }) {
       let skiped = false
 
-      for (let task of tasks) {
-        if (task.files.length) {
-          let [cmd, ...args] = stringToArgv(task.cmd)
+      for (let { pattern, cmd: stringCmd, files } of tasks) {
+        if (files.length) {
+          let [cmd, ...args] = stringToArgv(stringCmd)
 
           try {
             if (skiped) {
               print(pico.gray('  •'))
-              output.msg.push(
-                `  ${pico.bold(pico.gray(task.pattern.padEnd(output.size)))} ${task.cmd}`
-              )
+              output.msg.push(`  ${pico.bold(pico.gray(pattern.padEnd(output.size)))} ${stringCmd}`)
               continue
             }
 
-            await spawn(cmd, [...args, ...task.files], {
+            await spawn(cmd, [...args, ...files], {
               cwd: repoPath,
               env: { ...process.env, FORCE_COLOR: '1' },
             })
 
             print(pico.green('  •'))
-            output.msg.push(
-              `  ${pico.bold(pico.green(task.pattern.padEnd(output.size)))} ${task.cmd}`
-            )
+            output.msg.push(`  ${pico.bold(pico.green(pattern.padEnd(output.size)))} ${stringCmd}`)
           } catch (err) {
             print(pico.red('  •'))
-            output.msg.push(
-              `  ${pico.bold(pico.red(task.pattern.padEnd(output.size)))} ${task.cmd}`
-            )
-            output.err.push(`${pico.red(`${task.cmd}:\n`) + err}\n`)
+            output.msg.push(`  ${pico.bold(pico.red(pattern.padEnd(output.size)))} ${stringCmd}`)
+            output.err.push(pico.red(`${stringCmd}:\n`) + err)
             skiped = true
           }
         } else {
           print(pico.yellow('  •'))
           output.msg.push(
             `  ${pico.bold(
-              pico.yellow(task.pattern.padEnd(output.size))
+              pico.yellow(pattern.padEnd(output.size))
             )} no staged files matching the pattern were found`
           )
         }

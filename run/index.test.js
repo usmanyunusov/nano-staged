@@ -186,13 +186,12 @@ test('run cmd error', async () => {
         '\x1B[2m  \x1B[32m»\x1B[39m Done clearing cache and removing patch file\x1B[22m\n' +
         '\n' +
         '\x1B[31mpsrettier --write:\n' +
-        '\x1B[39mError: spawn psrettier ENOENT\n' +
-        '\n'
+        '\x1B[39mError: spawn psrettier ENOENT\n'
     )
   }
 })
 
-test('run cmd error', async () => {
+test('run git error', async () => {
   const run = await esmock('./index.js', {
     '../pipeliner/index.js': {
       pipeliner: () => ({

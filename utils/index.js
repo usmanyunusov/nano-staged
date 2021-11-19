@@ -1,7 +1,7 @@
-import { resolve, join, normalize, relative, isAbsolute } from 'path'
-import { spawn as _spawn } from 'child_process'
+import { spawn as baseSpawn } from 'child_process'
 import { existsSync, readFileSync } from 'fs'
 import { fileURLToPath } from 'url'
+import { resolve, join } from 'path'
 import pico from 'picocolors'
 
 const REG_STR = /([^\s'"]([^\s'"]*(['"])([^\3]*?)\3)+[^\s'"]*)|[^\s'"]+|(['"])([^\5]*?)\5/gi
@@ -28,19 +28,18 @@ export function showVersion(print) {
 }
 
 export async function spawn(program, args, opts = {}) {
-  let child = _spawn(program, args, opts)
-  let stdout = ''
-  let stderr = ''
+  let child = baseSpawn(program, args, opts)
+  let output = ''
 
   if (child.stdout) {
     child.stdout.on('data', (data) => {
-      stdout += data
+      output += data
     })
   }
 
   if (child.stderr) {
     child.stderr.on('data', (data) => {
-      stderr += data
+      output += data
     })
   }
 
@@ -49,9 +48,9 @@ export async function spawn(program, args, opts = {}) {
 
     child.on('close', (code) => {
       if (code === 0) {
-        resolve(stdout)
+        resolve(output)
       } else {
-        reject(stderr)
+        reject(output)
       }
     })
   })
