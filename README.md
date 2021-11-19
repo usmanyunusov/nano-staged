@@ -11,15 +11,15 @@ Tool to run commands only on git staged files, **speeding up the validation/form
 ```diff
 $ node benchmarks/running-time/index.js
 Running time for 1 files
-- lint-staged 1.602 ms
-+ nano-staged 1.219 ms
+- lint-staged 1.347 ms
++ nano-staged 0.789 ms
 ```
 
 ```diff
 $ node benchmarks/running-time/index.js
 Running time for 3 files
-- lint-staged 2.277 ms
-+ nano-staged 1.905 ms
+- lint-staged 2.075 ms
++ nano-staged 1.578 ms
 ```
 
 The performance results were generated on a MBP Late 2013, 2,3 GHz Intel Core i7 by running `npm run benchmark` in the library folder. See [benchmarks/running-time/index.js](https://github.com/usmanyunusov/nano-staged/blob/master/benchmarks/running-time/index.js)
