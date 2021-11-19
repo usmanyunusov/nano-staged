@@ -38,7 +38,7 @@ test('didn’t find git directory', async () => {
   await run({ cwd, stream: stdout })
 
   is(
-    stdout.out,
+    stdout.out.replace(/\d+\.\d+\.\d+/, '0.1.0'),
     'Nano Staged \x1B[1mv0.1.0\x1B[22m\n' +
       '\x1B[36m-\x1B[39m Nano Staged didn’t find git directory\n'
   )
@@ -49,7 +49,7 @@ test('create config in package.json', async () => {
   await run({ cwd, stream: stdout })
 
   is(
-    stdout.out,
+    stdout.out.replace(/\d+\.\d+\.\d+/, '0.1.0'),
     'Nano Staged \x1B[1mv0.1.0\x1B[22m\n' +
       '\x1B[36m-\x1B[39m Create Nano Staged config in package.json\n'
   )
@@ -70,7 +70,7 @@ test('config invalid', async () => {
   await run({ cwd, stream: stdout })
 
   is(
-    stdout.out,
+    stdout.out.replace(/\d+\.\d+\.\d+/, '0.1.0'),
     'Nano Staged \x1B[1mv0.1.0\x1B[22m\n\x1B[36m-\x1B[39m Nano Staged config invalid\n'
   )
 })
@@ -90,7 +90,7 @@ test('staging area is empty', async () => {
   await run({ cwd, stream: stdout })
 
   is(
-    stdout.out,
+    stdout.out.replace(/\d+\.\d+\.\d+/, '0.1.0'),
     'Nano Staged \x1B[1mv0.1.0\x1B[22m\n\x1B[36m-\x1B[39m Git staging area is empty.\n'
   )
 })
@@ -112,7 +112,7 @@ test('staging area is empty', async () => {
   await run({ cwd, stream: stdout })
 
   is(
-    stdout.out,
+    stdout.out.replace(/\d+\.\d+\.\d+/, '0.1.0'),
     'Nano Staged \x1B[1mv0.1.0\x1B[22m\n' +
       '\x1B[36m-\x1B[39m No staged files match any configured task.\n'
   )
@@ -135,7 +135,7 @@ test('run success', async () => {
   await run({ cwd, stream: stdout })
 
   is(
-    stdout.out,
+    stdout.out.replace(/\d+\.\d+\.\d+/, '0.1.0'),
     'Nano Staged \x1B[1mv0.1.0\x1B[22m\n' +
       '\x1B[32m-\x1B[39m Preparing pipeliner...\n' +
       '\x1B[2m  \x1B[32m»\x1B[39m Done backing up original repo state.\x1B[22m\n' +
@@ -166,7 +166,7 @@ test('run cmd error', async () => {
     await run({ cwd, stream: stdout })
   } catch (error) {
     is(
-      stdout.out,
+      stdout.out.replace(/\d+\.\d+\.\d+/, '0.1.0'),
       'Nano Staged \x1B[1mv0.1.0\x1B[22m\n' +
         '\x1B[32m-\x1B[39m Preparing pipeliner...\n' +
         '\x1B[2m  \x1B[32m»\x1B[39m Done backing up original repo state.\x1B[22m\n' +

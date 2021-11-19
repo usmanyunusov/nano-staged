@@ -1,6 +1,6 @@
 {
   "name": "nano-staged",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Tool to run commands only on git staged files",
   "author": "Usman Yunusov <usman.iunusov@gmail.com>",
   "license": "MIT",
@@ -15,7 +15,7 @@
     "lint": "prettier --write **/*.js",
     "unit": "node --loader=esmock node_modules/.bin/uvu . '\\.test\\.js$'",
     "test": "c8 yarn unit",
-    "bench": "node benchmarks/running-time/index.js"
+    "bench": "node benchmarks/running-time/index.js && node benchmarks/size/index.js"
   },
   "dependencies": {
     "picocolors": "^1.0.0"

@@ -76,7 +76,6 @@ await initGitRepo()
 await initProject()
 
 async function run(names = [], files = []) {
-  process.stdout.write(`Running time for ${files.length} files\n`)
   await execGit(['add', ...files])
 
   for (let name of names) {
