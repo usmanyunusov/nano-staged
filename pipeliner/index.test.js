@@ -63,10 +63,7 @@ test('pipeliner run without unstaged files', async () => {
     '\x1B[32m-\x1B[39m Preparing pipeliner...\n' +
       '\x1B[2m  \x1B[32m»\x1B[39m Done backing up original repo state.\x1B[22m\n' +
       '\x1B[32m-\x1B[39m Running tasks...\n' +
-      '  \x1B[32m•  \x1B[39m\n' +
-      '\n' +
       '  \x1B[1m\x1B[32m*.js\x1B[39m\x1B[22m prettier --write\n' +
-      '\n' +
       '\x1B[32m-\x1B[39m Applying modifications...\n' +
       '\x1B[2m  \x1B[32m»\x1B[39m Done adding all task modifications to index\x1B[22m\n' +
       '\x1B[32m-\x1B[39m Removing patch file...\n' +
@@ -103,10 +100,7 @@ test('pipeliner run with deleted files', async () => {
       '\x1B[32m-\x1B[39m Backing up unstaged changes for staged files...\n' +
       '\x1B[2m  \x1B[32m»\x1B[39m Done caching and removing unstaged changes\x1B[22m\n' +
       '\x1B[32m-\x1B[39m Running tasks...\n' +
-      '  \x1B[32m•  \x1B[39m\n' +
-      '\n' +
       '  \x1B[1m\x1B[32m*.js\x1B[39m\x1B[22m prettier --write\n' +
-      '\n' +
       '\x1B[32m-\x1B[39m Applying modifications...\n' +
       '\x1B[2m  \x1B[32m»\x1B[39m Done adding all task modifications to index\x1B[22m\n' +
       '\x1B[32m-\x1B[39m Restoring unstaged changes for staged files...\n' +
@@ -145,10 +139,7 @@ test('pipeliner run restor original state', async () => {
       '\x1B[32m-\x1B[39m Preparing pipeliner...\n' +
         '\x1B[2m  \x1B[32m»\x1B[39m Done backing up original repo state.\x1B[22m\n' +
         '\x1B[32m-\x1B[39m Running tasks...\n' +
-        '  \x1B[31m•  \x1B[39m\n' +
-        '\n' +
         '  \x1B[1m\x1B[31m*.js\x1B[39m\x1B[22m prettier --write\n' +
-        '\n' +
         '\x1B[32m-\x1B[39m Restoring original state...\n' +
         '\x1B[2m  \x1B[32m»\x1B[39m Done restoring\x1B[22m\n' +
         '\x1B[32m-\x1B[39m Removing patch file...\n' +
@@ -186,10 +177,7 @@ test('pipeliner run with changed files', async () => {
       '\x1B[32m-\x1B[39m Backing up unstaged changes for staged files...\n' +
       '\x1B[2m  \x1B[32m»\x1B[39m Done caching and removing unstaged changes\x1B[22m\n' +
       '\x1B[32m-\x1B[39m Running tasks...\n' +
-      '  \x1B[32m•  \x1B[39m\n' +
-      '\n' +
       '  \x1B[1m\x1B[32m*.js\x1B[39m\x1B[22m prettier --write\n' +
-      '\n' +
       '\x1B[32m-\x1B[39m Applying modifications...\n' +
       '\x1B[2m  \x1B[32m»\x1B[39m Done adding all task modifications to index\x1B[22m\n' +
       '\x1B[32m-\x1B[39m Restoring unstaged changes for staged files...\n' +
@@ -226,10 +214,7 @@ test('pipeliner run with skiped', async () => {
     '\x1B[32m-\x1B[39m Preparing pipeliner...\n' +
       '\x1B[2m  \x1B[32m»\x1B[39m Done backing up original repo state.\x1B[22m\n' +
       '\x1B[32m-\x1B[39m Running tasks...\n' +
-      '  \x1B[33m•  \x1B[39m\n' +
-      '\n' +
       '  \x1B[1m\x1B[33m*.ts\x1B[39m\x1B[22m no staged files matching the pattern were found\n' +
-      '\n' +
       '\x1B[32m-\x1B[39m Applying modifications...\n' +
       '\x1B[2m  \x1B[32m»\x1B[39m Done adding all task modifications to index\x1B[22m\n' +
       '\x1B[32m-\x1B[39m Removing patch file...\n' +
@@ -267,11 +252,8 @@ test('pipeliner run with skiped', async () => {
         '\x1B[32m-\x1B[39m Backing up unstaged changes for staged files...\n' +
         '\x1B[2m  \x1B[32m»\x1B[39m Done caching and removing unstaged changes\x1B[22m\n' +
         '\x1B[32m-\x1B[39m Running tasks...\n' +
-        '  \x1B[31m•  \x1B[39m\x1B[90m•  \x1B[39m\n' +
-        '\n' +
         '  \x1B[1m\x1B[31m*.js\x1B[39m\x1B[22m pretstier --write\n' +
         '  \x1B[1m\x1B[90m*.js\x1B[39m\x1B[22m prettier --write\n' +
-        '\n' +
         '\x1B[32m-\x1B[39m Restoring original state...\n' +
         '\x1B[2m  \x1B[32m»\x1B[39m Done restoring\x1B[22m\n' +
         '\x1B[32m-\x1B[39m Removing patch file...\n' +

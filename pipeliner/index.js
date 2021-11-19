@@ -68,6 +68,7 @@ export function pipeliner({
 
     async runTask({ task, output, skiped = false }) {
       let [pattern = '', cmds = []] = task
+      let noMatch = []
 
       for (let stringCmd of toArray(cmds)) {
         let files = taskedFiles.filter((file) => file[0] === pattern).map((file) => file[1])
@@ -77,8 +78,7 @@ export function pipeliner({
 
           try {
             if (skiped) {
-              print(pico.gray('•  '))
-              output.msg.push(`  ${pico.bold(pico.gray(pattern.padEnd(output.size)))} ${stringCmd}`)
+              log(`  ${pico.bold(pico.gray(pattern.padEnd(output.size)))} ${stringCmd}`)
               continue
             }
 
@@ -87,21 +87,22 @@ export function pipeliner({
               env: { ...process.env, FORCE_COLOR: '1' },
             })
 
-            print(pico.green('•  '))
-            output.msg.push(`  ${pico.bold(pico.green(pattern.padEnd(output.size)))} ${stringCmd}`)
+            log(`  ${pico.bold(pico.green(pattern.padEnd(output.size)))} ${stringCmd}`)
           } catch (err) {
-            print(pico.red('•  '))
-            output.msg.push(`  ${pico.bold(pico.red(pattern.padEnd(output.size)))} ${stringCmd}`)
-            output.err.push(pico.red(`${stringCmd}:\n`) + err)
+            log(`  ${pico.bold(pico.red(pattern.padEnd(output.size)))} ${stringCmd}`)
+            output.errors.push(pico.red(`${stringCmd}:\n`) + err)
             skiped = true
           }
         } else {
-          print(pico.yellow('•  '))
-          output.msg.push(
-            `  ${pico.bold(
-              pico.yellow(pattern.padEnd(output.size))
-            )} no staged files matching the pattern were found`
-          )
+          if (!noMatch.includes(pattern)) {
+            log(
+              `  ${pico.bold(
+                pico.yellow(pattern.padEnd(output.size))
+              )} no staged files matching the pattern were found`
+            )
+
+            noMatch.push(pattern)
+          }
         }
       }
     },
@@ -109,20 +110,17 @@ export function pipeliner({
     async runTasks() {
       step('Running tasks')
 
-      let output = {
-        msg: [],
-        err: [],
-        size: Math.max(...Object.keys(config).map((pattern) => pattern.length)),
-      }
-
       try {
-        print('  ')
-        await Promise.all(Object.entries(config).map((task) => this.runTask({ task, output })))
-        log('\n\n' + output.msg.join('\n') + '\n')
+        let output = {
+          errors: [],
+          size: Math.max(...Object.keys(config).map((pattern) => pattern.length)),
+        }
 
-        if (output.err.length) {
+        await Promise.all(Object.entries(config).map((task) => this.runTask({ task, output })))
+
+        if (output.errors.length) {
           let err = new Error()
-          err.tasks = output.err.join('\n')
+          err.tasks = output.errors.join('\n')
           throw err
         }
       } catch (err) {

@@ -142,10 +142,7 @@ test('run success', async () => {
       '\x1B[32m-\x1B[39m Preparing pipeliner...\n' +
       '\x1B[2m  \x1B[32m»\x1B[39m Done backing up original repo state.\x1B[22m\n' +
       '\x1B[32m-\x1B[39m Running tasks...\n' +
-      '  \x1B[32m•  \x1B[39m\n' +
-      '\n' +
       '  \x1B[1m\x1B[32m*.js\x1B[39m\x1B[22m prettier --write\n' +
-      '\n' +
       '\x1B[32m-\x1B[39m Applying modifications...\n' +
       '\x1B[2m  \x1B[32m»\x1B[39m Done adding all task modifications to index\x1B[22m\n' +
       '\x1B[32m-\x1B[39m Removing patch file...\n' +
@@ -176,10 +173,7 @@ test('run cmd error', async () => {
         '\x1B[32m-\x1B[39m Preparing pipeliner...\n' +
         '\x1B[2m  \x1B[32m»\x1B[39m Done backing up original repo state.\x1B[22m\n' +
         '\x1B[32m-\x1B[39m Running tasks...\n' +
-        '  \x1B[31m•  \x1B[39m\n' +
-        '\n' +
         '  \x1B[1m\x1B[31m*.js\x1B[39m\x1B[22m psrettier --write\n' +
-        '\n' +
         '\x1B[32m-\x1B[39m Restoring original state...\n' +
         '\x1B[2m  \x1B[32m»\x1B[39m Done restoring\x1B[22m\n' +
         '\x1B[32m-\x1B[39m Removing patch file...\n' +
