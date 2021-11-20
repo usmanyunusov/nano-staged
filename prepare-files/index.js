@@ -15,7 +15,7 @@ export function prepareFiles({
   let taskedFiles = []
 
   for (let pattern of Object.keys(config)) {
-    let matches = glob(pattern, { globstar: true, filepath: true, extended: true })
+    let matches = glob(pattern, { filepath: true, extended: true })
 
     for (let { path, type, rename } of entries) {
       path = normalize(relative(cwd, normalize(resolve(repoPath, rename || path))))
@@ -27,7 +27,7 @@ export function prepareFiles({
       if (matches.regex.test(path)) {
         path = resolve(cwd, path)
 
-        if (stagedFiles.indexOf(path) === -1) {
+        if (!stagedFiles.includes(path)) {
           if (type === CHANGED_CODE) {
             changedFiles.push(path)
           }
