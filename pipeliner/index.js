@@ -79,6 +79,7 @@ export function pipeliner({
 
             await spawn(cmd, [...args, ...files], {
               cwd: repoPath,
+              preferLocal: true,
               env: { ...process.env, FORCE_COLOR: '1' },
             })
 

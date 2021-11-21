@@ -1,7 +1,7 @@
 import { spawn as baseSpawn } from 'child_process'
+import { resolve, join, delimiter } from 'path'
 import { existsSync, readFileSync } from 'fs'
 import { fileURLToPath } from 'url'
-import { resolve, join } from 'path'
 import pico from 'picocolors'
 
 const REG_STR = /([^\s'"]([^\s'"]*(['"])([^\3]*?)\3)+[^\s'"]*)|[^\s'"]+|(['"])([^\5]*?)\5/gi
@@ -27,7 +27,22 @@ export function showVersion(print) {
   print(`Nano Staged ${pico.bold(`v${pkgJson.version}`)}`)
 }
 
-export async function spawn(program, args, opts = {}) {
+export async function spawn(program, args, options = {}) {
+  let opts = {
+    preferLocal: false,
+    ...options,
+  }
+
+  opts.env = {
+    ...process.env,
+    ...options.env,
+  }
+
+  if (opts.preferLocal) {
+    opts.env[process.env.PATH ? 'PATH' : 'path'] =
+      opts.env.PATH + delimiter + join(fileURLToPath(import.meta.url), '../../../.bin')
+  }
+
   let child = baseSpawn(program, args, opts)
   let output = ''
 
