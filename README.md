@@ -61,7 +61,7 @@ The performance results were generated on a MBP Late 2013, 2,3 GHz Intel Core i7
 
    ```json
    "simple-git-hooks": {
-     "pre-commit": "npx nano-staged"
+     "pre-commit": "./node_modules/.bin/nano-staged"
    }
    ```
 
