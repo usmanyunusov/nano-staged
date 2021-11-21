@@ -18,10 +18,12 @@ async function getJSON(url) {
 }
 
 async function benchmark(lib) {
+  let prefix = lib === 'nano-staged' ? '+ ' : '- '
   let data = await getJSON(`https://packagephobia.com/v2/api.json?p=${lib}`)
   let size = data.install.bytes
   process.stdout.write(
-    lib.padEnd('lint-staged   '.length) +
+    prefix +
+      lib.padEnd('lint-staged   '.length) +
       pico.bold(
         Math.round(size / 1024)
           .toString()

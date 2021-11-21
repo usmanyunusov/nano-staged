@@ -80,7 +80,7 @@ async function run(names = [], files = []) {
 
   for (let name of names) {
     before = performance.now()
-    await spawn('npx', [name], { cwd })
+    await spawn(`./node_modules/.bin/${name}`, { cwd })
     showTime(name)
   }
 
