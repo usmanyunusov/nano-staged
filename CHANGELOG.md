@@ -2,13 +2,17 @@
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.1.5
+
+- Update docs.
+
 ## 0.1.4
 
-- Fixed to run `./node_modules/.bin/nano-staged`
+- Fixed to run `./node_modules/.bin/nano-staged`.
 
 ## 0.1.3
 
-- Removed `globstart`
+- Removed `globstart`.
 
 
 ## 0.1.2

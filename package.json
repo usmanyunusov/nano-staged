@@ -1,6 +1,6 @@
 {
   "name": "nano-staged",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Tool to run commands only on git staged files",
   "author": "Usman Yunusov <usman.iunusov@gmail.com>",
   "license": "MIT",
