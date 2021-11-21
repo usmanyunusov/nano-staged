@@ -1,20 +1,11 @@
 import { equal, is } from 'uvu/assert'
 import { test } from 'uvu'
 
-import { toArray, findUp, showVersion, stringToArgv, spawn } from './index.js'
+import { toArray, showVersion, stringToArgv, spawn } from './index.js'
 import { fixture, createStdout } from '../test/utils/index.js'
 
 test('single to array', () => {
   equal(toArray('path'), ['path'])
-})
-
-test('found file dir', () => {
-  let cwd = fixture('config/pkg-with-config')
-  let pkgPath = findUp('package.json', cwd)
-  let pkgNotPath = findUp('not-package.json', cwd)
-
-  is(pkgPath, cwd)
-  is(pkgNotPath, undefined)
 })
 
 test('print version', () => {

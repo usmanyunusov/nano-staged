@@ -1,6 +1,5 @@
 import { equal, is } from 'uvu/assert'
 import { join } from 'path'
-import esmock from 'esmock'
 import { test } from 'uvu'
 import fs from 'fs-extra'
 
@@ -15,7 +14,7 @@ async function execGit(args) {
   await git.exec(args, { cwd })
 }
 
-test.before(async () => {
+test.before.each(async () => {
   await makeDir(cwd)
   await execGit(['init'])
   await execGit(['config', 'user.name', '"test"'])
@@ -23,35 +22,36 @@ test.before(async () => {
   await appendFile('README.md', '# Test\n', cwd)
   await execGit(['add', 'README.md'])
   await execGit(['commit', '-m initial commit'])
-  await writeFile('README.md', '# Test\n## Test', cwd)
 })
 
-test.after(async () => {
+test.after.each(async () => {
   await removeFile(cwd)
 })
 
 test('not found git dir', async () => {
-  const { gitWorker } = await esmock('./index.js', {
-    '../utils/index.js': {
-      findUp: () => undefined,
-    },
-  })
-
   let git = gitWorker(cwd)
+  git.exec = async () => null
+
   let { repoPath, dotGitPath } = await git.getRepoAndDotGitPaths()
 
   is(repoPath, null)
   is(dotGitPath, null)
 })
 
-test('found git dir', async () => {
-  const { gitWorker } = await esmock('./index.js', {
-    '../utils/index.js': {
-      findUp: () => 'test',
-    },
-  })
-
+test('not found git dir', async () => {
   let git = gitWorker(cwd)
+  git.exec = async () => Promise.reject()
+
+  let { repoPath, dotGitPath } = await git.getRepoAndDotGitPaths()
+
+  is(repoPath, null)
+  is(dotGitPath, null)
+})
+
+test('resolve git dir', async () => {
+  let git = gitWorker(cwd)
+  git.exec = async () => 'test'
+
   let { repoPath, dotGitPath } = await git.getRepoAndDotGitPaths()
 
   is(repoPath, 'test')
@@ -61,6 +61,7 @@ test('found git dir', async () => {
 test('create patch file', async () => {
   let git = gitWorker(cwd)
 
+  await writeFile('README.md', '# Test\n## Test', cwd)
   await git.diffPatch(patchPath)
 
   let source = await fs.readFile(patchPath)
@@ -76,19 +77,48 @@ test('create patch file', async () => {
   )
 })
 
+test('create patch file for files', async () => {
+  let git = gitWorker(cwd)
+
+  await appendFile('a.js', 'let a = {};', cwd)
+  await git.add(join(cwd, 'a.js'))
+  await removeFile(join(cwd, 'a.js'))
+  await git.diffPatch(patchPath, [join(cwd, 'a.js')])
+
+  let source = await fs.readFile(patchPath)
+
+  is(
+    source.toString(),
+    'diff --git a/a.js b/a.js\n' +
+      'deleted file mode 100644\n' +
+      'index 36b56ef..0000000\n' +
+      '--- a/a.js\n' +
+      '+++ /dev/null\n' +
+      '@@ -1 +0,0 @@\n' +
+      '-let a = {};\n' +
+      '\\ No newline at end of file\n'
+  )
+})
+
 test('checkout files', async () => {
   let git = gitWorker(cwd)
 
-  await git.checkout(['.'])
+  await appendFile('a.js', 'let a = {};', cwd)
+  await git.add('.')
+  await writeFile('a.js', 'let b = {};', cwd)
+  await git.checkout(join(cwd, 'a.js'))
 
   let files = await git.getStagedFiles()
-  equal(files, [])
+  equal(files, [{ path: 'a.js', rename: undefined, type: 1 }])
 })
 
 test('apply patch file', async () => {
   let git = gitWorker(cwd)
 
-  await git.applyPatch(patchPath, true)
+  await writeFile('README.md', '# Test\n## Test', cwd)
+  await git.diffPatch(patchPath)
+  await git.applyPatch(patchPath)
+
   is((await fs.stat(patchPath)).isFile(), true)
 })
 
@@ -105,10 +135,12 @@ test('not apply patch file', async () => {
 test('add files', async () => {
   let git = gitWorker(cwd)
 
+  await appendFile('a.js', 'let a = {};', cwd)
   await git.add(['.'])
 
   let files = await git.getStagedFiles()
-  is(files.length, 2)
+
+  equal(files, [{ path: 'a.js', rename: undefined, type: 1 }])
 })
 
 test('parse status', async () => {

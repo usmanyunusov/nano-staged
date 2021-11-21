@@ -1,49 +1,32 @@
 import { equal, is } from 'uvu/assert'
+import { join } from 'path'
 import esmock from 'esmock'
 import { test } from 'uvu'
+import os from 'os'
 
 import { fixture } from '../test/utils/index.js'
+import { loadConfig, validConfig } from './index.js'
+
+test('cwd null', async () => {
+  is(await loadConfig(join(os.homedir(), 'test')), undefined)
+})
 
 test('found package.json with config', async () => {
-  const { loadConfig } = await esmock('./index.js', {
-    '../utils/index.js': {
-      findUp: () => fixture('config/pkg-with-config'),
-    },
-  })
-
-  let config = await loadConfig()
-  equal(config, {
+  equal(await loadConfig(fixture('config/pkg-with-config')), {
     '*': 'my-tasks',
   })
 })
 
 test('found package.json without config', async () => {
-  const { loadConfig } = await esmock('./index.js', {
-    '../utils/index.js': {
-      findUp: () => fixture('config/pkg-without-config'),
-    },
-  })
-
-  let config = await loadConfig()
-  is(config, undefined)
+  is(await loadConfig(fixture('config/pkg-without-config')), undefined)
 })
 
 test('not found package.json', async () => {
-  const { loadConfig } = await esmock('./index.js', {
-    '../utils/index.js': {
-      findUp: () => undefined,
-    },
-  })
-
-  let config = await loadConfig()
-  is(config, undefined)
+  is(await loadConfig(undefined), undefined)
 })
 
 test('resolve package.json', async () => {
   const { loadConfig } = await esmock('./index.js', {
-    '../utils/index.js': {
-      findUp: () => fixture('config/pkg-with-config'),
-    },
     fs: {
       promises: {
         async readFile() {
@@ -53,22 +36,33 @@ test('resolve package.json', async () => {
     },
   })
 
-  let config = await loadConfig()
-  is(config, undefined)
+  is(await loadConfig(), undefined)
+})
+
+test('find config in parent dirs', async () => {
+  let config = await loadConfig(fixture('config/pkg-parent/pkg-child/pkg-child-child'))
+  equal(config, { '*': 'my-tasks' })
+})
+
+test('find nano-staged.json config', async () => {
+  let config = await loadConfig(fixture('config/json-config'))
+  equal(config, { '*': 'my-json-tasks' })
+})
+
+test('find .nano-staged.json config', async () => {
+  let config = await loadConfig(fixture('config/dot-json-config'))
+  equal(config, { '*': 'my-json-dot-tasks' })
 })
 
 test('config undefined', async () => {
-  const { validConfig } = await esmock('./index.js')
   is(validConfig(), false)
 })
 
 test('config empty', async () => {
-  const { validConfig } = await esmock('./index.js')
   is(validConfig({}), false)
 })
 
 test('config single cmd', async () => {
-  const { validConfig } = await esmock('./index.js')
   is(
     validConfig({
       '*': 'my-tasks',
@@ -78,7 +72,6 @@ test('config single cmd', async () => {
 })
 
 test('config array cmds', async () => {
-  const { validConfig } = await esmock('./index.js')
   is(
     validConfig({
       '*': ['my-tasks'],
@@ -88,7 +81,6 @@ test('config array cmds', async () => {
 })
 
 test('config glob empty', async () => {
-  const { validConfig } = await esmock('./index.js')
   is(
     validConfig({
       '': ['my-tasks'],
@@ -98,7 +90,6 @@ test('config glob empty', async () => {
 })
 
 test('config single cmd empty', async () => {
-  const { validConfig } = await esmock('./index.js')
   is(
     validConfig({
       '*': '',
@@ -108,7 +99,6 @@ test('config single cmd empty', async () => {
 })
 
 test('config array cmds empty', async () => {
-  const { validConfig } = await esmock('./index.js')
   is(
     validConfig({
       '*': ['', ''],
@@ -118,7 +108,6 @@ test('config array cmds empty', async () => {
 })
 
 test('config cmd not string', async () => {
-  const { validConfig } = await esmock('./index.js')
   is(
     validConfig({
       '': 1,
@@ -128,7 +117,6 @@ test('config cmd not string', async () => {
 })
 
 test('config glob and cmd empty', async () => {
-  const { validConfig } = await esmock('./index.js')
   is(
     validConfig({
       '': '',
@@ -138,7 +126,6 @@ test('config glob and cmd empty', async () => {
 })
 
 test('config one task invalid', async () => {
-  const { validConfig } = await esmock('./index.js')
   is(
     validConfig({
       '*': '',

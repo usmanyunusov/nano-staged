@@ -1,6 +1,6 @@
-import { join } from 'path'
+import { join, normalize } from 'path'
 
-import { spawn, findUp, toArray } from '../utils/index.js'
+import { spawn, toArray } from '../utils/index.js'
 
 const ADDED = 'A'.charCodeAt(0)
 const COPIED = 'C'.charCodeAt(0)
@@ -51,6 +51,7 @@ export function gitWorker(cwd = process.cwd()) {
     async applyPatch(patchPath, threeWay = false, opts = {}) {
       const args = ['apply', ...APPLY_ARGS]
 
+      /* c8 ignore next 3 */
       if (threeWay) {
         args.push('--3way')
       }
@@ -63,13 +64,20 @@ export function gitWorker(cwd = process.cwd()) {
     },
 
     async getRepoAndDotGitPaths(opts = {}) {
-      let result = {}
-      let repoPath = findUp('.git', opts.cwd || cwd)
+      try {
+        let result = await git.exec(['rev-parse', '--show-toplevel'], opts)
+        let repositoriyPath = result ? normalize(result.trimLeft().replace(/[\r\n]+$/, '')) : ''
 
-      result['repoPath'] = repoPath || null
-      result['dotGitPath'] = repoPath ? join(repoPath, '.git') : null
-
-      return result
+        return {
+          repoPath: repositoriyPath || null,
+          dotGitPath: repositoriyPath ? join(repositoriyPath, '.git') : null,
+        }
+      } catch (error) {
+        return {
+          repoPath: null,
+          dotGitPath: null,
+        }
+      }
     },
 
     async add(paths, opts = {}) {
