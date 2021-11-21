@@ -13,7 +13,7 @@
   },
   "scripts": {
     "lint": "prettier --write **/*.js",
-    "unit": "node --loader=esmock node_modules/.bin/uvu . '\\.test\\.js$'",
+    "unit": "node --loader=esmock --no-warnings node_modules/.bin/uvu . '\\.test\\.js$'",
     "test": "c8 yarn unit",
     "bench": "node benchmarks/running-time/index.js && node benchmarks/size/index.js"
   },
