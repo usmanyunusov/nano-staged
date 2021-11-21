@@ -65,6 +65,12 @@ The performance results were generated on a MBP Late 2013, 2,3 GHz Intel Core i7
    }
    ```
 
+5. Run the CLI script to update the git hooks with the commands from the config.
+
+   ```terminal
+   npx simple-git-hooks
+   ```
+
 ## Configuration
 
 <details>
