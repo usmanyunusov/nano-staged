@@ -131,7 +131,7 @@ test('run cmd error', async () => {
     await run({ cwd, stream: stdout })
   } catch (error) {
     is(
-      stdout.out,
+      stdout.out.replace(/\d+\.\d+\.\d+/, '0.1.0'),
       'Nano Staged \x1B[1mv0.1.5\x1B[22m\n' +
         '\x1B[32m-\x1B[39m Preparing pipeliner...\n' +
         '\x1B[2m  \x1B[32m»\x1B[39m Done backing up original repo state.\x1B[22m\n' +
@@ -180,7 +180,7 @@ test('run all success', async () => {
   await run({ cwd, stream: stdout })
 
   is(
-    stdout.out,
+    stdout.out.replace(/\d+\.\d+\.\d+/, '0.1.0'),
     'Nano Staged \x1B[1mv0.1.5\x1B[22m\n' +
       '\x1B[32m-\x1B[39m Preparing pipeliner...\n' +
       '\x1B[2m  \x1B[32m»\x1B[39m Done backing up original repo state.\x1B[22m\n' +
