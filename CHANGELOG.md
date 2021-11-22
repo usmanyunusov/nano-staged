@@ -2,6 +2,10 @@
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.2.1
+
+- Fixed test
+
 ## 0.2
 
 - Added external configs (`nano-staged.json`, `.nano-staged.json`)
