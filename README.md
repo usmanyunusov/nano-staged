@@ -2,7 +2,7 @@
 
 Tool to run commands only on git staged files, **speeding up the validation/formatting** processes. It is for working with **git hooks** tools like an [simple-git-hooks](https://github.com/toplenboren/simple-git-hooks) and [husky](https://github.com/typicode/husky).
 
-- 📦 **Small**: 223x+ lighter than **lint-staged**.
+- 📦 **Small**: 200x+ lighter than **lint-staged**.
 - 🥇 **Single dependency** (Picocolors).
 
 ## Benchmarks
@@ -53,7 +53,7 @@ The performance results were generated on a MBP Late 2013, 2,3 GHz Intel Core i7
    },
    ```
 
-3. Run `npx nano-staged` to run commands.
+3. Run `./node_modules/.bin/nano-staged` to run commands.
 
 4. Add the `simple-git-hooks` section to your `package.json` and fill in the `pre-commit` for the `npx nano-staged`.
 
@@ -74,7 +74,7 @@ The performance results were generated on a MBP Late 2013, 2,3 GHz Intel Core i7
 ## Configuration
 
 <details>
-   <summary><b><code>.package.json</code> example</b></summary>
+   <summary><b><code>package.json</code> example</b></summary>
    <br/>
 
 ```json
@@ -83,6 +83,19 @@ The performance results were generated on a MBP Late 2013, 2,3 GHz Intel Core i7
     "*": "your-cmd",
     "*.ext": ["your-cmd", "your-cmd"]
   }
+}
+```
+
+</details>
+
+<details>
+   <summary><b><code>nano-staged.json</code> and <code>.nano-staged.json</code> example</b></summary>
+   <br/>
+
+```json
+{
+  "*": "your-cmd",
+  "*.ext": ["your-cmd", "your-cmd"]
 }
 ```
 
