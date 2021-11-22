@@ -10,8 +10,6 @@ import { gitWorker } from '../git/index.js'
 import run from './index.js'
 
 let cwd = resolve(homedir(), 'nano-staged-' + nanoid())
-
-console.log(cwd)
 let stdout = createStdout()
 
 async function execGit(args) {
@@ -55,6 +53,19 @@ test('create config in package.json', async () => {
     stdout.out.replace(/\d+\.\d+\.\d+/, '0.1.0'),
     'Nano Staged \x1B[1mv0.1.0\x1B[22m\n' +
       '\x1B[36m-\x1B[39m Create Nano Staged config in package.json\n'
+  )
+})
+
+test('config file not found', async () => {
+  await initGitRepo()
+  await run({ cwd, stream: stdout, configPath: cwd })
+
+  is(
+    stdout.out.replace(/\d+\.\d+\.\d+/, '0.1.0'),
+    'Nano Staged \x1B[1mv0.1.0\x1B[22m\n' +
+      '\x1B[36m-\x1B[39m Nano Staged config file \x1B[33m' +
+      cwd +
+      '\x1B[39m is not found\n'
   )
 })
 

@@ -1,11 +1,17 @@
-import syncFs, { promises as fs } from 'fs'
+import fs from 'fs'
 import { resolve } from 'path'
 
 const NODE_PACKAGE_JSON = 'package.json'
 const CONFIG_NAME = 'nano-staged'
 const PLACES = [`.${CONFIG_NAME}.json`, `${CONFIG_NAME}.json`, NODE_PACKAGE_JSON]
 
-export async function loadConfig(cwd = process.cwd()) {
+export function readConfig(filepath) {
+  if (fs.existsSync(filepath) && fs.lstatSync(filepath).isFile()) {
+    return JSON.parse(fs.readFileSync(filepath, 'utf-8'))
+  }
+}
+
+export function loadConfig(cwd = process.cwd()) {
   try {
     let config
     let dir = resolve(cwd)
@@ -16,12 +22,11 @@ export async function loadConfig(cwd = process.cwd()) {
       for (let place of PLACES) {
         let path = resolve(cwd, place)
 
-        if (!config && syncFs.existsSync(path)) {
-          if (place === 'package.json') {
-            let pkg = JSON.parse(await fs.readFile(path, 'utf8'))
-            config = pkg[CONFIG_NAME]
+        if (!config && fs.existsSync(path)) {
+          if (place === NODE_PACKAGE_JSON) {
+            config = readConfig(path)[CONFIG_NAME]
           } else {
-            config = JSON.parse(await fs.readFile(path, 'utf8'))
+            config = readConfig(path)
           }
 
           return config

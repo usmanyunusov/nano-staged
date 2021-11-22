@@ -1,13 +1,18 @@
+import { resolve } from 'path'
 import pico from 'picocolors'
 
-import { loadConfig, validConfig } from '../config/index.js'
+import { loadConfig, readConfig, validConfig } from '../config/index.js'
 import { createReporter } from '../create-reporter/index.js'
 import { prepareFiles } from '../prepare-files/index.js'
 import { pipeliner } from '../pipeliner/index.js'
 import { showVersion } from '../utils/index.js'
 import { gitWorker } from '../git/index.js'
 
-export default async function run({ cwd = process.cwd(), stream = process.stderr } = {}) {
+export default async function run({
+  configPath,
+  cwd = process.cwd(),
+  stream = process.stderr,
+} = {}) {
   let { log, info } = createReporter({ stream })
 
   try {
@@ -21,9 +26,14 @@ export default async function run({ cwd = process.cwd(), stream = process.stderr
       return
     }
 
-    let config = await loadConfig(cwd)
+    let config = configPath ? readConfig(resolve(configPath)) : loadConfig(cwd)
     if (!config) {
-      info(`Create Nano Staged config in package.json`)
+      if (configPath) {
+        info(`Nano Staged config file ${pico.yellow(configPath)} is not found`)
+      } else {
+        info(`Create Nano Staged config in package.json`)
+      }
+
       return
     }
 

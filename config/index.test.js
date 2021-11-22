@@ -8,21 +8,21 @@ import { fixture } from '../test/utils/index.js'
 import { loadConfig, validConfig } from './index.js'
 
 test('cwd null', async () => {
-  is(await loadConfig(join(os.homedir(), 'test')), undefined)
+  is(loadConfig(join(os.homedir(), 'test')), undefined)
 })
 
 test('found package.json with config', async () => {
-  equal(await loadConfig(fixture('config/pkg-with-config')), {
+  equal(loadConfig(fixture('config/pkg-with-config')), {
     '*': 'my-tasks',
   })
 })
 
 test('found package.json without config', async () => {
-  is(await loadConfig(fixture('config/pkg-without-config')), undefined)
+  is(loadConfig(fixture('config/pkg-without-config')), undefined)
 })
 
 test('not found package.json', async () => {
-  is(await loadConfig(undefined), undefined)
+  is(loadConfig(undefined), undefined)
 })
 
 test('resolve package.json', async () => {
@@ -36,21 +36,21 @@ test('resolve package.json', async () => {
     },
   })
 
-  is(await loadConfig(), undefined)
+  is(loadConfig(), undefined)
 })
 
 test('find config in parent dirs', async () => {
-  let config = await loadConfig(fixture('config/pkg-parent/pkg-child/pkg-child-child'))
+  let config = loadConfig(fixture('config/pkg-parent/pkg-child/pkg-child-child'))
   equal(config, { '*': 'my-tasks' })
 })
 
 test('find nano-staged.json config', async () => {
-  let config = await loadConfig(fixture('config/json-config'))
+  let config = loadConfig(fixture('config/json-config'))
   equal(config, { '*': 'my-json-tasks' })
 })
 
 test('find .nano-staged.json config', async () => {
-  let config = await loadConfig(fixture('config/dot-json-config'))
+  let config = loadConfig(fixture('config/dot-json-config'))
   equal(config, { '*': 'my-json-dot-tasks' })
 })
 
