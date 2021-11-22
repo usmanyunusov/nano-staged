@@ -1,6 +1,6 @@
 import { resolve, join } from 'path'
 import { is } from 'uvu/assert'
-import { tmpdir } from 'os'
+import { homedir } from 'os'
 import { test } from 'uvu'
 
 import { writeFile, makeDir, appendFile, removeFile, createStdout } from '../test/utils/index.js'
@@ -8,7 +8,7 @@ import { prepareFiles } from '../prepare-files/index.js'
 import { gitWorker } from '../git/index.js'
 import { pipeliner } from './index.js'
 
-let cwd = join(tmpdir(), 'nano-staged-' + Math.random())
+let cwd = join(homedir(), 'nano-staged-' + Math.random())
 let stdout = createStdout()
 
 async function execGit(args) {

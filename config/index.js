@@ -1,24 +1,35 @@
-import { promises as fs } from 'fs'
+import syncFs, { promises as fs } from 'fs'
 import { resolve } from 'path'
-
-import { findUp } from '../utils/index.js'
 
 const NODE_PACKAGE_JSON = 'package.json'
 const CONFIG_NAME = 'nano-staged'
+const PLACES = [`.${CONFIG_NAME}.json`, `${CONFIG_NAME}.json`, NODE_PACKAGE_JSON]
 
 export async function loadConfig(cwd = process.cwd()) {
   try {
-    let rootPath = findUp(NODE_PACKAGE_JSON, cwd)
+    let config
+    let dir = resolve(cwd)
 
-    if (!rootPath) {
-      return undefined
-    }
+    do {
+      cwd = dir
 
-    let pkgPath = resolve(rootPath, NODE_PACKAGE_JSON)
-    let pkgJson = JSON.parse(await fs.readFile(pkgPath, 'utf8'))
-    let config = pkgJson[CONFIG_NAME]
+      for (let place of PLACES) {
+        let path = resolve(cwd, place)
 
-    return config
+        if (!config && syncFs.existsSync(path)) {
+          if (place === 'package.json') {
+            let pkg = JSON.parse(await fs.readFile(path, 'utf8'))
+            config = pkg[CONFIG_NAME]
+          } else {
+            config = JSON.parse(await fs.readFile(path, 'utf8'))
+          }
+
+          return config
+        }
+      }
+
+      dir = resolve(cwd, '../')
+    } while (dir !== cwd)
   } catch (error) {
     return undefined
   }

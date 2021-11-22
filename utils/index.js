@@ -1,6 +1,6 @@
 import { spawn as baseSpawn } from 'child_process'
-import { resolve, join, delimiter } from 'path'
-import { existsSync, readFileSync } from 'fs'
+import { join, delimiter } from 'path'
+import { readFileSync } from 'fs'
 import { fileURLToPath } from 'url'
 import pico from 'picocolors'
 
@@ -8,17 +8,6 @@ const REG_STR = /([^\s'"]([^\s'"]*(['"])([^\3]*?)\3)+[^\s'"]*)|[^\s'"]+|(['"])([
 
 export function toArray(val) {
   return Array.isArray(val) ? val : [val]
-}
-
-export function findUp(name, cwd = process.cwd()) {
-  let dir = resolve(cwd)
-
-  do {
-    cwd = dir
-    const foundPath = resolve(cwd, name)
-    if (existsSync(foundPath)) return cwd
-    dir = resolve(cwd, '../')
-  } while (dir !== cwd)
 }
 
 export function showVersion(print) {
