@@ -100,3 +100,7 @@ The performance results were generated on a MBP Late 2013, 2,3 GHz Intel Core i7
 ```
 
 </details>
+
+## Thanks
+
+Special thanks to [lint-staged](https://github.com/okonet/lint-staged). Some codes was borrowed from it.
