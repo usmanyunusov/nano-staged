@@ -2,6 +2,10 @@
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.3
+
+- Added config load from file 
+
 ## 0.2.1
 
 - Fixed test
