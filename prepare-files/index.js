@@ -1,7 +1,7 @@
 import { normalize, relative, resolve, isAbsolute } from 'path'
 
 import { CHANGED_CODE, DELETED_CODE } from '../git/index.js'
-import { glob } from '../glob/index.js'
+import { globToRegex } from '../glob-to-regex/index.js'
 
 export function prepareFiles({
   repoPath = '',
@@ -15,7 +15,7 @@ export function prepareFiles({
   let taskedFiles = []
 
   for (let pattern of Object.keys(config)) {
-    let matches = glob(pattern, { filepath: true, extended: true })
+    let matches = globToRegex(pattern, { extended: true, globstar: pattern.includes('/') })
 
     for (let { path, type, rename } of entries) {
       path = normalize(relative(cwd, normalize(resolve(repoPath, rename || path))))
