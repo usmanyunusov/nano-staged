@@ -23,13 +23,15 @@ const GLOBSTAR = `((?:[^/]*(?:/|$))*)`
 const WILDCARD = `([^/]*)`
 
 export function globToRegex(glob, opts = {}) {
-  let { extended = false, globstar = false } = opts
+  let { extended = false, globstar = false, flags = '' } = opts
+
   let inRange = false
   let inGroup = false
-  let code, next
   let stack = []
   let regex = ''
   let pos = 0
+
+  let code, next
 
   while (pos < glob.length) {
     code = glob.charCodeAt(pos)
@@ -227,7 +229,6 @@ export function globToRegex(glob, opts = {}) {
         }
         let nextChar = glob[pos + 1]
 
-        /* c8 ignore next 14 */
         if (!globstar) {
           regex += `.*`
         } else {
@@ -255,5 +256,9 @@ export function globToRegex(glob, opts = {}) {
     pos++
   }
 
-  return { regex: new RegExp(`^${regex}$`) }
+  if (!flags.includes('g')) {
+    regex = `^${regex}$`
+  }
+
+  return { regex: new RegExp(regex, flags) }
 }

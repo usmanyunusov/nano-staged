@@ -13,7 +13,7 @@ The space in node_modules including sub-dependencies:
 $ node benchmarks/size/index.js
 Data from packagephobia.com
 - lint-staged   6792 kB
-+ nano-staged     32 kB
++ nano-staged     33 kB
 ```
 
 Benchmarks running time for 1 file:
@@ -42,7 +42,11 @@ The performance results were generated on a MBP Late 2013, 2,3 GHz Intel Core i7
    npm install --save-dev nano-staged
    ```
 
-2. Add the `nano-staged` section to your `package.json`. Fill it with glob pattern and the corresponding commands.
+   ```terminal
+   yarn add --dev nano-staged
+   ```
+
+2. Add the `nano-staged` section to your `package.json`. Fill it with [glob pattern](#cheatsheet-to-filtering-files) and the corresponding commands:
 
    For example:
 
@@ -53,9 +57,13 @@ The performance results were generated on a MBP Late 2013, 2,3 GHz Intel Core i7
    },
    ```
 
-3. Run `./node_modules/.bin/nano-staged` to run commands.
+3. Now, run commands with Nano Staged:
 
-4. Add the `simple-git-hooks` section to your `package.json` and fill in the `pre-commit` for the `npx nano-staged`.
+   ```terminal
+   ./node_modules/.bin/nano-staged
+   ```
+
+4. Add the `simple-git-hooks` section to your `package.json` and fill in the `pre-commit` to have `Nano Staged` run before each git commit:
 
    For example:
 
@@ -65,7 +73,7 @@ The performance results were generated on a MBP Late 2013, 2,3 GHz Intel Core i7
    }
    ```
 
-5. Run the CLI script to update the git hooks with the commands from the config.
+   Run the CLI script to update the git hooks with the commands from the config
 
    ```terminal
    npx simple-git-hooks
@@ -74,7 +82,7 @@ The performance results were generated on a MBP Late 2013, 2,3 GHz Intel Core i7
 ## Configuration
 
 <details>
-   <summary><b><code>package.json</code> example</b></summary>
+   <summary><b><code>package.json</code></b> example</summary>
    <br/>
 
 ```json
@@ -89,7 +97,7 @@ The performance results were generated on a MBP Late 2013, 2,3 GHz Intel Core i7
 </details>
 
 <details>
-   <summary><b><code>nano-staged.json</code> and <code>.nano-staged.json</code> example</b></summary>
+   <summary><b><code>nano-staged.json</code></b> and <b><code>.nano-staged.json</code></b> example</summary>
    <br/>
 
 ```json
@@ -100,6 +108,20 @@ The performance results were generated on a MBP Late 2013, 2,3 GHz Intel Core i7
 ```
 
 </details>
+
+## Cheatsheet to filtering files
+
+| **paths**           | **\*** | **\*\*/\*** | **\*.css** | **\*\*/\*.css** | **\*\*/\*.{css,js}** | **\*\*/!(\*test).js** | **src/\*\*/\*.js** |
+| ------------------- | ------ | ----------- | ---------- | --------------- | -------------------- | --------------------- | ------------------ |
+| `style.css`         | ✅     | ✅          | ✅         | ✅              | ✅                   | ❌                    | ❌                 |
+| `src/style.css`     | ✅     | ✅          | ✅         | ✅              | ✅                   | ❌                    | ❌                 |
+| `src/css/style.css` | ✅     | ✅          | ✅         | ✅              | ✅                   | ❌                    | ❌                 |
+| `src/css/style.css` | ✅     | ✅          | ✅         | ✅              | ✅                   | ❌                    | ❌                 |
+| `src/index.js`      | ✅     | ✅          | ❌         | ❌              | ✅                   | ❌                    | ✅                 |
+| `src/js/index.js`   | ✅     | ✅          | ❌         | ❌              | ✅                   | ❌                    | ✅                 |
+| `index.js`          | ✅     | ✅          | ❌         | ❌              | ✅                   | ❌                    | ❌                 |
+| `test/b.test.js`    | ✅     | ✅          | ❌         | ❌              | ✅                   | ✅                    | ❌                 |
+| `test/a.test.js`    | ✅     | ✅          | ❌         | ❌              | ✅                   | ✅                    | ❌                 |
 
 ## Thanks
 
