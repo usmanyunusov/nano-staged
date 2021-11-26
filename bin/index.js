@@ -7,14 +7,15 @@ process.on('SIGINT', () => {})
 
 function run() {
   let options = {}
-  let arg = process.argv[2]
 
-  if (arg === '-c' || arg === '--config') {
-    options.configPath = process.argv[3]
-  }
+  for (let i = 2; i < process.argv.length; i++) {
+    let arg = process.argv[i]
 
-  if (arg === '--not-staged') {
-    options.notStaged = true
+    if (arg === '-c' || arg === '--config') {
+      options.configPath = process.argv[i + 1]
+    } else if (arg === '--not-staged') {
+      options.notStaged = true
+    }
   }
 
   return runner(options)
