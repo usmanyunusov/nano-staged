@@ -10,6 +10,7 @@ import { gitWorker } from '../git/index.js'
 
 export default async function run({
   configPath,
+  notStaged = false,
   cwd = process.cwd(),
   stream = process.stderr,
 } = {}) {
@@ -43,7 +44,9 @@ export default async function run({
       return
     }
 
-    let entries = await git.getStagedFiles({ cwd: repoPath })
+    let entries = notStaged
+      ? await git.getNotStagedFiles({ cwd: repoPath })
+      : await git.getStagedFiles({ cwd: repoPath })
     if (!entries.length) {
       info(`Git staging area is empty.`)
       return
@@ -55,7 +58,7 @@ export default async function run({
       return
     }
 
-    await pipeliner({ repoPath, files, dotGitPath, stream, config }).run()
+    await pipeliner({ repoPath, files, dotGitPath, stream, config, notStaged }).run()
   } catch (err) {
     if (err.tasks) {
       log('\n' + err.tasks)

@@ -11,7 +11,7 @@ export function prepareFiles({
 } = {}) {
   let deletedFiles = []
   let changedFiles = []
-  let stagedFiles = []
+  let workingFiles = []
   let taskedFiles = []
 
   for (let pattern of Object.keys(config)) {
@@ -27,7 +27,7 @@ export function prepareFiles({
       if (matches.regex.test(path)) {
         path = resolve(cwd, path)
 
-        if (!stagedFiles.includes(path)) {
+        if (!workingFiles.includes(path)) {
           if (type === CHANGED_CODE) {
             changedFiles.push(path)
           }
@@ -36,7 +36,7 @@ export function prepareFiles({
             deletedFiles.push(path)
           }
 
-          stagedFiles.push(path)
+          workingFiles.push(path)
         }
 
         taskedFiles.push([pattern, path])
@@ -44,5 +44,5 @@ export function prepareFiles({
     }
   }
 
-  return { stagedFiles, deletedFiles, changedFiles, taskedFiles }
+  return { workingFiles, deletedFiles, changedFiles, taskedFiles }
 }

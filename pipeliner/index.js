@@ -12,6 +12,7 @@ const PARTIAL_PATCH = 'nano-staged_partial.patch'
 export function pipeliner({
   stream = process.stderr,
   repoPath = process.cwd(),
+  notStaged = false,
   dotGitPath = '',
   config = {},
   files = {},
@@ -22,7 +23,7 @@ export function pipeliner({
   let git = gitWorker(repoPath)
   let fs = fileSystem()
 
-  let { changedFiles = [], deletedFiles = [], stagedFiles = [], taskedFiles = [] } = files
+  let { changedFiles = [], deletedFiles = [], workingFiles = [], taskedFiles = [] } = files
   let { log, step } = createReporter({ stream })
 
   return {
@@ -42,7 +43,7 @@ export function pipeliner({
     },
 
     async backupUnstagedFiles() {
-      if (changedFiles.length || deletedFiles.length) {
+      if (!notStaged && (changedFiles.length || deletedFiles.length)) {
         step('Backing up unstaged changes for staged files.')
 
         try {
@@ -123,7 +124,7 @@ export function pipeliner({
         throw err
       }
 
-      await this.applyModifications()
+      notStaged ? await this.cleanUp() : await this.applyModifications()
     },
 
     async applyModifications() {
@@ -137,7 +138,7 @@ export function pipeliner({
           throw err
         }
 
-        await git.add(stagedFiles)
+        await git.add(workingFiles)
         log(pico.dim(`  ${pico.green('»')} Done adding up all task modifications to index.`))
       } catch (err) {
         /* c8 ignore next 4 */
@@ -198,7 +199,7 @@ export function pipeliner({
       try {
         await fs.delete(originalPatch)
 
-        if (changedFiles.length || deletedFiles.length) {
+        if (!notStaged && (changedFiles.length || deletedFiles.length)) {
           await fs.delete(partialPatch)
         }
 

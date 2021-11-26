@@ -13,6 +13,10 @@ function run() {
     options.configPath = process.argv[3]
   }
 
+  if (arg === '--not-staged') {
+    options.notStaged = true
+  }
+
   return runner(options)
 }
 
