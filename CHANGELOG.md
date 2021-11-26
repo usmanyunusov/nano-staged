@@ -2,6 +2,12 @@
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.3.1
+
+- Fix glob parse
+- Added globstar to glob parse
+- Updated docs
+
 ## 0.3
 
 - Added config load from file 
