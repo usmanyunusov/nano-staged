@@ -12,7 +12,7 @@ const PARTIAL_PATCH = 'nano-staged_partial.patch'
 export function pipeliner({
   stream = process.stderr,
   repoPath = process.cwd(),
-  notStaged = false,
+  unstaged = false,
   dotGitPath = '',
   config = {},
   files = {},
@@ -39,11 +39,11 @@ export function pipeliner({
         throw err
       }
 
-      await this.backupUnstagedFiles()
+      unstaged ? await this.runTasks() : await this.backupUnstagedFiles()
     },
 
     async backupUnstagedFiles() {
-      if (!notStaged && (changedFiles.length || deletedFiles.length)) {
+      if (changedFiles.length || deletedFiles.length) {
         step('Backing up unstaged changes for staged files.')
 
         try {
@@ -95,7 +95,7 @@ export function pipeliner({
             log(
               `  ${pico.bold(
                 pico.yellow(pattern.padEnd(output.size))
-              )} no staged files matching the pattern were found.`
+              )} no files matching the pattern were found.`
             )
             notMatchingPatterns.push(pattern)
           }
@@ -124,7 +124,7 @@ export function pipeliner({
         throw err
       }
 
-      notStaged ? await this.cleanUp() : await this.applyModifications()
+      unstaged ? await this.cleanUp() : await this.applyModifications()
     },
 
     async applyModifications() {
@@ -178,8 +178,8 @@ export function pipeliner({
       try {
         await git.checkout('.')
 
-        let hasPatch = await fs.read(originalPatch)
-        if (hasPatch.toString()) {
+        let originalPatchBuffer = await fs.read(originalPatch)
+        if (originalPatchBuffer.toString()) {
           await git.apply(originalPatch)
         }
 
@@ -199,7 +199,7 @@ export function pipeliner({
       try {
         await fs.delete(originalPatch)
 
-        if (!notStaged && (changedFiles.length || deletedFiles.length)) {
+        if (!unstaged && (changedFiles.length || deletedFiles.length)) {
           await fs.delete(partialPatch)
         }
 

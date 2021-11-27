@@ -10,7 +10,7 @@ import { gitWorker } from '../git/index.js'
 
 export default async function run({
   configPath,
-  notStaged = false,
+  unstaged = false,
   cwd = process.cwd(),
   stream = process.stderr,
 } = {}) {
@@ -44,7 +44,7 @@ export default async function run({
       return
     }
 
-    let entries = notStaged
+    let entries = unstaged
       ? await git.unstagedFiles({ cwd: repoPath })
       : await git.stagedFiles({ cwd: repoPath })
     if (!entries.length) {
@@ -54,11 +54,11 @@ export default async function run({
 
     let files = prepareFiles({ entries, config, repoPath, cwd })
     if (!files.taskedFiles.length) {
-      info(`No staged files match any configured task.`)
+      info(`No files match any configured task.`)
       return
     }
 
-    await pipeliner({ repoPath, files, dotGitPath, stream, config, notStaged }).run()
+    await pipeliner({ repoPath, files, dotGitPath, stream, config, unstaged }).run()
   } catch (err) {
     if (err.tasks) {
       log('\n' + err.tasks)

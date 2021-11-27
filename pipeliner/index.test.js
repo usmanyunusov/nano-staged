@@ -212,7 +212,7 @@ test('pipeliner run with skiped', async () => {
     '\x1B[32m-\x1B[39m Preparing pipeliner...\n' +
       '\x1B[2m  \x1B[32m»\x1B[39m Done backing up original repo state.\x1B[22m\n' +
       '\x1B[32m-\x1B[39m Running tasks...\n' +
-      '  \x1B[1m\x1B[33m*.ts\x1B[39m\x1B[22m no staged files matching the pattern were found.\n' +
+      '  \x1B[1m\x1B[33m*.ts\x1B[39m\x1B[22m no files matching the pattern were found.\n' +
       '\x1B[32m-\x1B[39m Applying modifications...\n' +
       '\x1B[2m  \x1B[32m»\x1B[39m Done adding up all task modifications to index.\x1B[22m\n' +
       '\x1B[32m-\x1B[39m Removing patch files...\n' +

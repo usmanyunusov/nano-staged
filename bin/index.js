@@ -14,7 +14,7 @@ function run() {
     if (arg === '-c' || arg === '--config') {
       options.configPath = process.argv[++i]
     } else if (arg === '--unstaged') {
-      options.notStaged = true
+      options.unstaged = true
     }
   }
 
