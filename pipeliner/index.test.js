@@ -42,7 +42,7 @@ test('pipeliner run without unstaged files', async () => {
   await appendFile('index.js', 'var test = {};', cwd)
   await execGit(['add', 'index.js'])
 
-  let entries = await git.getStagedFiles()
+  let entries = await git.stagedFiles()
   let config = { '*.js': 'prettier --write' }
   let files = prepareFiles({ entries, config, repoPath: cwd, cwd })
 
@@ -77,7 +77,7 @@ test('pipeliner run with deleted files', async () => {
   await execGit(['add', 'index.js'])
   await removeFile(resolve(cwd, 'index.js'))
 
-  let entries = await git.getStagedFiles()
+  let entries = await git.stagedFiles()
   let config = { '*.js': 'prettier --write' }
   let files = prepareFiles({ entries, config, repoPath: cwd, cwd })
 
@@ -115,7 +115,7 @@ test('pipeliner run restor original state', async () => {
   await appendFile('index.js', 'var test = {};', cwd)
   await execGit(['add', 'index.js'])
 
-  let entries = await git.getStagedFiles()
+  let entries = await git.stagedFiles()
   let config = { '*.js': 'prettier --write' }
   let files = prepareFiles({ entries, config, repoPath: cwd, cwd })
 
@@ -154,7 +154,7 @@ test('pipeliner run with changed files', async () => {
   await execGit(['add', 'index.js'])
   await writeFile('index.js', 'var a = { };', cwd)
 
-  let entries = await git.getStagedFiles()
+  let entries = await git.stagedFiles()
   let config = { '*.js': 'prettier --write' }
   let files = prepareFiles({ entries, config, repoPath: cwd, cwd })
 
@@ -193,7 +193,7 @@ test('pipeliner run with skiped', async () => {
   await execGit(['add', 'index.js'])
   await writeFile('index.js', 'var a = { };', cwd)
 
-  let entries = await git.getStagedFiles()
+  let entries = await git.stagedFiles()
   let config = { '*.ts': 'prettier --write' }
   let files = prepareFiles({ entries, config, repoPath: cwd, cwd })
 
@@ -228,7 +228,7 @@ test('pipeliner run with skiped', async () => {
   await execGit(['add', 'index.js'])
   await writeFile('index.js', 'var a = { };', cwd)
 
-  let entries = await git.getStagedFiles()
+  let entries = await git.stagedFiles()
   let config = { '*.js': ['pretstier --write', 'prettier --write'] }
   let files = prepareFiles({ entries, config, repoPath: cwd, cwd })
 

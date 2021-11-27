@@ -45,8 +45,8 @@ export default async function run({
     }
 
     let entries = notStaged
-      ? await git.getNotStagedFiles({ cwd: repoPath })
-      : await git.getStagedFiles({ cwd: repoPath })
+      ? await git.unstagedFiles({ cwd: repoPath })
+      : await git.stagedFiles({ cwd: repoPath })
     if (!entries.length) {
       info(`Git staging area is empty.`)
       return

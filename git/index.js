@@ -38,8 +38,8 @@ export function gitWorker(cwd = process.cwd()) {
       }
     },
 
-    async diffPatch(patchPath, files = [], opts = {}) {
-      const args = ['diff', ...DIFF_ARGS, '--output', patchPath]
+    async diff(fileName, files = [], opts = {}) {
+      const args = ['diff', ...DIFF_ARGS, '--output', fileName]
 
       if (files.length) {
         args.push('--')
@@ -49,16 +49,16 @@ export function gitWorker(cwd = process.cwd()) {
       await git.exec(args, opts)
     },
 
-    async applyPatch(patchPath, threeWay = false, opts = {}) {
+    async apply(patch, allowConflicts = false, opts = {}) {
       const args = ['apply', ...APPLY_ARGS]
 
       /* c8 ignore next 3 */
-      if (threeWay) {
-        args.push('--3way')
+      if (allowConflicts) {
+        args.push('-3')
       }
 
-      if (patchPath) {
-        args.push(patchPath)
+      if (patch) {
+        args.push(patch)
       }
 
       await git.exec(args, opts)
@@ -99,7 +99,7 @@ export function gitWorker(cwd = process.cwd()) {
       }
     },
 
-    async getStatus(opts = {}) {
+    async status(opts = {}) {
       const env = { GIT_OPTIONAL_LOCKS: '0' }
       const args = ['status', '-z', '-u']
       const result = []
@@ -155,8 +155,8 @@ export function gitWorker(cwd = process.cwd()) {
       }
     },
 
-    async getStagedFiles(opts = {}) {
-      let entries = await git.getStatus(opts)
+    async stagedFiles(opts = {}) {
+      let entries = await git.status(opts)
       let result = []
 
       for (let entry of entries) {
@@ -178,8 +178,9 @@ export function gitWorker(cwd = process.cwd()) {
       return result
     },
 
-    async getNotStagedFiles(opts = {}) {
-      let entries = await git.getStatus(opts)
+    /* c8 ignore next 20 */
+    async unstagedFiles(opts = {}) {
+      let entries = await git.status(opts)
       let result = []
 
       for (let entry of entries) {

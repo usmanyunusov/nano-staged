@@ -31,7 +31,7 @@ export function pipeliner({
       step('Preparing pipeliner')
 
       try {
-        await git.diffPatch(originalPatch)
+        await git.diff(originalPatch)
         log(pico.dim(`  ${pico.green('»')} Done backing up original repo state.`))
       } catch (err) {
         /* c8 ignore next 3 */
@@ -47,7 +47,7 @@ export function pipeliner({
         step('Backing up unstaged changes for staged files.')
 
         try {
-          await git.diffPatch(partialPatch, [...changedFiles, ...deletedFiles])
+          await git.diff(partialPatch, [...changedFiles, ...deletedFiles])
           await git.checkout([...changedFiles, ...deletedFiles])
 
           log(pico.dim(`  ${pico.green('»')} Done backing up unstaged changes.`))
@@ -155,12 +155,12 @@ export function pipeliner({
         step('Restoring unstaged changes for staged files.')
 
         try {
-          await git.applyPatch(partialPatch)
+          await git.apply(partialPatch)
           log(pico.dim(`  ${pico.green('»')} Done restoring up unstaged changes.`))
         } catch (err) {
           /* c8 ignore next 8 */
           try {
-            await git.applyPatch(partialPatch, true)
+            await git.apply(partialPatch, true)
           } catch (error) {
             log(pico.dim(`  ${pico.red('»')} Merge conflict!!! Unstaged changes not restored.`))
             await this.restoreOriginalState()
@@ -180,7 +180,7 @@ export function pipeliner({
 
         let hasPatch = await fs.read(originalPatch)
         if (hasPatch.toString()) {
-          await git.applyPatch(originalPatch)
+          await git.apply(originalPatch)
         }
 
         log(pico.dim(`  ${pico.green('»')} Done restoring up to its original state.`))

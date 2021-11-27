@@ -62,7 +62,7 @@ test('create patch file', async () => {
   let git = gitWorker(cwd)
 
   await writeFile('README.md', '# Test\n## Test', cwd)
-  await git.diffPatch(patchPath)
+  await git.diff(patchPath)
 
   let source = await fs.readFile(patchPath)
   is(
@@ -83,7 +83,7 @@ test('create patch file for files', async () => {
   await appendFile('a.js', 'let a = {};', cwd)
   await git.add(join(cwd, 'a.js'))
   await removeFile(join(cwd, 'a.js'))
-  await git.diffPatch(patchPath, [join(cwd, 'a.js')])
+  await git.diff(patchPath, [join(cwd, 'a.js')])
 
   let source = await fs.readFile(patchPath)
 
@@ -108,16 +108,16 @@ test('checkout files', async () => {
   await writeFile('a.js', 'let b = {};', cwd)
   await git.checkout(join(cwd, 'a.js'))
 
-  let files = await git.getStagedFiles()
-  equal(files, [{ path: 'a.js', rename: undefined, type: 1 }])
+  let files = await git.stagedFiles()
+  equal(files, [{ x: 65, y: 32, path: 'a.js', rename: undefined, type: 1 }])
 })
 
 test('apply patch file', async () => {
   let git = gitWorker(cwd)
 
   await writeFile('README.md', '# Test\n## Test', cwd)
-  await git.diffPatch(patchPath)
-  await git.applyPatch(patchPath)
+  await git.diff(patchPath)
+  await git.apply(patchPath)
 
   is((await fs.stat(patchPath)).isFile(), true)
 })
@@ -126,7 +126,7 @@ test('not apply patch file', async () => {
   let git = gitWorker(cwd)
 
   try {
-    await git.applyPatch('test.patch')
+    await git.apply('test.patch')
   } catch (error) {
     is(error, "error: can't open patch 'test.patch': No such file or directory\n")
   }
@@ -138,9 +138,9 @@ test('add files', async () => {
   await appendFile('a.js', 'let a = {};', cwd)
   await git.add(['.'])
 
-  let files = await git.getStagedFiles()
+  let files = await git.stagedFiles()
 
-  equal(files, [{ path: 'a.js', rename: undefined, type: 1 }])
+  equal(files, [{ x: 65, y: 32, path: 'a.js', rename: undefined, type: 1 }])
 })
 
 test('parse status', async () => {
@@ -151,12 +151,12 @@ test('parse status', async () => {
 
   git.exec = async () => status
 
-  equal(await git.getStagedFiles(), [
-    { path: 'mod.js', rename: undefined, type: 2 },
-    { path: 'test/add.js', rename: undefined, type: 2 },
-    { path: 'origin.js', rename: 'rename.js', type: 2 },
-    { path: 'test/base.js', rename: 'test/copy.js', type: 2 },
-    { path: 'remove.js', rename: undefined, type: 4 },
+  equal(await git.stagedFiles(), [
+    { x: 77, y: 77, path: 'mod.js', rename: undefined, type: 2 },
+    { x: 65, y: 77, path: 'test/add.js', rename: undefined, type: 2 },
+    { x: 82, y: 77, path: 'origin.js', rename: 'rename.js', type: 2 },
+    { x: 67, y: 77, path: 'test/base.js', rename: 'test/copy.js', type: 2 },
+    { x: 77, y: 68, path: 'remove.js', rename: undefined, type: 4 },
   ])
 })
 
@@ -164,28 +164,28 @@ test('parse status empty', async () => {
   let git = gitWorker(cwd)
 
   git.exec = async () => ''
-  equal(await git.getStagedFiles(), [])
+  equal(await git.stagedFiles(), [])
 })
 
 test('parse fail status', async () => {
   let git = gitWorker(cwd)
 
   git.exec = async () => ' '
-  equal(await git.getStagedFiles(), [])
+  equal(await git.stagedFiles(), [])
 
   git.exec = async () => 'M   rename.js'
-  equal(await git.getStagedFiles(), [])
+  equal(await git.stagedFiles(), [])
 
   git.exec = async () => 'RM  rename.js'
-  equal(await git.getStagedFiles(), [])
+  equal(await git.stagedFiles(), [])
 
   git.exec = async () => '     '
-  equal(await git.getStagedFiles(), [])
+  equal(await git.stagedFiles(), [])
 
   git.exec = async () => {
     throw new Error('fatal: not a git repository (or any of the parent directories): .git')
   }
-  equal(await git.getStagedFiles(), [])
+  equal(await git.stagedFiles(), [])
 })
 
 test.run()
