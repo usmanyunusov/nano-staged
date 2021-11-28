@@ -32,6 +32,12 @@ export async function spawn(program, args, options = {}) {
       opts.env.PATH + delimiter + join(fileURLToPath(import.meta.url), '../../../.bin')
   }
 
+  /* c8 ignore next 4 */
+  if (process.platform === 'win32') {
+    args = ['/c', cmd].concat(args)
+    program = process.env.comspec
+  }
+
   let child = baseSpawn(program, args, opts)
   let output = ''
 
