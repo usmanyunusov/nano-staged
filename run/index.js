@@ -16,10 +16,10 @@ export default async function run({
 } = {}) {
   let { log, info } = createReporter({ stream })
 
+  showVersion(log)
+
   try {
     let git = gitWorker(cwd)
-
-    showVersion(log)
 
     let { repoPath, dotGitPath } = await git.getRepoAndDotGitPaths()
     if (!repoPath) {

@@ -11,7 +11,7 @@ function run() {
   for (let i = 2; i < process.argv.length; i++) {
     let arg = process.argv[i]
 
-    if (arg === '-c' || arg === '--config') {
+    if (arg === '--config') {
       options.configPath = process.argv[++i]
     } else if (arg === '--unstaged') {
       options.unstaged = true
