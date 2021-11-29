@@ -162,7 +162,11 @@ export async function exec(program, args, options = {}) {
       opts.env.PATH + delimiter + join(fileURLToPath(import.meta.url), '../../../.bin')
   }
 
-  let child = spawn(program, args, opts)
+  let child = spawn(
+    getSpawnFileName(program),
+    getSpawnArgs(program, args, opts),
+    getSpawnOptions(opts, program)
+  )
   let output = ''
 
   if (child.stdout) {
