@@ -18,6 +18,7 @@
     "bench": "node benchmarks/running-time/index.js && node benchmarks/size/index.js"
   },
   "dependencies": {
+    "cross-spawn": "^7.0.3",
     "picocolors": "^1.0.0"
   },
   "devDependencies": {
