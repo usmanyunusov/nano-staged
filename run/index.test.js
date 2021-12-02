@@ -154,7 +154,7 @@ test('run cmd error', async () => {
         '\x1B[2m  \x1B[32m»\x1B[39m Done removing up patch files.\x1B[22m\n' +
         '\n' +
         '\x1B[31mpsrettier --write:\n' +
-        '\x1B[39mError: spawn psrettier ENOENT\n'
+        '\x1B[39mpsrettier does not exist\n'
     )
   }
 })

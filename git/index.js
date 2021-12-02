@@ -1,6 +1,7 @@
 import { join, normalize } from 'path'
 
-import { spawn, toArray } from '../utils/index.js'
+import { spawner } from '../spawner/index.js'
+import { toArray } from '../utils/index.js'
 
 const ADDED = 'A'.charCodeAt(0)
 const COPIED = 'C'.charCodeAt(0)
@@ -28,7 +29,7 @@ export function gitWorker(cwd = process.cwd()) {
   let git = {
     async exec(args = [], opts = {}) {
       try {
-        return await spawn('git', args, {
+        return await spawner('git', args, {
           ...opts,
           cwd: opts.cwd || cwd,
         })
