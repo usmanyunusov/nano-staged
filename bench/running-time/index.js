@@ -5,7 +5,7 @@ import { promisify } from 'util'
 import { nanoid } from 'nanoid'
 import fs from 'fs-extra'
 
-import { gitWorker } from '../../git/index.js'
+import { gitWorker } from '../../lib/git.js'
 
 let spawn = promisify(execFile)
 let currentDir = dirname(fileURLToPath(import.meta.url))

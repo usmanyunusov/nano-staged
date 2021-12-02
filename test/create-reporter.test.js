@@ -1,8 +1,8 @@
 import { is } from 'uvu/assert'
 import { test } from 'uvu'
 
-import { createStdout } from '../test/utils/index.js'
-import { createReporter } from './index.js'
+import { createStdout } from './utils/index.js'
+import { createReporter } from '../lib/create-reporter.js'
 
 test('should reported log correctly', () => {
   let stdout = createStdout()

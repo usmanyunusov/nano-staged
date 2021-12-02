@@ -1,14 +1,13 @@
 import { equal, is } from 'uvu/assert'
+import { homedir } from 'os'
 import { join } from 'path'
-import esmock from 'esmock'
 import { test } from 'uvu'
-import os from 'os'
 
-import { fixture } from '../test/utils/index.js'
-import { loadConfig, validConfig } from './index.js'
+import { fixture } from './utils/index.js'
+import { loadConfig, validConfig } from '../lib/config.js'
 
 test('cwd null', async () => {
-  is(loadConfig(join(os.homedir(), 'test')), undefined)
+  is(loadConfig(join(homedir(), 'test')), undefined)
 })
 
 test('found package.json with config', async () => {
@@ -26,17 +25,7 @@ test('not found package.json', async () => {
 })
 
 test('resolve package.json', async () => {
-  const { loadConfig } = await esmock('./index.js', {
-    fs: {
-      promises: {
-        async readFile() {
-          return Promise.reject()
-        },
-      },
-    },
-  })
-
-  is(loadConfig(), undefined)
+  is(loadConfig(null), undefined)
 })
 
 test('find config in parent dirs', async () => {

@@ -36,15 +36,22 @@ jobs:
         env:
           FORCE_COLOR: 2
   short:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         node-version:
-          - 16
-          - 14
           - 12
-    name: Node.js ${{ matrix.node-version }} Quick
+          - 14
+          - 16
+          - 17
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
+    name: Node.js v${{ matrix.node-version }} on ${{ matrix.os }}
     steps:
+      - if: matrix.os == 'windows-latest'
+        run: git config --global core.autocrlf true
       - name: Checkout the repository
         uses: actions/checkout@v2
       - name: Install Node.js ${{ matrix.node-version }}
@@ -53,7 +60,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: yarn
       - name: Install dependencies
-        run: yarn install --frozen-lockfile --ignore-engines
+        run: yarn install --frozen-lockfile
       - name: Run unit tests
         run: yarn unit
         env:

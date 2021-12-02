@@ -2,7 +2,7 @@ yarn-error.log
 yarn.lock
 
 coverage/
-benchmarks/
+bench/
 test/
 
 **/*.test.*

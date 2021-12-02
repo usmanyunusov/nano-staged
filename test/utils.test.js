@@ -1,8 +1,8 @@
 import { equal, is } from 'uvu/assert'
 import { test } from 'uvu'
 
-import { toArray, showVersion, stringArgvToArray } from './index.js'
-import { createStdout } from '../test/utils/index.js'
+import { toArray, showVersion, stringArgvToArray } from '../lib/utils.js'
+import { createStdout } from './utils/index.js'
 
 test('single to array', () => {
   equal(toArray('path'), ['path'])

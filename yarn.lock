@@ -196,13 +196,6 @@ escalade@^3.1.1:
   resolved "https://registry.yarnpkg.com/escalade/-/escalade-3.1.1.tgz#d8cfdc7000965c5a0174b4a82eaa5c0552742e40"
   integrity sha512-k0er2gUkLf8O0zKJiAhmkTnJlTvINGv7ygDNPbeIsX/TJjGJZHuh9B2UxbsaEkmlEo9MfhrSzmhIlhRlI2GXnw==
 
-esmock@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/esmock/-/esmock-1.0.1.tgz#a5ed90f0b8c8e10615fcb78404893bec2728d5c4"
-  integrity sha512-HtB8YtDQbiDVG/zKSMlBQUk/jc6TIiq/PUgXWjO89SM9DdQK3YbKFABFC9S58mQIJ8i6TeyIXbHsF8RApfFgSw==
-  dependencies:
-    resolvewithplus "^0.2.0"
-
 fast-glob@^3.2.7:
   version "3.2.7"
   resolved "https://registry.yarnpkg.com/fast-glob/-/fast-glob-3.2.7.tgz#fd6cb7a2d7e9aa7a7846111e85a196d6b2f766a1"
@@ -529,11 +522,6 @@ require-directory@^2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/require-directory/-/require-directory-2.1.1.tgz#8c64ad5fd30dab1c976e2344ffe7f792a6a6df42"
   integrity sha1-jGStX9MNqxyXbiNE/+f3kqam30I=
-
-resolvewithplus@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/resolvewithplus/-/resolvewithplus-0.2.0.tgz#5a0777dd3cca5a1a46e021c66abcc3d8f115c69b"
-  integrity sha512-TST6Ttys5b2PFeq3rVaazuQuoErtUYmKnf2wbCImmaRqBakPrFeIcz2vevomf+H14VB5hipCZItUAY1DZSP6ig==
 
 reusify@^1.0.4:
   version "1.0.4"

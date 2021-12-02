@@ -10,7 +10,7 @@ Tool to run commands only on git staged files, **speeding up the validation/form
 The space in node_modules including sub-dependencies:
 
 ```diff
-$ node benchmarks/size/index.js
+$ node bench/size/index.js
 Data from packagephobia.com
 - lint-staged   6792 kB
 + nano-staged     33 kB
@@ -19,7 +19,7 @@ Data from packagephobia.com
 Benchmarks running time for 1 file:
 
 ```diff
-$ node benchmarks/running-time/index.js
+$ node bench/running-time/index.js
 - lint-staged 1.279 ms
 + nano-staged 0.849 ms
 ```
@@ -27,12 +27,12 @@ $ node benchmarks/running-time/index.js
 Benchmarks running time for 3 files:
 
 ```diff
-$ node benchmarks/running-time/index.js
+$ node bench/running-time/index.js
 - lint-staged 1.901 ms
 + nano-staged 1.470 ms
 ```
 
-The performance results were generated on a MBP Late 2013, 2,3 GHz Intel Core i7 by running `npm run benchmark` in the library folder. See [benchmarks/running-time/index.js](https://github.com/usmanyunusov/nano-staged/blob/master/benchmarks/running-time/index.js)
+The performance results were generated on a MBP Late 2013, 2,3 GHz Intel Core i7 by running `npm run bench` in the library folder. See [bench/running-time/index.js](https://github.com/usmanyunusov/nano-staged/blob/master/bench/running-time/index.js)
 
 ## Usage
 

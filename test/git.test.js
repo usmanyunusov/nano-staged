@@ -3,8 +3,8 @@ import { join } from 'path'
 import { test } from 'uvu'
 import fs from 'fs-extra'
 
-import { writeFile, makeDir, appendFile, fixture, removeFile } from '../test/utils/index.js'
-import { gitWorker } from './index.js'
+import { writeFile, makeDir, appendFile, fixture, removeFile } from './utils/index.js'
+import { gitWorker } from '../lib/git.js'
 
 let cwd = fixture('git/nano-staged-git')
 let patchPath = join(cwd, 'nano-staged.patch')
@@ -55,7 +55,7 @@ test('resolve git dir', async () => {
   let { repoPath, dotGitPath } = await git.getRepoAndDotGitPaths()
 
   is(repoPath, 'test')
-  is(dotGitPath, 'test/.git')
+  is(dotGitPath, process.platform === 'win32' ? 'test\\.git' : 'test/.git')
 })
 
 test('create patch file', async () => {

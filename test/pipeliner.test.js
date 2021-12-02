@@ -4,10 +4,10 @@ import { nanoid } from 'nanoid'
 import { homedir } from 'os'
 import { test } from 'uvu'
 
-import { writeFile, makeDir, appendFile, removeFile, createStdout } from '../test/utils/index.js'
-import { prepareFiles } from '../prepare-files/index.js'
-import { gitWorker } from '../git/index.js'
-import { pipeliner } from './index.js'
+import { writeFile, makeDir, appendFile, removeFile, createStdout } from './utils/index.js'
+import { prepareFiles } from '../lib/prepare-files.js'
+import { gitWorker } from '../lib/git.js'
+import { pipeliner } from '../lib/pipeliner.js'
 
 let cwd = join(homedir(), 'nano-staged-' + nanoid())
 let stdout = createStdout()
@@ -43,7 +43,7 @@ test('pipeliner run without unstaged files', async () => {
   await execGit(['add', 'index.js'])
 
   let entries = await git.getStagedFiles()
-  let config = { '*.js': 'prettier --write' }
+  let config = { '*.js': 'echo success' }
   let files = prepareFiles({ entries, config, repoPath: cwd, cwd })
 
   let pl = pipeliner({
@@ -61,7 +61,7 @@ test('pipeliner run without unstaged files', async () => {
     '\x1B[32m-\x1B[39m Preparing pipeliner...\n' +
       '\x1B[2m  \x1B[32m»\x1B[39m Done backing up original repo state.\x1B[22m\n' +
       '\x1B[32m-\x1B[39m Running tasks...\n' +
-      '  \x1B[1m\x1B[32m*.js\x1B[39m\x1B[22m prettier --write\n' +
+      '  \x1B[1m\x1B[32m*.js\x1B[39m\x1B[22m echo success\n' +
       '\x1B[32m-\x1B[39m Applying modifications...\n' +
       '\x1B[2m  \x1B[32m»\x1B[39m Done adding up all task modifications to index.\x1B[22m\n' +
       '\x1B[32m-\x1B[39m Removing patch files...\n' +
@@ -78,7 +78,7 @@ test('pipeliner run with deleted files', async () => {
   await removeFile(resolve(cwd, 'index.js'))
 
   let entries = await git.getStagedFiles()
-  let config = { '*.js': 'prettier --write' }
+  let config = { '*.js': 'echo success' }
   let files = prepareFiles({ entries, config, repoPath: cwd, cwd })
 
   let pl = pipeliner({
@@ -98,7 +98,7 @@ test('pipeliner run with deleted files', async () => {
       '\x1B[32m-\x1B[39m Backing up unstaged changes for staged files....\n' +
       '\x1B[2m  \x1B[32m»\x1B[39m Done backing up unstaged changes.\x1B[22m\n' +
       '\x1B[32m-\x1B[39m Running tasks...\n' +
-      '  \x1B[1m\x1B[32m*.js\x1B[39m\x1B[22m prettier --write\n' +
+      '  \x1B[1m\x1B[32m*.js\x1B[39m\x1B[22m echo success\n' +
       '\x1B[32m-\x1B[39m Applying modifications...\n' +
       '\x1B[2m  \x1B[32m»\x1B[39m Done adding up all task modifications to index.\x1B[22m\n' +
       '\x1B[32m-\x1B[39m Restoring unstaged changes for staged files....\n' +
@@ -155,7 +155,7 @@ test('pipeliner run with changed files', async () => {
   await writeFile('index.js', 'var a = { };', cwd)
 
   let entries = await git.getStagedFiles()
-  let config = { '*.js': 'prettier --write' }
+  let config = { '*.js': 'echo success' }
   let files = prepareFiles({ entries, config, repoPath: cwd, cwd })
 
   let pl = pipeliner({
@@ -175,7 +175,7 @@ test('pipeliner run with changed files', async () => {
       '\x1B[32m-\x1B[39m Backing up unstaged changes for staged files....\n' +
       '\x1B[2m  \x1B[32m»\x1B[39m Done backing up unstaged changes.\x1B[22m\n' +
       '\x1B[32m-\x1B[39m Running tasks...\n' +
-      '  \x1B[1m\x1B[32m*.js\x1B[39m\x1B[22m prettier --write\n' +
+      '  \x1B[1m\x1B[32m*.js\x1B[39m\x1B[22m echo success\n' +
       '\x1B[32m-\x1B[39m Applying modifications...\n' +
       '\x1B[2m  \x1B[32m»\x1B[39m Done adding up all task modifications to index.\x1B[22m\n' +
       '\x1B[32m-\x1B[39m Restoring unstaged changes for staged files....\n' +
@@ -194,7 +194,7 @@ test('pipeliner run with skiped', async () => {
   await writeFile('index.js', 'var a = { };', cwd)
 
   let entries = await git.getStagedFiles()
-  let config = { '*.ts': 'prettier --write' }
+  let config = { '*.ts': 'echo success' }
   let files = prepareFiles({ entries, config, repoPath: cwd, cwd })
 
   let pl = pipeliner({
@@ -229,7 +229,7 @@ test('pipeliner run with skiped', async () => {
   await writeFile('index.js', 'var a = { };', cwd)
 
   let entries = await git.getStagedFiles()
-  let config = { '*.js': ['pretstier --write', 'prettier --write'] }
+  let config = { '*.js': ['eccho success', 'echo success 2'] }
   let files = prepareFiles({ entries, config, repoPath: cwd, cwd })
 
   let pl = pipeliner({
@@ -250,8 +250,8 @@ test('pipeliner run with skiped', async () => {
         '\x1B[32m-\x1B[39m Backing up unstaged changes for staged files....\n' +
         '\x1B[2m  \x1B[32m»\x1B[39m Done backing up unstaged changes.\x1B[22m\n' +
         '\x1B[32m-\x1B[39m Running tasks...\n' +
-        '  \x1B[1m\x1B[31m*.js\x1B[39m\x1B[22m pretstier --write\n' +
-        '  \x1B[1m\x1B[90m*.js\x1B[39m\x1B[22m prettier --write\n' +
+        '  \x1B[1m\x1B[31m*.js\x1B[39m\x1B[22m eccho success\n' +
+        '  \x1B[1m\x1B[90m*.js\x1B[39m\x1B[22m echo success 2\n' +
         '\x1B[32m-\x1B[39m Restoring to its original state...\n' +
         '\x1B[2m  \x1B[32m»\x1B[39m Done restoring up to its original state.\x1B[22m\n' +
         '\x1B[32m-\x1B[39m Removing patch files...\n' +
