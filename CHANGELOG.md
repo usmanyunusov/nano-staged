@@ -2,6 +2,10 @@
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.4
+
+- Support windows platform
+
 ## 0.3.1
 
 - Fix glob parse
