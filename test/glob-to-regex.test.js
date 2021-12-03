@@ -1,7 +1,7 @@
 import { is } from 'uvu/assert'
 import { test } from 'uvu'
 
-import { globToRegex } from './index.js'
+import { globToRegex } from '../lib/glob-to-regex.js'
 
 function match(glob, path, opts = {}) {
   let regex = globToRegex(glob, opts)

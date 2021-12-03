@@ -4,15 +4,15 @@ import { nanoid } from 'nanoid'
 import { homedir } from 'os'
 import { test } from 'uvu'
 
-import { prepareFiles } from './index.js'
-import { CHANGED_CODE, DELETED_CODE, STAGED_CODE } from '../git/index.js'
+import { prepareFiles } from '../lib/prepare-files.js'
+import { CHANGED_CODE, DELETED_CODE, STAGED_CODE } from '../lib/git.js'
 
 let cwd = join(homedir(), 'nano-staged-' + nanoid())
 
 let config = {
   '*.{css,js}': ['prettier --write'],
   '*.md': ['prettier --write'],
-  '../*.txt': ['prettier --write'],
+  '../*.ts': ['prettier --write'],
 }
 let entries = [
   { path: 'main/src/a.js', type: STAGED_CODE, rename: undefined },
@@ -21,7 +21,7 @@ let entries = [
   { path: 'd.md', type: CHANGED_CODE, rename: undefined },
   { path: 'e.css', type: DELETED_CODE, rename: undefined },
   { path: 'f.ts', type: STAGED_CODE, rename: undefined },
-  { path: '../j.txt', type: STAGED_CODE, rename: undefined },
+  { path: '../j.ts', type: STAGED_CODE, rename: undefined },
   { path: 'a/b/c/j.js', type: STAGED_CODE, rename: undefined },
 ]
 
@@ -45,7 +45,7 @@ test(`shoulds prepare correctly files`, () => {
       ['*.{css,js}', resolve(cwd, 'e.css')],
       ['*.{css,js}', resolve(cwd, 'a/b/c/j.js')],
       ['*.md', resolve(cwd, 'd.md')],
-      ['../*.txt', resolve(cwd, '../j.txt')],
+      ['../*.ts', resolve(cwd, '../j.ts')],
     ],
     stagedFiles: resolvePaths([
       'main/src/a.js',
@@ -54,7 +54,7 @@ test(`shoulds prepare correctly files`, () => {
       'e.css',
       'a/b/c/j.js',
       'd.md',
-      '../j.txt',
+      '../j.ts',
     ]),
     deletedFiles: resolvePaths(['e.css']),
     changedFiles: resolvePaths(['b.js', 'd.md']),

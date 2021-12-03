@@ -2,12 +2,11 @@ import { is } from 'uvu/assert'
 import { nanoid } from 'nanoid'
 import { resolve } from 'path'
 import { homedir } from 'os'
-import esmock from 'esmock'
 import { test } from 'uvu'
 
-import { makeDir, appendFile, removeFile, createStdout } from '../test/utils/index.js'
-import { gitWorker } from '../git/index.js'
-import run from './index.js'
+import { makeDir, appendFile, removeFile, createStdout } from './utils/index.js'
+import { gitWorker } from '../lib/git.js'
+import run from '../lib/run.js'
 
 let cwd = resolve(homedir(), 'nano-staged-' + nanoid())
 let stdout = createStdout()
@@ -133,7 +132,7 @@ test('run cmd error', async () => {
     await appendFile(
       'nano-staged.json',
       `{
-        "*.js": "psrettier --write"
+        "*.js": "eccho success"
       }`,
       cwd
     )
@@ -147,33 +146,15 @@ test('run cmd error', async () => {
         '\x1B[32m-\x1B[39m Preparing pipeliner...\n' +
         '\x1B[2m  \x1B[32m»\x1B[39m Done backing up original repo state.\x1B[22m\n' +
         '\x1B[32m-\x1B[39m Running tasks...\n' +
-        '  \x1B[1m\x1B[31m*.js\x1B[39m\x1B[22m psrettier --write\n' +
+        '  \x1B[1m\x1B[31m*.js\x1B[39m\x1B[22m eccho success\n' +
         '\x1B[32m-\x1B[39m Restoring to its original state...\n' +
         '\x1B[2m  \x1B[32m»\x1B[39m Done restoring up to its original state.\x1B[22m\n' +
         '\x1B[32m-\x1B[39m Removing patch files...\n' +
         '\x1B[2m  \x1B[32m»\x1B[39m Done removing up patch files.\x1B[22m\n' +
         '\n' +
-        '\x1B[31mpsrettier --write:\n' +
-        '\x1B[39mError: spawn psrettier ENOENT\n'
+        '\x1B[31meccho success:\n' +
+        '\x1B[39meccho does not exist\n'
     )
-  }
-})
-
-test('run git error', async () => {
-  const run = await esmock('./index.js', {
-    '../git/index.js': {
-      gitWorker: () => ({
-        async getRepoAndDotGitPaths() {
-          return Promise.reject('Git error')
-        },
-      }),
-    },
-  })
-
-  try {
-    await run({ cwd, stream: stdout })
-  } catch (error) {
-    is(error, 'Git error')
   }
 })
 
@@ -182,12 +163,13 @@ test('run all success', async () => {
   await appendFile(
     'nano-staged.json',
     `{
-        "*.js": "prettier --write"
+        "*.js": "echo success"
      }`,
     cwd
   )
   await appendFile('index.js', 'var test = {};', cwd)
   await execGit(['add', '--', 'index.js'])
+
   await run({ cwd, stream: stdout })
 
   is(
@@ -196,7 +178,7 @@ test('run all success', async () => {
       '\x1B[32m-\x1B[39m Preparing pipeliner...\n' +
       '\x1B[2m  \x1B[32m»\x1B[39m Done backing up original repo state.\x1B[22m\n' +
       '\x1B[32m-\x1B[39m Running tasks...\n' +
-      '  \x1B[1m\x1B[32m*.js\x1B[39m\x1B[22m prettier --write\n' +
+      '  \x1B[1m\x1B[32m*.js\x1B[39m\x1B[22m echo success\n' +
       '\x1B[32m-\x1B[39m Applying modifications...\n' +
       '\x1B[2m  \x1B[32m»\x1B[39m Done adding up all task modifications to index.\x1B[22m\n' +
       '\x1B[32m-\x1B[39m Removing patch files...\n' +
