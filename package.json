@@ -13,7 +13,7 @@
   },
   "scripts": {
     "lint": "prettier --write lib/**/*.js",
-    "unit": "uvu test \"\\.test\\.js$\"",
+    "unit": "node --loader=esmock --no-warnings ./node_modules/uvu/bin.js test \"\\.test\\.js$\"",
     "test": "c8 yarn unit",
     "bench": "node bench/running-time/index.js && node bench/size/index.js"
   },
@@ -23,6 +23,7 @@
   "devDependencies": {
     "c8": "^7.10.0",
     "clean-publish": "^3.4.3",
+    "esmock": "^1.6.2",
     "fs-extra": "^10.0.0",
     "nanoid": "^3.1.30",
     "prettier": "^2.4.1",
