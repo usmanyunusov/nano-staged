@@ -2,7 +2,7 @@
 
 Tool to run commands only on git staged files, **speeding up the validation/formatting** processes. It is for working with **git hooks** tools like an [simple-git-hooks](https://github.com/toplenboren/simple-git-hooks) and [husky](https://github.com/typicode/husky).
 
-- 📦 **Small**: 200x+ lighter than **lint-staged**.
+- 📦 **Small**: 174x+ lighter than **lint-staged**.
 - 🥇 **Single dependency** ([`picocolors`](https://github.com/alexeyraspopov/picocolors)).
 
 ## Benchmarks
@@ -13,7 +13,7 @@ The space in node_modules including sub-dependencies:
 $ node bench/size/index.js
 Data from packagephobia.com
 - lint-staged   6792 kB
-+ nano-staged     33 kB
++ nano-staged     39 kB
 ```
 
 Benchmarks running time for 1 file:
