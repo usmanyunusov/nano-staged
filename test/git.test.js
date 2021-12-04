@@ -126,7 +126,7 @@ test('not apply patch file', async () => {
   let git = gitWorker(cwd)
 
   try {
-    await git.applyPatch('test.patch')
+    await git.applyPatch('test.patch', true)
   } catch (error) {
     is(error, "error: can't open patch 'test.patch': No such file or directory\n")
   }

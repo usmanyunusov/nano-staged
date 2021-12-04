@@ -1,46 +1,95 @@
 import { equal, is } from 'uvu/assert'
-import { join } from 'path'
+import esmock from 'esmock'
 import { test } from 'uvu'
 
-import { fileSystem } from '../lib/file-system.js'
-import { fixture } from './utils/index.js'
+async function fsMock() {
+  let { fileSystem } = await esmock('../lib/file-system.js', {
+    fs: {
+      promises: {
+        async unlink(path = null) {
+          return Promise[path ? 'resolve' : 'reject'](path)
+        },
 
-let cwd = fixture('simple')
+        async readFile(path = null) {
+          return Promise[path ? 'resolve' : 'reject'](path)
+        },
 
-test('to file', async () => {
-  let fs = fileSystem()
+        async writeFile(path = null, content = null) {
+          return Promise[path ? 'resolve' : 'reject']({ path, content })
+        },
+      },
+    },
+  })
 
-  await fs.write(join(cwd, 'a.js'), 'let a = {};')
-  is((await fs.read(join(cwd, 'a.js'))).toString(), 'let a = {};')
-  is(await fs.read(join(cwd, 'c.js')), null)
-  await fs.delete(join(cwd, 'a.js'))
+  return fileSystem()
+}
+
+test('delete file', async () => {
+  let fs = await fsMock()
+  let path = 'a.js'
+  let result = await fs.delete(path)
+
+  is(result, path)
 })
 
-test('to file list', async () => {
-  let fs = fileSystem()
+test('delete file list', async () => {
+  let fs = await fsMock()
+  let paths = ['a.js', 'b.js']
+  let result = await fs.delete(paths)
 
-  await fs.write([
-    {
-      path: join(cwd, 'a.js'),
-      content: 'let a = {};',
-    },
-    {
-      path: join(cwd, 'b.js'),
-      content: 'let b = {};',
-    },
+  equal(result, paths)
+})
+
+test('read file', async () => {
+  let fs = await fsMock()
+  let path = 'a.js'
+  let result = await fs.read(path)
+
+  equal(result, path)
+})
+
+test('not read file', async () => {
+  let fs = await fsMock()
+  let result = await fs.read()
+
+  equal(result, null)
+})
+
+test('read file list', async () => {
+  let fs = await fsMock()
+  let result = await fs.read(['a.js', 'b.js'])
+
+  equal(result, [
+    { path: 'a.js', content: 'a.js' },
+    { path: 'b.js', content: 'b.js' },
   ])
+})
 
-  equal(
-    (await fs.read([join(cwd, 'a.js'), join(cwd, 'c.js')])).map(({ content }) =>
-      content.toString()
-    ),
-    ['let a = {};']
-  )
-  equal(
-    (await fs.read([join(cwd, 'a.js'), join(cwd, 'c.js')])).map(({ path }) => path),
-    [join(cwd, 'a.js')]
-  )
-  await fs.delete([join(cwd, 'a.js'), join(cwd, 'b.js')])
+test('not read file list', async () => {
+  let fs = await fsMock()
+  let result = await fs.read([null, null])
+
+  equal(result, [])
+})
+
+test('write file', async () => {
+  let fs = await fsMock()
+  let files = [
+    { path: 'a.js', content: 'a.js' },
+    { path: 'b.js', content: 'b.js' },
+  ]
+  let result = await fs.write(files)
+
+  equal(result, files)
+})
+
+test('write file list', async () => {
+  let fs = await fsMock()
+  let path = 'a.js'
+  let content = 'a.js'
+  let result = await fs.write(path, content)
+
+  equal(result, { path, content })
 })
 
 test.run()

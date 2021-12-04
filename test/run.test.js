@@ -2,6 +2,7 @@ import { is } from 'uvu/assert'
 import { nanoid } from 'nanoid'
 import { resolve } from 'path'
 import { homedir } from 'os'
+import esmock from 'esmock'
 import { test } from 'uvu'
 
 import { makeDir, appendFile, removeFile, createStdout } from './utils/index.js'
@@ -155,6 +156,24 @@ test('run cmd error', async () => {
         '\x1B[31meccho success:\n' +
         '\x1B[39meccho does not exist\n'
     )
+  }
+})
+
+test('run git error', async () => {
+  const run = await esmock('../lib/run.js', {
+    '../lib/git.js': {
+      gitWorker: () => ({
+        async getRepoAndDotGitPaths() {
+          return Promise.reject('Git error')
+        },
+      }),
+    },
+  })
+
+  try {
+    await run({ cwd, stream: stdout })
+  } catch (error) {
+    is(error, 'Git error')
   }
 })
 
