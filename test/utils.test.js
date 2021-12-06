@@ -11,8 +11,8 @@ test.before.each(() => {
   Object.defineProperty(process, 'platform', {
     value: 'linux',
   })
-
   process.env = {}
+  process.argv = []
   tty.isatty = () => true
 })
 
@@ -141,6 +141,30 @@ test('prefer level 2/xterm over COLORTERM', () => {
 test('return level 1 when `TERM` is set to dumb when `FORCE_COLOR` is set', (t) => {
   process.env = { FORCE_COLOR: '1', TERM: 'dumb' }
   is(getForceColorLevel(), 1)
+})
+
+test('--no-color', (t) => {
+  process.env = { TERM: 'xterm-256color' }
+  process.argv = ['--no-colors']
+  is(getForceColorLevel(), 0)
+})
+
+test('--no-colors', (t) => {
+  process.env = { TERM: 'xterm-256color' }
+  process.argv = ['--no-colors']
+  is(getForceColorLevel(), 0)
+})
+
+test('-color=false', (t) => {
+  process.env = { TERM: 'xterm-256color' }
+  process.argv = ['--color=false']
+  is(getForceColorLevel(), 0)
+})
+
+test('--color=never', (t) => {
+  process.env = { TERM: 'xterm-256color' }
+  process.argv = ['--color=never']
+  is(getForceColorLevel(), 0)
 })
 
 test.run()
