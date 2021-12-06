@@ -124,15 +124,15 @@ c8@^7.10.0:
     yargs-parser "^20.2.7"
 
 clean-publish@^3.4.3:
-  version "3.4.3"
-  resolved "https://registry.yarnpkg.com/clean-publish/-/clean-publish-3.4.3.tgz#1b12ac1d26549098bf49d0c17fdc9e86824d66be"
-  integrity sha512-PXq2JrWYqsovKjaO7NqOi47vMHV/6VbkP8fxPK4e3RBsoghAJXemwCiBCqhymgIIxD67G0VfRnkCJCa78+zqDw==
+  version "3.4.4"
+  resolved "https://registry.yarnpkg.com/clean-publish/-/clean-publish-3.4.4.tgz#d5ffa3a4bffb76594b14706675efea7d78f42e46"
+  integrity sha512-eCWBBLbaOBqLtxQrjBDSI1tSmx6tKckV2H0C9/je0eQg2QOGGnjE1XKc01V8M3vKe7bJuCut5hF/yUwLGLZoVA==
   dependencies:
     cross-spawn "^7.0.3"
     fast-glob "^3.2.7"
     fs-extra "^10.0.0"
     hosted-git-info "^4.0.2"
-    lilconfig "^2.0.3"
+    lilconfig "^2.0.4"
 
 cliui@^7.0.2:
   version "7.0.4"
@@ -197,9 +197,9 @@ escalade@^3.1.1:
   integrity sha512-k0er2gUkLf8O0zKJiAhmkTnJlTvINGv7ygDNPbeIsX/TJjGJZHuh9B2UxbsaEkmlEo9MfhrSzmhIlhRlI2GXnw==
 
 esmock@^1.6.2:
-  version "1.6.2"
-  resolved "https://registry.yarnpkg.com/esmock/-/esmock-1.6.2.tgz#d1f4635347b274fac3719e9d53aa88b3addd3ccf"
-  integrity sha512-bv9j3Xvq/z7mg5lbMuG0MeKrVGPAmL/hNetmMasOX5eSwAW92PYrx/+lnpFxpq7uk00RdDdqHuU6BbfYfbVBlQ==
+  version "1.6.5"
+  resolved "https://registry.yarnpkg.com/esmock/-/esmock-1.6.5.tgz#6034a18f2240051a537768214f197007bba95407"
+  integrity sha512-BGR5PYntlKOdYV6rUKUD5rG3OGqtncJxVILo6NF2Rf5NPRwifv0ro62qp4zI3XrJ4TuZSJdqalRhyaMVJ4Dg3w==
   dependencies:
     resolvewithplus "^0.4.2"
 
@@ -364,9 +364,9 @@ istanbul-lib-report@^3.0.0:
     supports-color "^7.1.0"
 
 istanbul-reports@^3.0.2:
-  version "3.0.5"
-  resolved "https://registry.yarnpkg.com/istanbul-reports/-/istanbul-reports-3.0.5.tgz#a2580107e71279ea6d661ddede929ffc6d693384"
-  integrity sha512-5+19PlhnGabNWB7kOFnuxT8H3T/iIyQzIbQMxXsURmmvKg86P2sbkrGOT77VnHw0Qr0gc2XzRaRfMZYYbSQCJQ==
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/istanbul-reports/-/istanbul-reports-3.1.1.tgz#7085857f17d2441053c6ce5c3b8fdf6882289397"
+  integrity sha512-q1kvhAXWSsXfMjCdNHNPKZZv94OlspKnoGv+R9RGbnqOOQ0VbNfLFgQDVgi7hHenKsndGq3/o0OBdzDXthWcNw==
   dependencies:
     html-escaper "^2.0.0"
     istanbul-lib-report "^3.0.0"
@@ -390,10 +390,10 @@ kleur@^4.0.3:
   resolved "https://registry.yarnpkg.com/kleur/-/kleur-4.1.4.tgz#8c202987d7e577766d039a8cd461934c01cda04d"
   integrity sha512-8QADVssbrFjivHWQU7KkMgptGTl6WAcSdlbBPY4uNF+mWr6DGcKrvY2w4FQJoXch7+fKMjj0dRrL75vk3k23OA==
 
-lilconfig@^2.0.3:
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/lilconfig/-/lilconfig-2.0.3.tgz#68f3005e921dafbd2a2afb48379986aa6d2579fd"
-  integrity sha512-EHKqr/+ZvdKCifpNrJCKxBTgk5XupZA3y/aCPY9mxfgBzmgh93Mt/WqjjQ38oMxXuvDokaKiM3lAgvSH2sjtHg==
+lilconfig@^2.0.4:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/lilconfig/-/lilconfig-2.0.4.tgz#f4507d043d7058b380b6a8f5cb7bcd4b34cee082"
+  integrity sha512-bfTIN7lEsiooCocSISTWXkiWJkRqtL9wYtYy+8EK3Y41qh3mpwPU0ycTOgjdY9ErwXCc8QyrQp82bdL0Xkm9yA==
 
 locate-path@^6.0.0:
   version "6.0.0"
@@ -516,9 +516,9 @@ picomatch@^2.2.3:
   integrity sha512-lY1Q/PiJGC2zOv/z391WOTD+Z02bCgsFfvxoXXf6h7kv9o+WmsmzYqrAwY63sNgOxE4xEdq0WyUnXfKeBrSvYw==
 
 prettier@^2.4.1:
-  version "2.4.1"
-  resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.4.1.tgz#671e11c89c14a4cfc876ce564106c4a6726c9f5c"
-  integrity sha512-9fbDAXSBcc6Bs1mZrDYb3XKzDLm4EXXL9sC1LqKP5rZkT6KRr/rf9amVUcODVXgguK/isJz0d0hP72WeaKWsvA==
+  version "2.5.1"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.5.1.tgz#fff75fa9d519c54cf0fce328c1017d94546bc56a"
+  integrity sha512-vBZcPRUR5MZJwoyi3ZoyQlc1rXeEck8KgeC9AwwOn+exuxLxq5toTRDTSaVrXHxelDMHy9zlicw8u66yxoSUFg==
 
 queue-microtask@^1.2.2:
   version "1.2.3"
@@ -584,9 +584,9 @@ shebang-regex@^3.0.0:
   integrity sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==
 
 signal-exit@^3.0.2:
-  version "3.0.5"
-  resolved "https://registry.yarnpkg.com/signal-exit/-/signal-exit-3.0.5.tgz#9e3e8cc0c75a99472b44321033a7702e7738252f"
-  integrity sha512-KWcOiKeQj6ZyXx7zq4YxSMgHRlod4czeBQZrPb8OKcohcqAXShm7E20kEMle9WBt26hFcAf0qLOcp5zmY7kOqQ==
+  version "3.0.6"
+  resolved "https://registry.yarnpkg.com/signal-exit/-/signal-exit-3.0.6.tgz#24e630c4b0f03fea446a2bd299e62b4a6ca8d0af"
+  integrity sha512-sDl4qMFpijcGw22U5w63KmD3cZJfBuFlVNbVMKje2keoKML7X2UzWbc4XrmEbDwg0NXJc3yv4/ox7b+JWb57kQ==
 
 sinon@^12.0.1:
   version "12.0.1"
