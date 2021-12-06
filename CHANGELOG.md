@@ -2,6 +2,10 @@
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.4.4
+
+- Added support no-color flags
+
 ## 0.4.3
 
 - Added run task output status
