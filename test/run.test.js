@@ -147,7 +147,7 @@ test('run cmd error', async () => {
         '\x1B[32m-\x1B[39m Preparing pipeliner...\n' +
         '\x1B[2m  \x1B[32m»\x1B[39m Done backing up original repo state.\x1B[22m\n' +
         '\x1B[32m-\x1B[39m Running tasks...\n' +
-        '  \x1B[1m\x1B[31m*.js\x1B[39m\x1B[22m eccho success\n' +
+        '  \x1B[1m\x1B[31m*.js\x1B[39m\x1B[22m | FAILED  | eccho success\n' +
         '\x1B[32m-\x1B[39m Restoring to its original state...\n' +
         '\x1B[2m  \x1B[32m»\x1B[39m Done restoring up to its original state.\x1B[22m\n' +
         '\x1B[32m-\x1B[39m Removing patch files...\n' +
@@ -197,7 +197,7 @@ test('run all success', async () => {
       '\x1B[32m-\x1B[39m Preparing pipeliner...\n' +
       '\x1B[2m  \x1B[32m»\x1B[39m Done backing up original repo state.\x1B[22m\n' +
       '\x1B[32m-\x1B[39m Running tasks...\n' +
-      '  \x1B[1m\x1B[32m*.js\x1B[39m\x1B[22m echo success\n' +
+      '  \x1B[1m\x1B[32m*.js\x1B[39m\x1B[22m | SUCCESS | echo success\n' +
       '\x1B[32m-\x1B[39m Applying modifications...\n' +
       '\x1B[2m  \x1B[32m»\x1B[39m Done adding up all task modifications to index.\x1B[22m\n' +
       '\x1B[32m-\x1B[39m Removing patch files...\n' +
