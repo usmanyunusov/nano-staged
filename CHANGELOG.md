@@ -2,6 +2,10 @@
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.4.5
+
+- Fix publish npm
+
 ## 0.4.4
 
 - Added support no-color flags
