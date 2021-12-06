@@ -13,7 +13,7 @@ The space in node_modules including sub-dependencies:
 $ node bench/size/index.js
 Data from packagephobia.com
 - lint-staged   6792 kB
-+ nano-staged     39 kB
++ nano-staged     40 kB
 ```
 
 Benchmarks running time for 1 file:
