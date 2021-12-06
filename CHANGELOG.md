@@ -2,6 +2,12 @@
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.4.2
+
+- Better output on script error
+- Updated dependencies
+- Add support are no-colors output
+
 ## 0.4.1
 
 - Postpublish npm
