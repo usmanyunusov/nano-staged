@@ -211,12 +211,10 @@ test('parse unstagedFiles', async () => {
   git.exec = async () => status
 
   equal(await git.unstagedFiles(), [
-    { x: 65, y: 68, path: 'add_remove.js', rename: undefined, type: 4 },
     { x: 77, y: 77, path: 'mod.js', rename: undefined, type: 2 },
     { x: 63, y: 63, path: 'test/add.js', rename: undefined, type: 2 },
     { x: 82, y: 77, path: 'origin.js', rename: 'rename.js', type: 2 },
     { x: 67, y: 77, path: 'test/base.js', rename: 'test/copy.js', type: 2 },
-    { x: 77, y: 68, path: 'remove.js', rename: undefined, type: 4 },
   ])
 })
 
