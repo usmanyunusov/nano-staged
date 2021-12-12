@@ -1,9 +1,10 @@
 # Nano Staged
 
-Tiny tool to run commands only for staged git files. It help **speeding up the run tests, lint code**, etc...
+Tiny tool to run commands for both staged and unstaged git files. It help **speeding up the run tests, lint code**, etc...
 
 - 📦 **Small**: [40kB](https://packagephobia.com/result?p=nano-staged) (174x+ lighter than **lint-staged**).
 - 🥇 **Single dependency** ([`picocolors`](https://github.com/alexeyraspopov/picocolors)).
+- ☯️ Support **staged/unstaged** git files.
 
 ## Benchmarks
 
@@ -49,11 +50,17 @@ The performance results were generated on a MBP Late 2013, 2,3 GHz Intel Core i7
 
 3. Now, run commands with Nano Staged:
 
+   For staged files (`by default`)
    ```terminal
    ./node_modules/.bin/nano-staged
    ```
 
-   > Nano Staged will filter out files which are in staging area, and run commands from the config for them.
+   For unstaged files (`--unstaged` and `-u`)
+   ```terminal
+   ./node_modules/.bin/nano-staged --unstaged
+   ```
+
+   > Nano Staged will filter out files which are in staging/unstaging area, and run commands from the config for them.
 
 ### Pre-commit Hook
 
@@ -124,7 +131,7 @@ The performance results were generated on a MBP Late 2013, 2,3 GHz Intel Core i7
 Starting from the current working directory, Nano Staged looks for the following possible sources:
 
 <details>
-   <summary><b><code>.nano-staged.json</code></b></summary>
+   <summary><b><code>nano-staged.json</code></b> or <b><code>.nano-staged.json</code></b> file</summary>
    <br/>
 
 ```json
@@ -137,20 +144,7 @@ Starting from the current working directory, Nano Staged looks for the following
 </details>
 
 <details>
-   <summary><b><code>nano-staged.json</code></b></summary>
-   <br/>
-
-```json
-{
-  "*": "your-cmd",
-  "*.ext": ["your-cmd", "your-cmd"]
-}
-```
-
-</details>
-
-<details>
-   <summary><b><code>package.json</code></b></summary>
+   <summary><b><code>nano-staged</code></b> object in your <b><code>package.json</code></b></summary>
    <br/>
 
 ```json
