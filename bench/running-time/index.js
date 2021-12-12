@@ -10,7 +10,6 @@ import { gitWorker } from '../../lib/git.js'
 let spawn = promisify(execFile)
 let currentDir = dirname(fileURLToPath(import.meta.url))
 let cwd = resolve(currentDir, `nano-staged-${nanoid()}`)
-let files = [['index.js'], ['index.js', 'index.css', 'bootstrap.css']]
 let runners = ['lint-staged', 'nano-staged']
 let before
 
@@ -43,22 +42,31 @@ async function initProject() {
     `{
       "lint-staged": {
         "*.js": "prettier --write",
-        "*.css": ["prettier --write", "prettier --write"]
+        "*.css": "prettier --write"
       },
       "nano-staged": {
         "*.js": "prettier --write",
-        "*.css": ["prettier --write", "prettier --write"]
+        "*.css": "prettier --write"
       }
     }`
   )
 
   await spawn('yarn', ['add', 'lint-staged'], { cwd })
-  await spawn('yarn', ['add', resolve(cwd, '../../../')], {
+  await spawn('yarn', ['add', resolve(cwd, '../../../../nano-staged')], {
     cwd,
   })
-  await appendFile('index.js', 'var test = {};')
-  await appendFile('index.css', 'body {color: red;}')
-  await appendFile('bootstrap.css', 'body {color: red;}')
+  await appendFile('a.js', 'var test = {};')
+  await appendFile('b.js', 'var test = {};')
+  await appendFile('c.js', 'var test = {};')
+  await appendFile('d.js', 'var test = {};')
+  await appendFile('e.js', 'var test = {};')
+  await appendFile('a.css', 'body {color: red;}')
+  await appendFile('b.css', 'body {color: red;}')
+  await appendFile('c.css', 'body {color: red;}')
+  await appendFile('d.css', 'body {color: red;}')
+  await appendFile('e.css', 'body {color: red;}')
+
+  await execGit(['add', '--all'])
 }
 
 function showTime(name) {
@@ -71,24 +79,17 @@ function showTime(name) {
   process.stdout.write(prefix + name + '\x1B[1m' + time.padStart(6) + '\x1B[22m ms\n')
 }
 
+async function run() {
+  for (let runner of runners) {
+    before = performance.now()
+    await spawn(`./node_modules/.bin/${runner}`, { cwd })
+    showTime(runner)
+  }
+}
+
 await makeDir()
 await initGitRepo()
 await initProject()
-
-async function run(names = [], files = []) {
-  await execGit(['add', ...files])
-
-  for (let name of names) {
-    before = performance.now()
-    await spawn(`./node_modules/.bin/${name}`, { cwd })
-    showTime(name)
-  }
-
-  await execGit(['checkout', ...files])
-}
-
-for (let i = 0; i < runners.length; i++) {
-  await run(runners, files[i])
-}
+await run()
 
 await fs.remove(cwd)
