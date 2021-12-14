@@ -50,12 +50,12 @@ The performance results were generated on a MBP Late 2013, 2,3 GHz Intel Core i7
 
 3. Now, run commands with Nano Staged:
 
-   For staged files (`by default`)
+   For staged files:
    ```terminal
    ./node_modules/.bin/nano-staged
    ```
 
-   For unstaged files (`--unstaged` and `-u`)
+   For unstaged files:
    ```terminal
    ./node_modules/.bin/nano-staged --unstaged
    ```
@@ -157,6 +157,20 @@ Starting from the current working directory, Nano Staged looks for the following
 ```
 
 </details>
+
+## Command line flags
+
+#### `--config` or `-c`
+
+Path to a JSON file that contains your configuration object. Use this option if you don't want Nano Staged to search for a configuration file. The path should be either absolute or relative to the directory that your process is running from.
+
+#### `--unstaged` or `-u`
+
+Under this flag will be run commands from the config for only unstaged git files. Nano Staged by default use only staged git files.
+
+#### `--allow-empty`
+
+Will allow creating an empty commit.
 
 ## Cheatsheet to filtering files
 
