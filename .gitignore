@@ -1,5 +1,5 @@
 node_modules/
-yarn-error.log
+pnpm-lock.yaml
 
 coverage/
 nano-staged-*
