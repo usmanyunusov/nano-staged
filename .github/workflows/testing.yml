@@ -1,7 +1,9 @@
 name: Testing
 on:
   push:
+    branches: [master]
   pull_request:
+    branches: [master]
 jobs:
   full:
       name: Node.js 17 Full
@@ -19,7 +21,7 @@ jobs:
             node-version: 17
             cache: pnpm
         - name: Install dependencies
-          run: pnpm --frozen-lockfile
+          run: pnpm install --frozen-lockfile
         - name: Run tests
           run: pnpm test
           env:
