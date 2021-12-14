@@ -1,5 +1,8 @@
 # Nano Staged
 
+<img align="right" width="92" height="92" title="Nano Stores logo"
+     src="https://usmanyunusov.github.io/nano-staged/img/logo.svg">
+
 Tiny tool to run commands for both staged and unstaged git files. It help **speeding up the run tests, lint code**, etc...
 
 - 📦 **Small**: [40kB](https://packagephobia.com/result?p=nano-staged) (174x+ lighter than **lint-staged**).
