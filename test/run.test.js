@@ -105,7 +105,27 @@ test('staging area is empty', async () => {
   )
 })
 
-test('staging area is empty', async () => {
+test('unstaging area is empty', async () => {
+  await initGitRepo()
+  await appendFile(
+    'package.json',
+    `{
+      "nano-staged": {
+        "*.js": "prettier --write"
+      }
+    }`,
+    cwd
+  )
+  await execGit(['add', '--', 'package.json'])
+  await run({ cwd, stream: stdout, unstaged: true })
+
+  is(
+    stdout.out.replace(/\d+\.\d+\.\d+/, '0.1.0'),
+    'Nano Staged \x1B[1mv0.1.0\x1B[22m\n\x1B[36m-\x1B[39m Git unstaging area is empty.\n'
+  )
+})
+
+test('no files match any configured task', async () => {
   await initGitRepo()
   await appendFile(
     'package.json',
@@ -123,7 +143,7 @@ test('staging area is empty', async () => {
   is(
     stdout.out.replace(/\d+\.\d+\.\d+/, '0.1.0'),
     'Nano Staged \x1B[1mv0.1.0\x1B[22m\n' +
-      '\x1B[36m-\x1B[39m No staged files match any configured task.\n'
+      '\x1B[36m-\x1B[39m No files match any configured task.\n'
   )
 })
 

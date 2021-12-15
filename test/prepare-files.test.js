@@ -47,7 +47,7 @@ test(`shoulds prepare correctly files`, () => {
       ['*.md', resolve(cwd, 'd.md')],
       ['../*.ts', resolve(cwd, '../j.ts')],
     ],
-    stagedFiles: resolvePaths([
+    workingFiles: resolvePaths([
       'main/src/a.js',
       'b.js',
       'c.css',
