@@ -3,5 +3,6 @@ pnpm-lock.yaml
 coverage/
 bench/
 test/
+img/
 
 **/*.test.*

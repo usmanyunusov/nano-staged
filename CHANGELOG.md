@@ -2,6 +2,14 @@
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.5
+
+- Support run script for unstaged files
+- Added allowing empty git commit
+- Update docs
+- Replace yarn to pnpm 
+- Add logo
+
 ## 0.4.5
 
 - Fix publish npm
