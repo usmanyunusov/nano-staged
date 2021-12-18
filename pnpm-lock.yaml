@@ -3,7 +3,7 @@ lockfileVersion: 5.3
 specifiers:
   c8: ^7.10.0
   clean-publish: ^3.4.4
-  esmock: ^1.7.0
+  esmock: ^1.7.2
   fs-extra: ^10.0.0
   nanoid: ^3.1.30
   picocolors: ^1.0.0
@@ -16,7 +16,7 @@ dependencies:
 devDependencies:
   c8: 7.10.0
   clean-publish: 3.4.4
-  esmock: 1.7.0
+  esmock: 1.7.2
   fs-extra: 10.0.0
   nanoid: 3.1.30
   prettier: 2.5.1
@@ -176,10 +176,10 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
-  /esmock/1.7.0:
-    resolution: {integrity: sha512-hy84z0T3WINnWWZqhrGEhdv61UlkhZQ6YvXKBGvwBy2Yuwsbof277oaNBcY4k609NSQ94zlSILUZwlrNuE41xw==}
+  /esmock/1.7.2:
+    resolution: {integrity: sha512-H6CTtJ1PV5fmEtSieSTQBTtLPTksP+NFRXypnMPWsrMwHMMZTOJre3ueBavvemn/eyRrmLf1zegiZ97O00L6TQ==}
     dependencies:
-      resolvewithplus: 0.5.1
+      resolvewithplus: 0.6.0
     dev: true
 
   /fast-glob/3.2.7:
@@ -465,8 +465,8 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
-  /resolvewithplus/0.5.1:
-    resolution: {integrity: sha512-QXrpQZ3BKrHHQa/4d+xVFvUi/FD7gJpnmBE9353gvdajNG5Tuzj/bhK2HtX3aRh+MZvwpcpBj0fFh//S4g9ZMw==}
+  /resolvewithplus/0.6.0:
+    resolution: {integrity: sha512-3oHAYXtmJeT5NIu6QIxq9Cs+lK0gsMuJuXlOnbukQ3Xw7Nl/Pp1I/PH5ofhVvkhuu+v4vMyJwHdRbrH4ljlySg==}
     dev: true
 
   /reusify/1.0.4:
