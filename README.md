@@ -129,37 +129,37 @@ The performance results were generated on a MBP Late 2013, 2,3 GHz Intel Core i7
    }
    ```
 
-## Configuration
+## Configuration File Formats
 
-Starting from the current working directory, Nano Staged looks for the following possible sources:
+Nano Staged supports configuration files in several formats:
 
-<details>
-   <summary><b><code>nano-staged.json</code></b> or <b><code>.nano-staged.json</code></b> file</summary>
-   <br/>
+- **JSON** - use `nano-staged.json` or `.nano-staged.json` to define the configuration structure.
+- **package.json** - create an `nano-staged` property in your package.json file and define your configuration there.
+
+If there are multiple configuration files in the same directory, Nano Staged will only use one. The priority order is as follows:
+
+1. `.nano-staged.json`
+2. `nano-staged.json`
+3. `package.json`
+
+There are two ways to use configuration files.
+
+The first way to use configuration files. Starting from the current working directory, Nano Staged looks for the following possible sources: `.nano-staged.*`, `nano-staged.*` and `package.json` files.
+
+The second way to use configuration files is to save the file wherever you would like and pass its location to the CLI using the `--config` or `-c` option, such as:
+
+```terminal
+./node_modules/.bin/nano-staged --config myconfig.json
+```
+
+Example JSON configuration file:
 
 ```json
 {
-  "*": "your-cmd",
-  "*.ext": ["your-cmd", "your-cmd"]
+   "*": "your-cmd",
+   "*.ext": ["your-cmd", "your-cmd"]
 }
 ```
-
-</details>
-
-<details>
-   <summary><b><code>nano-staged</code></b> object in your <b><code>package.json</code></b></summary>
-   <br/>
-
-```json
-{
-  "nano-staged": {
-    "*": "your-cmd",
-    "*.ext": ["your-cmd", "your-cmd"]
-  }
-}
-```
-
-</details>
 
 ## Command line flags
 
