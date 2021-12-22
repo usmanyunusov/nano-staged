@@ -5,7 +5,7 @@
 
 Tiny tool to run commands for both staged and unstaged git files. It help **speeding up the run tests, lint code**, etc...
 
-- 📦 **Small**: [40kB](https://packagephobia.com/result?p=nano-staged) (174x+ lighter than **lint-staged**).
+- 📦 **Small**: [41kB](https://packagephobia.com/result?p=nano-staged) (160x+ lighter than **lint-staged**).
 - 🥇 **Single dependency** ([`picocolors`](https://github.com/alexeyraspopov/picocolors)).
 - ☯️ Support **staged/unstaged** git files.
 
@@ -24,8 +24,8 @@ The space in node_modules including sub-dependencies:
 ```diff
 $ node bench/size/index.js
 Data from packagephobia.com
-- lint-staged   6792 kB
-+ nano-staged     40 kB
+- lint-staged   6615 kB
++ nano-staged     41 kB
 ```
 
 The performance results were generated on a MBP Late 2013, 2,3 GHz Intel Core i7 by running `npm run bench` in the library folder. See [bench/running-time/index.js](https://github.com/usmanyunusov/nano-staged/blob/master/bench/running-time/index.js)
