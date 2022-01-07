@@ -52,20 +52,20 @@ test('create config in package.json', async () => {
   is(
     stdout.out.replace(/\d+\.\d+\.\d+/, '0.1.0'),
     'Nano Staged \x1B[1mv0.1.0\x1B[22m\n' +
-      '\x1B[36m-\x1B[39m Create Nano Staged config in package.json\n'
+      '\x1B[36m-\x1B[39m Create Nano Staged config.\n'
   )
 })
 
 test('config file not found', async () => {
   await initGitRepo()
-  await run({ cwd, stream: stdout, configPath: cwd })
+  await run({ cwd, stream: stdout, config: cwd })
 
   is(
     stdout.out.replace(/\d+\.\d+\.\d+/, '0.1.0'),
     'Nano Staged \x1B[1mv0.1.0\x1B[22m\n' +
       '\x1B[36m-\x1B[39m Nano Staged config file \x1B[33m' +
       cwd +
-      '\x1B[39m is not found\n'
+      '\x1B[39m is not found.\n'
   )
 })
 

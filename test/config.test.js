@@ -17,6 +17,12 @@ test('found package.json with config', async () => {
   })
 })
 
+test('NodeJS API resolve config', async () => {
+  equal(await loadConfig(process.cwd(), { '*': 'my-tasks' }), {
+    '*': 'my-tasks',
+  })
+})
+
 test('found package.json without config', async () => {
   is(await loadConfig(fixture('config/pkg-without-config')), undefined)
 })
