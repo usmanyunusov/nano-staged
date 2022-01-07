@@ -7,7 +7,7 @@ import { test } from 'uvu'
 
 import { makeDir, appendFile, removeFile, createStdout } from './utils/index.js'
 import { gitWorker } from '../lib/git.js'
-import run from '../lib/run.js'
+import run from '../lib/runner.js'
 
 let cwd = resolve(homedir(), 'nano-staged-' + nanoid())
 let stdout = createStdout()
@@ -165,13 +165,13 @@ test('run cmd error', async () => {
       stdout.out.replace(/\d+\.\d+\.\d+/, '0.1.0'),
       'Nano Staged \x1B[1mv0.1.0\x1B[22m\n' +
         '\x1B[32m-\x1B[39m Preparing pipeliner...\n' +
-        '\x1B[2m  \x1B[32m»\x1B[39m Done backing up original repo state.\x1B[22m\n' +
+        '\x1B[2m  \x1B[90m»\x1B[39m Done backing up original repo state.\x1B[22m\n' +
         '\x1B[32m-\x1B[39m Running tasks...\n' +
         '  \x1B[1m\x1B[31m*.js\x1B[39m\x1B[22m | FAILED  | eccho success\n' +
         '\x1B[32m-\x1B[39m Restoring to its original state...\n' +
-        '\x1B[2m  \x1B[32m»\x1B[39m Done restoring up to its original state.\x1B[22m\n' +
+        '\x1B[2m  \x1B[90m»\x1B[39m Done restoring up to its original state.\x1B[22m\n' +
         '\x1B[32m-\x1B[39m Removing patch files...\n' +
-        '\x1B[2m  \x1B[32m»\x1B[39m Done removing up patch files.\x1B[22m\n' +
+        '\x1B[2m  \x1B[90m»\x1B[39m Done removing up patch files.\x1B[22m\n' +
         '\n' +
         '\x1B[31meccho success:\n' +
         '\x1B[39meccho does not exist\n'
@@ -180,7 +180,7 @@ test('run cmd error', async () => {
 })
 
 test('run git error', async () => {
-  const run = await esmock('../lib/run.js', {
+  const run = await esmock('../lib/runner.js', {
     '../lib/git.js': {
       gitWorker: () => ({
         async getRepoAndDotGitPaths() {
@@ -215,13 +215,13 @@ test('run all success', async () => {
     stdout.out.replace(/\d+\.\d+\.\d+/, '0.1.0'),
     'Nano Staged \x1B[1mv0.1.0\x1B[22m\n' +
       '\x1B[32m-\x1B[39m Preparing pipeliner...\n' +
-      '\x1B[2m  \x1B[32m»\x1B[39m Done backing up original repo state.\x1B[22m\n' +
+      '\x1B[2m  \x1B[90m»\x1B[39m Done backing up original repo state.\x1B[22m\n' +
       '\x1B[32m-\x1B[39m Running tasks...\n' +
       '  \x1B[1m\x1B[32m*.js\x1B[39m\x1B[22m | SUCCESS | echo success\n' +
       '\x1B[32m-\x1B[39m Applying modifications...\n' +
-      '\x1B[2m  \x1B[32m»\x1B[39m Done adding up all task modifications to index.\x1B[22m\n' +
+      '\x1B[2m  \x1B[90m»\x1B[39m Done adding up all task modifications to index.\x1B[22m\n' +
       '\x1B[32m-\x1B[39m Removing patch files...\n' +
-      '\x1B[2m  \x1B[32m»\x1B[39m Done removing up patch files.\x1B[22m\n'
+      '\x1B[2m  \x1B[90m»\x1B[39m Done removing up patch files.\x1B[22m\n'
   )
 })
 

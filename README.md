@@ -54,11 +54,13 @@ The performance results were generated on a MBP Late 2013, 2,3 GHz Intel Core i7
 3. Now, run commands with Nano Staged:
 
    For staged files:
+
    ```terminal
    ./node_modules/.bin/nano-staged
    ```
 
    For unstaged files:
+
    ```terminal
    ./node_modules/.bin/nano-staged --unstaged
    ```
@@ -69,7 +71,7 @@ The performance results were generated on a MBP Late 2013, 2,3 GHz Intel Core i7
 
 > You can use Nano Staged with a pre-commit tools to run it automatically after every commit.
 
-#### Simple Git Hooks
+#### [Simple Git Hooks](https://github.com/toplenboren/simple-git-hooks)
 
 1. Install `simple-git-hooks` as a dev dependency:
 
@@ -101,7 +103,7 @@ The performance results were generated on a MBP Late 2013, 2,3 GHz Intel Core i7
    }
    ```
 
-#### Husky
+#### [Husky](https://github.com/typicode/husky)
 
 1. Install `husky` as a dev dependency:
 
@@ -116,7 +118,7 @@ The performance results were generated on a MBP Late 2013, 2,3 GHz Intel Core i7
    ```
 
 3. Add a command to a hook
-   
+
    ```terminal
    npx husky add .husky/pre-commit "./node_modules/.bin/nano-staged"
    ```
@@ -133,14 +135,23 @@ The performance results were generated on a MBP Late 2013, 2,3 GHz Intel Core i7
 
 Nano Staged supports configuration files in several formats:
 
+- **JavaScript** - use `nano-staged.js` or `.nano-staged.js`
+- **JavaScript (ESM)** - use `nano-staged.mjs` or `.nano-staged.mjs`
+- **JavaScript (CJS)** - use `nano-staged.cjs` or `.nano-staged.cjs`
 - **JSON** - use `nano-staged.json` or `.nano-staged.json` to define the configuration structure.
 - **package.json** - create an `nano-staged` property in your package.json file and define your configuration there.
 
 If there are multiple configuration files in the same directory, Nano Staged will only use one. The priority order is as follows:
 
-1. `.nano-staged.json`
-2. `nano-staged.json`
-3. `package.json`
+1. `.nano-staged.js`
+2. `nano-staged.js`
+3. `.nano-staged.cjs`
+4. `nano-staged.cjs`
+5. `.nano-staged.mjs`
+6. `nano-staged.mjs`
+7. `.nano-staged.json`
+8. `nano-staged.json`
+9. `package.json`
 
 There are two ways to use configuration files.
 
@@ -156,8 +167,8 @@ Example JSON configuration file:
 
 ```json
 {
-   "*": "your-cmd",
-   "*.ext": ["your-cmd", "your-cmd"]
+  "*": "your-cmd",
+  "*.ext": ["your-cmd", "your-cmd"]
 }
 ```
 

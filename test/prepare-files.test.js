@@ -25,8 +25,8 @@ let entries = [
   { path: 'a/b/c/j.js', type: STAGED_CODE, rename: undefined },
 ]
 
-test(`shoulds prepare correctly files`, () => {
-  let files = prepareFiles({
+test(`shoulds prepare correctly files`, async () => {
+  let files = await prepareFiles({
     repoPath: cwd,
     cwd,
     entries,
@@ -38,14 +38,31 @@ test(`shoulds prepare correctly files`, () => {
   }
 
   equal(files, {
-    taskedFiles: [
-      ['*.{css,js}', resolve(cwd, 'main/src/a.js')],
-      ['*.{css,js}', resolve(cwd, 'b.js')],
-      ['*.{css,js}', resolve(cwd, 'c.css')],
-      ['*.{css,js}', resolve(cwd, 'e.css')],
-      ['*.{css,js}', resolve(cwd, 'a/b/c/j.js')],
-      ['*.md', resolve(cwd, 'd.md')],
-      ['../*.ts', resolve(cwd, '../j.ts')],
+    resolvedTasks: [
+      {
+        isFn: false,
+        pattern: '*.{css,js}',
+        cmds: ['prettier --write'],
+        files: [
+          resolve(cwd, 'main/src/a.js'),
+          resolve(cwd, 'b.js'),
+          resolve(cwd, 'c.css'),
+          resolve(cwd, 'e.css'),
+          resolve(cwd, 'a/b/c/j.js'),
+        ],
+      },
+      {
+        isFn: false,
+        pattern: '*.md',
+        cmds: ['prettier --write'],
+        files: [resolve(cwd, 'd.md')],
+      },
+      {
+        isFn: false,
+        pattern: '../*.ts',
+        cmds: ['prettier --write'],
+        files: [resolve(cwd, '../j.ts')],
+      },
     ],
     workingFiles: resolvePaths([
       'main/src/a.js',

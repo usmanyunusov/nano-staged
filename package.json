@@ -1,13 +1,13 @@
 {
   "name": "nano-staged",
   "version": "0.5.0",
-  "description": "Tool to run commands only on git staged files",
+  "description": "Tiny tool to run commands for both staged and unstaged git files",
   "author": "Usman Yunusov <usman.iunusov@gmail.com>",
   "license": "MIT",
   "repository": "usmanyunusov/nano-staged",
   "type": "module",
   "bin": "./lib/bin.js",
-  "exports": "./lib/run.js",
+  "exports": "./lib/runner.js",
   "engines": {
     "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
   },
@@ -21,7 +21,7 @@
     "picocolors": "^1.0.0"
   },
   "devDependencies": {
-    "c8": "^7.10.0",
+    "c8": "^7.11.0",
     "clean-publish": "^3.4.4",
     "esmock": "^1.7.2",
     "fs-extra": "^10.0.0",

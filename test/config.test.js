@@ -8,21 +8,21 @@ import { fixture } from './utils/index.js'
 import { loadConfig, validConfig } from '../lib/config.js'
 
 test('cwd null', async () => {
-  is(loadConfig(join(homedir(), 'test')), undefined)
+  is(await loadConfig(join(homedir(), 'test')), undefined)
 })
 
 test('found package.json with config', async () => {
-  equal(loadConfig(fixture('config/pkg-with-config')), {
+  equal(await loadConfig(fixture('config/pkg-with-config')), {
     '*': 'my-tasks',
   })
 })
 
 test('found package.json without config', async () => {
-  is(loadConfig(fixture('config/pkg-without-config')), undefined)
+  is(await loadConfig(fixture('config/pkg-without-config')), undefined)
 })
 
 test('not found package.json', async () => {
-  is(loadConfig(undefined), undefined)
+  is(await loadConfig(undefined), undefined)
 })
 
 test('resolve package.json', async () => {
@@ -36,22 +36,52 @@ test('resolve package.json', async () => {
     },
   })
 
-  is(loadConfig(), undefined)
+  is(await loadConfig(), undefined)
 })
 
 test('find config in parent dirs', async () => {
-  let config = loadConfig(fixture('config/pkg-parent/pkg-child/pkg-child-child'))
+  let config = await loadConfig(fixture('config/pkg-parent/pkg-child/pkg-child-child'))
   equal(config, { '*': 'my-tasks' })
 })
 
 test('find nano-staged.json config', async () => {
-  let config = loadConfig(fixture('config/json-config'))
+  let config = await loadConfig(fixture('config/json-config'))
   equal(config, { '*': 'my-json-tasks' })
 })
 
 test('find .nano-staged.json config', async () => {
-  let config = loadConfig(fixture('config/dot-json-config'))
+  let config = await loadConfig(fixture('config/dot-json-config'))
   equal(config, { '*': 'my-json-dot-tasks' })
+})
+
+test('find .nano-staged.js config', async () => {
+  let config = await loadConfig(fixture('config/dot-js-config'))
+  equal(config['*'](), 'my-dot-js-tasks')
+})
+
+test('find nano-staged.js config', async () => {
+  let config = await loadConfig(fixture('config/js-config'))
+  equal(config['*'](), 'my-js-tasks')
+})
+
+test('find .nano-staged.mjs config', async () => {
+  let config = await loadConfig(fixture('config/dot-mjs-config'))
+  equal(config['*'](), 'my-dot-mjs-tasks')
+})
+
+test('find nano-staged.mjs config', async () => {
+  let config = await loadConfig(fixture('config/mjs-config'))
+  equal(config['*'](), 'my-mjs-tasks')
+})
+
+test('find .nano-staged.cjs config', async () => {
+  let config = await loadConfig(fixture('config/dot-cjs-config'))
+  equal(config['*'](), 'my-dot-cjs-tasks')
+})
+
+test('find nano-staged.cjs config', async () => {
+  let config = await loadConfig(fixture('config/cjs-config'))
+  equal(config['*'](), 'my-cjs-tasks')
 })
 
 test('config undefined', async () => {
