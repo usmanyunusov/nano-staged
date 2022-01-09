@@ -7,7 +7,7 @@
   "repository": "usmanyunusov/nano-staged",
   "type": "module",
   "bin": "./lib/bin.js",
-  "exports": "./lib/runner.js",
+  "exports": "./lib/index.js",
   "engines": {
     "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
   },
