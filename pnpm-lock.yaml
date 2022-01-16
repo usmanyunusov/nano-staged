@@ -2,25 +2,25 @@ lockfileVersion: 5.3
 
 specifiers:
   c8: ^7.11.0
-  clean-publish: ^3.4.4
+  clean-publish: ^3.4.5
   esmock: ^1.7.2
   fs-extra: ^10.0.0
-  nanoid: ^3.1.30
+  nanoid: ^3.2.0
   picocolors: ^1.0.0
   prettier: ^2.5.1
-  uvu: ^0.5.2
+  uvu: ^0.5.3
 
 dependencies:
   picocolors: 1.0.0
 
 devDependencies:
   c8: 7.11.0
-  clean-publish: 3.4.4
+  clean-publish: 3.4.5
   esmock: 1.7.2
   fs-extra: 10.0.0
-  nanoid: 3.1.30
+  nanoid: 3.2.0
   prettier: 2.5.1
-  uvu: 0.5.2
+  uvu: 0.5.3
 
 packages:
 
@@ -102,20 +102,20 @@ packages:
       istanbul-reports: 3.1.3
       rimraf: 3.0.2
       test-exclude: 6.0.0
-      v8-to-istanbul: 8.1.0
+      v8-to-istanbul: 8.1.1
       yargs: 16.2.0
       yargs-parser: 20.2.9
     dev: true
 
-  /clean-publish/3.4.4:
-    resolution: {integrity: sha512-eCWBBLbaOBqLtxQrjBDSI1tSmx6tKckV2H0C9/je0eQg2QOGGnjE1XKc01V8M3vKe7bJuCut5hF/yUwLGLZoVA==}
+  /clean-publish/3.4.5:
+    resolution: {integrity: sha512-wxtaEqCy/B7lch+bpTPmx9wI8owTODa619UOVA1XfyNaM2bjwv1SkR1IJNDA6rtf89bjiz6UkpfU5HcEL8YJIw==}
     engines: {node: ^12.0.0 || ^14.0.0 || >= 16.0.0}
     hasBin: true
     dependencies:
       cross-spawn: 7.0.3
-      fast-glob: 3.2.7
+      fast-glob: 3.2.11
       fs-extra: 10.0.0
-      hosted-git-info: 4.0.2
+      hosted-git-info: 4.1.0
       lilconfig: 2.0.4
     dev: true
 
@@ -182,9 +182,9 @@ packages:
       resolvewithplus: 0.6.0
     dev: true
 
-  /fast-glob/3.2.7:
-    resolution: {integrity: sha512-rYGMRwip6lUMvYD3BTScMwT1HtAs2d71SMv66Vrxs0IekGZEjhM0pcMfjQPnknBt2zeCwQMEupiN02ZP4DiT1Q==}
-    engines: {node: '>=8'}
+  /fast-glob/3.2.11:
+    resolution: {integrity: sha512-xrO3+1bxSo3ZVHAnqzyuewYT6aMFHRAd4Kcs92MAonjwQZLsK9d0SF1IyQ3k5PoirxTW0Oe/RqFgMQ6TcNE5Ew==}
+    engines: {node: '>=8.6.0'}
     dependencies:
       '@nodelib/fs.stat': 2.0.5
       '@nodelib/fs.walk': 1.2.8
@@ -226,7 +226,7 @@ packages:
     resolution: {integrity: sha512-C5owb14u9eJwizKGdchcDUQeFtlSHHthBk8pbX9Vc1PFZrLombudjDnNns88aYslCyF6IY5SUw3Roz6xShcEIQ==}
     engines: {node: '>=12'}
     dependencies:
-      graceful-fs: 4.2.8
+      graceful-fs: 4.2.9
       jsonfile: 6.1.0
       universalify: 2.0.0
     dev: true
@@ -258,8 +258,8 @@ packages:
       path-is-absolute: 1.0.1
     dev: true
 
-  /graceful-fs/4.2.8:
-    resolution: {integrity: sha512-qkIilPUYcNhJpd33n0GBXTB1MMPp14TxEsEs0pTrsSVucApsYzW5V+Q8Qxhik6KU3evy+qkAAowTByymK0avdg==}
+  /graceful-fs/4.2.9:
+    resolution: {integrity: sha512-NtNxqUcXgpW2iMrfqSfR73Glt39K+BLwWsPs94yR63v45T0Wbej7eRmL5cWfwEgqXnmjQp3zaJTshdRW/qC2ZQ==}
     dev: true
 
   /has-flag/4.0.0:
@@ -267,8 +267,8 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
-  /hosted-git-info/4.0.2:
-    resolution: {integrity: sha512-c9OGXbZ3guC/xOlCg1Ci/VgWlwsqDv1yMQL1CWqXDL0hDjXuNcq0zuR4xqPSuasI3kqFDhqSyTjREz5gzq0fXg==}
+  /hosted-git-info/4.1.0:
+    resolution: {integrity: sha512-kyCuEOWjJqZuDbRHzL8V93NzQhwIB71oFWSyzVo+KPZI+pnQPPxucdkrOZvkLRnrf5URsQM+IJ09Dw29cRALIA==}
     engines: {node: '>=10'}
     dependencies:
       lru-cache: 6.0.0
@@ -342,7 +342,7 @@ packages:
     dependencies:
       universalify: 2.0.0
     optionalDependencies:
-      graceful-fs: 4.2.8
+      graceful-fs: 4.2.9
     dev: true
 
   /kleur/4.1.4:
@@ -386,7 +386,7 @@ packages:
     engines: {node: '>=8.6'}
     dependencies:
       braces: 3.0.2
-      picomatch: 2.3.0
+      picomatch: 2.3.1
     dev: true
 
   /minimatch/3.0.4:
@@ -400,8 +400,8 @@ packages:
     engines: {node: '>=4'}
     dev: true
 
-  /nanoid/3.1.30:
-    resolution: {integrity: sha512-zJpuPDwOv8D2zq2WRoMe1HsfZthVewpel9CAvTfc/2mBD1uUT/agc5f7GHGWXlYkFvi1mVxe4IjvP2HNrop7nQ==}
+  /nanoid/3.2.0:
+    resolution: {integrity: sha512-fmsZYa9lpn69Ad5eDn7FMcnnSR+8R34W9qJEijxYhTbfOWzr22n1QxCMzXLK+ODyW2973V3Fux959iQoUxzUIA==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
     dev: true
@@ -445,8 +445,8 @@ packages:
     resolution: {integrity: sha512-1fygroTLlHu66zi26VoTDv8yRgm0Fccecssto+MhsZ0D/DGW2sm8E8AjW7NU5VVTRt5GxbeZ5qBuJr+HyLYkjQ==}
     dev: false
 
-  /picomatch/2.3.0:
-    resolution: {integrity: sha512-lY1Q/PiJGC2zOv/z391WOTD+Z02bCgsFfvxoXXf6h7kv9o+WmsmzYqrAwY63sNgOxE4xEdq0WyUnXfKeBrSvYw==}
+  /picomatch/2.3.1:
+    resolution: {integrity: sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==}
     engines: {node: '>=8.6'}
     dev: true
 
@@ -487,8 +487,8 @@ packages:
       queue-microtask: 1.2.3
     dev: true
 
-  /sade/1.8.0:
-    resolution: {integrity: sha512-NRfCA8AVYuAA7Hu8bs18od6J4BdcXXwOv6OJuNgwbw8LcLK8JKwaM3WckLZ+MGyPJUS/ivVgK3twltrOIJJnug==}
+  /sade/1.8.1:
+    resolution: {integrity: sha512-xal3CZX1Xlo/k4ApwCFrHVACi9fBqJ7V+mwhBsuf/1IOKbBy098Fex+Wa/5QMubw09pSZ/u8EY8PWgevJsXp1A==}
     engines: {node: '>=6'}
     dependencies:
       mri: 1.2.0
@@ -563,30 +563,24 @@ packages:
       is-number: 7.0.0
     dev: true
 
-  /totalist/2.0.0:
-    resolution: {integrity: sha512-+Y17F0YzxfACxTyjfhnJQEe7afPA0GSpYlFkl2VFMxYP7jshQf9gXV7cH47EfToBumFThfKBvfAcoUn6fdNeRQ==}
-    engines: {node: '>=6'}
-    dev: true
-
   /universalify/2.0.0:
     resolution: {integrity: sha512-hAZsKq7Yy11Zu1DE0OzWjw7nnLZmJZYTDZZyEFHZdUhV8FkH5MCfoU1XMaxXovpyW5nq5scPqq0ZDP9Zyl04oQ==}
     engines: {node: '>= 10.0.0'}
     dev: true
 
-  /uvu/0.5.2:
-    resolution: {integrity: sha512-m2hLe7I2eROhh+tm3WE5cTo/Cv3WQA7Oc9f7JB6uWv+/zVKvfAm53bMyOoGOSZeQ7Ov2Fu9pLhFr7p07bnT20w==}
+  /uvu/0.5.3:
+    resolution: {integrity: sha512-brFwqA3FXzilmtnIyJ+CxdkInkY/i4ErvP7uV0DnUVxQcQ55reuHphorpF+tZoVHK2MniZ/VJzI7zJQoc9T9Yw==}
     engines: {node: '>=8'}
     hasBin: true
     dependencies:
       dequal: 2.0.2
       diff: 5.0.0
       kleur: 4.1.4
-      sade: 1.8.0
-      totalist: 2.0.0
+      sade: 1.8.1
     dev: true
 
-  /v8-to-istanbul/8.1.0:
-    resolution: {integrity: sha512-/PRhfd8aTNp9Ggr62HPzXg2XasNFGy5PBt0Rp04du7/8GNNSgxFL6WBTkgMKSL9bFjH+8kKEG3f37FmxiTqUUA==}
+  /v8-to-istanbul/8.1.1:
+    resolution: {integrity: sha512-FGtKtv3xIpR6BYhvgH8MI/y78oT7d8Au3ww4QIxymrCtZEh5b8gCw2siywE+puhEmuWKDtmfrvF5UlB298ut3w==}
     engines: {node: '>=10.12.0'}
     dependencies:
       '@types/istanbul-lib-coverage': 2.0.4
