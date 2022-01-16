@@ -55,6 +55,14 @@ test('find nano-staged.json config', async () => {
   equal(config, { '*': 'my-json-tasks' })
 })
 
+test('find nano-staged.json config', async () => {
+  let config = await loadConfig(
+    fixture('config/json-config'),
+    fixture('config/json-config/nano-staged.json')
+  )
+  equal(config, { '*': 'my-json-tasks' })
+})
+
 test('find .nano-staged.json config', async () => {
   let config = await loadConfig(fixture('config/dot-json-config'))
   equal(config, { '*': 'my-json-dot-tasks' })
@@ -88,6 +96,11 @@ test('find .nano-staged.cjs config', async () => {
 test('find nano-staged.cjs config', async () => {
   let config = await loadConfig(fixture('config/cjs-config'))
   equal(config['*'](), 'my-cjs-tasks')
+})
+
+test('find object config', async () => {
+  let config = await loadConfig(process.cwd(), { '*': 'my-object-tasks' })
+  equal(config['*'], 'my-object-tasks')
 })
 
 test('config undefined', async () => {

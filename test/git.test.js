@@ -4,13 +4,13 @@ import { test } from 'uvu'
 import fs from 'fs-extra'
 
 import { writeFile, makeDir, appendFile, fixture, removeFile } from './utils/index.js'
-import { gitWorker } from '../lib/git.js'
+import { createGit } from '../lib/git.js'
 
 let cwd = fixture('git/nano-staged-git')
 let patchPath = join(cwd, 'nano-staged.patch')
 
 async function execGit(args) {
-  let git = gitWorker(cwd)
+  let git = createGit(cwd)
   await git.exec(args, { cwd })
 }
 
@@ -29,7 +29,7 @@ test.after.each(async () => {
 })
 
 test('not found git dir', async () => {
-  let git = gitWorker(cwd)
+  let git = createGit(cwd)
   git.exec = async () => null
 
   let { repoPath, dotGitPath } = await git.getRepoAndDotGitPaths()
@@ -39,7 +39,7 @@ test('not found git dir', async () => {
 })
 
 test('not found git dir', async () => {
-  let git = gitWorker(cwd)
+  let git = createGit(cwd)
   git.exec = async () => Promise.reject()
 
   let { repoPath, dotGitPath } = await git.getRepoAndDotGitPaths()
@@ -49,7 +49,7 @@ test('not found git dir', async () => {
 })
 
 test('resolve git dir', async () => {
-  let git = gitWorker(cwd)
+  let git = createGit(cwd)
   git.exec = async () => 'test'
 
   let { repoPath, dotGitPath } = await git.getRepoAndDotGitPaths()
@@ -58,15 +58,27 @@ test('resolve git dir', async () => {
   is(dotGitPath, process.platform === 'win32' ? 'test\\.git' : 'test/.git')
 })
 
+test('error find git dir', async () => {
+  let git = createGit(cwd)
+  git.exec = async () => {
+    throw new Error('Error')
+  }
+
+  let { repoPath, dotGitPath } = await git.getRepoAndDotGitPaths()
+
+  is(repoPath, null)
+  is(dotGitPath, null)
+})
+
 test('create patch file', async () => {
-  let git = gitWorker(cwd)
+  let git = createGit(cwd)
 
   await writeFile('README.md', '# Test\n## Test', cwd)
   await git.diff(patchPath)
 
-  let source = await fs.readFile(patchPath)
+  let patch = await fs.readFile(patchPath)
   is(
-    source.toString(),
+    patch.toString(),
     'diff --git a/README.md b/README.md\n' +
       'index 8ae0569..a07c500 100644\n' +
       '--- a/README.md\n' +
@@ -78,17 +90,16 @@ test('create patch file', async () => {
 })
 
 test('create patch file for files', async () => {
-  let git = gitWorker(cwd)
+  let git = createGit(cwd)
 
   await appendFile('a.js', 'let a = {};', cwd)
   await git.add(join(cwd, 'a.js'))
   await removeFile(join(cwd, 'a.js'))
   await git.diff(patchPath, [join(cwd, 'a.js')])
 
-  let source = await fs.readFile(patchPath)
-
+  let patch = await fs.readFile(patchPath)
   is(
-    source.toString(),
+    patch.toString(),
     'diff --git a/a.js b/a.js\n' +
       'deleted file mode 100644\n' +
       'index 36b56ef..0000000\n' +
@@ -101,19 +112,18 @@ test('create patch file for files', async () => {
 })
 
 test('checkout files', async () => {
-  let git = gitWorker(cwd)
+  let git = createGit(cwd)
 
   await appendFile('a.js', 'let a = {};', cwd)
   await git.add('.')
   await writeFile('a.js', 'let b = {};', cwd)
   await git.checkout(join(cwd, 'a.js'))
 
-  let files = await git.stagedFiles()
-  equal(files, [{ x: 65, y: 32, path: 'a.js', rename: undefined, type: 1 }])
+  equal(await git.status(), [{ x: 65, y: 32, path: 'a.js', rename: undefined }])
 })
 
 test('apply patch file', async () => {
-  let git = gitWorker(cwd)
+  let git = createGit(cwd)
 
   await writeFile('README.md', '# Test\n## Test', cwd)
   await git.diff(patchPath)
@@ -123,7 +133,7 @@ test('apply patch file', async () => {
 })
 
 test('not apply patch file', async () => {
-  let git = gitWorker(cwd)
+  let git = createGit(cwd)
 
   try {
     await git.apply('test.patch', true)
@@ -133,39 +143,32 @@ test('not apply patch file', async () => {
 })
 
 test('add files', async () => {
-  let git = gitWorker(cwd)
+  let git = createGit(cwd)
 
   await appendFile('a.js', 'let a = {};', cwd)
   await git.add(['.'])
 
-  let files = await git.stagedFiles()
-
-  equal(files, [{ x: 65, y: 32, path: 'a.js', rename: undefined, type: 1 }])
+  equal(await git.status(), [{ x: 65, y: 32, path: 'a.js', rename: undefined }])
 })
 
 test('parse status', async () => {
-  let git = gitWorker(cwd)
+  let git = createGit(cwd)
 
   await appendFile('a.js', 'let a = {};', cwd)
   await appendFile('b.js', 'let a = {};', cwd)
   await git.add(['b.js'])
 
-  let files = await git.status()
-  equal(files, [
+  equal(await git.status(), [
     { x: 65, y: 32, path: 'b.js', rename: undefined },
     { x: 63, y: 63, path: 'a.js', rename: undefined },
   ])
 })
 
-test('parse status empty', async () => {
-  let git = gitWorker(cwd)
+test('parse status mock', async () => {
+  let git = createGit(cwd)
 
   git.exec = async () => ''
   equal(await git.status(), [])
-})
-
-test('parse fail status', async () => {
-  let git = gitWorker(cwd)
 
   git.exec = async () => ' '
   equal(await git.status(), [])
@@ -185,37 +188,60 @@ test('parse fail status', async () => {
   equal(await git.status(), [])
 })
 
-test('parse stagedFiles', async () => {
-  let git = gitWorker(cwd)
+test('diff file name', async () => {
+  let git = createGit(cwd)
+
+  is(await git.diffFileName(), '')
+
+  await writeFile('README.md', '# Test\n## Test', cwd)
+  await execGit(['add', 'README.md'])
+  await execGit(['commit', '-m change README.md'])
+
+  is(await git.diffFileName('HEAD', 'HEAD^1'), 'README.md\x00')
+
+  git.exec = async () => {
+    throw new Error('Error')
+  }
+
+  is(await git.diffFileName(), '')
+})
+
+test('get diff files', async () => {
+  let git = createGit(cwd)
+
+  git.diffFileName = async () => 'add.js\x00'
+
+  equal(await git.diffFiles(), { working: ['add.js'], deleted: [], changed: ['add.js'] })
+})
+
+test('get staged files', async () => {
+  let git = createGit(cwd)
   let status =
-    'MM mod.js\x00AM test/add.js\x00RM rename.js\x00origin.js\x00CM' +
+    '?? new.js\x00A  stage.js\x00MM mod.js\x00AM test/add.js\x00RM rename.js\x00origin.js\x00CM' +
     ' test/copy.js\x00test/base.js\x00MD remove.js\x00D  delete.js\x00'
 
   git.exec = async () => status
 
-  equal(await git.stagedFiles(), [
-    { x: 77, y: 77, path: 'mod.js', rename: undefined, type: 2 },
-    { x: 65, y: 77, path: 'test/add.js', rename: undefined, type: 2 },
-    { x: 82, y: 77, path: 'origin.js', rename: 'rename.js', type: 2 },
-    { x: 67, y: 77, path: 'test/base.js', rename: 'test/copy.js', type: 2 },
-    { x: 77, y: 68, path: 'remove.js', rename: undefined, type: 4 },
-  ])
+  equal(await git.stagedFiles(), {
+    working: ['stage.js', 'mod.js', 'test/add.js', 'rename.js', 'test/copy.js', 'remove.js'],
+    deleted: ['remove.js'],
+    changed: ['mod.js', 'test/add.js', 'rename.js', 'test/copy.js'],
+  })
 })
 
-test('parse unstagedFiles', async () => {
-  let git = gitWorker(cwd)
+test('get unstaged files', async () => {
+  let git = createGit(cwd)
   let status =
     'A  add.js\x00AD add_remove.js\x00MM mod.js\x00?? test/add.js\x00RM rename.js\x00origin.js\x00CM' +
     ' test/copy.js\x00test/base.js\x00MD remove.js\x00D  delete.js\x00'
 
   git.exec = async () => status
 
-  equal(await git.unstagedFiles(), [
-    { x: 77, y: 77, path: 'mod.js', rename: undefined, type: 2 },
-    { x: 63, y: 63, path: 'test/add.js', rename: undefined, type: 2 },
-    { x: 82, y: 77, path: 'origin.js', rename: 'rename.js', type: 2 },
-    { x: 67, y: 77, path: 'test/base.js', rename: 'test/copy.js', type: 2 },
-  ])
+  equal(await git.unstagedFiles(), {
+    working: ['mod.js', 'test/add.js', 'rename.js', 'test/copy.js'],
+    deleted: [],
+    changed: ['mod.js', 'test/add.js', 'rename.js', 'test/copy.js'],
+  })
 })
 
 test.run()
