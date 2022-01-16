@@ -3,11 +3,11 @@
 <img align="right" width="92" height="92" title="Nano Stores logo"
      src="https://usmanyunusov.github.io/nano-staged/img/logo.svg">
 
-Tiny tool to run commands for both staged and unstaged git files. It help **speeding up the run tests, lint code**, etc...
+Tiny tool to run commands for both staged, unstaged and changed git files. It help **speeding up the run tests, lint code**, etc...
 
 - 📦 **Small**: [41kB](https://packagephobia.com/result?p=nano-staged) (160x+ lighter than **lint-staged**).
 - 🥇 **Single dependency** ([`picocolors`](https://github.com/alexeyraspopov/picocolors)).
-- ☯️ Support **staged/unstaged** git files.
+- ☯️ Support **staged/unstaged/changed** git files.
 
 ## Benchmarks
 
@@ -34,7 +34,7 @@ The performance results were generated on a MBP Late 2013, 2,3 GHz Intel Core i7
 
 ### Getting Started
 
-1. Add `nano-staged` as a development dependency in the root of your project.
+1. Add `nano-staged` as a development dependency in the root of your project:
 
    ```terminal
    npm install nano-staged -D
@@ -53,28 +53,21 @@ The performance results were generated on a MBP Late 2013, 2,3 GHz Intel Core i7
 
 3. Now, run commands with Nano Staged:
 
-   For staged files:
-
    ```terminal
    ./node_modules/.bin/nano-staged
    ```
 
-   For unstaged files:
-
-   ```terminal
-   ./node_modules/.bin/nano-staged --unstaged
-   ```
-
-   > Nano Staged will filter out files which are in staging/unstaging area, and run commands from the config for them.
+   > Nano Staged by default to run commands from the config for staged files.
 
 ### Pre-commit Hook
 
 > You can use Nano Staged with a pre-commit tools to run it automatically after every commit.
 
-#### [Simple Git Hooks](https://github.com/toplenboren/simple-git-hooks)
-
+<details>
+   <summary><b>Simple Git Hooks</b></summary>
+  
 1. Install `simple-git-hooks` as a dev dependency:
-
+   
    ```terminal
    npm install simple-git-hooks --save-dev
    ```
@@ -103,7 +96,10 @@ The performance results were generated on a MBP Late 2013, 2,3 GHz Intel Core i7
    }
    ```
 
-#### [Husky](https://github.com/typicode/husky)
+   </details>
+
+<details>
+   <summary><b>Husky</b></summary>
 
 1. Install `husky` as a dev dependency:
 
@@ -131,15 +127,19 @@ The performance results were generated on a MBP Late 2013, 2,3 GHz Intel Core i7
    }
    ```
 
+</details>
+
 ## Configuration File Formats
 
-Nano Staged supports configuration files in several formats:
+### Supported formats:
 
-- **JavaScript** - use `nano-staged.js` or `.nano-staged.js`
-- **JavaScript (ESM)** - use `nano-staged.mjs` or `.nano-staged.mjs`
-- **JavaScript (CJS)** - use `nano-staged.cjs` or `.nano-staged.cjs`
-- **JSON** - use `nano-staged.json` or `.nano-staged.json` to define the configuration structure.
+- **JavaScript (ESM)** - use `nano-staged.mjs` or `.nano-staged.mjs` (the default export value should be a configuration: `export default { ... }`).
+- **JavaScript (CJS)** - use `nano-staged.cjs` or `.nano-staged.cjs` (the default export value should be a configuration: `module.exports = { ... }`).
+- **JavaScript** – use `nano-staged.js` or `.nano-staged.js` (in either ESM or CJS format, depending on "type" your project's package.json).
+- **JSON** - use `nano-staged.json` or `.nano-staged.json`.
 - **package.json** - create an `nano-staged` property in your package.json file and define your configuration there.
+
+### Priorited formats:
 
 If there are multiple configuration files in the same directory, Nano Staged will only use one. The priority order is as follows:
 
@@ -153,52 +153,44 @@ If there are multiple configuration files in the same directory, Nano Staged wil
 8. `nano-staged.json`
 9. `package.json`
 
-There are two ways to use configuration files.
+### Using configuration files:
 
-The first way to use configuration files. Starting from the current working directory, Nano Staged looks for the following possible sources: `.nano-staged.*`, `nano-staged.*` and `package.json` files.
+- The first way to use configuration files. Starting from the current working directory, Nano Staged looks for the following possible sources: `.nano-staged.*`, `nano-staged.*` and `package.json` files.
 
-The second way to use configuration files is to save the file wherever you would like and pass its location to the CLI using the `--config` or `-c` option, such as:
+- The second way to use configuration files is to save the file wherever you would like and pass its location to the CLI using the `--config` or `-c` option, such as:
 
-```terminal
-./node_modules/.bin/nano-staged --config myconfig.json
-```
+  ```terminal
+  ./node_modules/.bin/nano-staged --config myconfig.json
+  ```
 
-Example JSON configuration file:
+  Example JSON configuration file:
 
-```json
-{
-  "*": "your-cmd",
-  "*.ext": ["your-cmd", "your-cmd"]
-}
-```
+  ```json
+  {
+    "*": "your-cmd",
+    "*.ext": ["your-cmd", "your-cmd"]
+  }
+  ```
 
-## Command line flags
+## Command Line Interface
 
-#### `--config` or `-c`
+#### `--config [<path>]` or `-c [<path>]`
 
-Path to a JSON file that contains your configuration object. Use this option if you don't want Nano Staged to search for a configuration file. The path should be either absolute or relative to the directory that your process is running from.
+Path to file that contains your configuration object. Use this option if you don't want Nano Staged to search for a configuration file. The path should be either absolute or relative to the directory that your process is running from.
 
 #### `--unstaged` or `-u`
 
-Under this flag will be run commands from the config for only unstaged git files. Nano Staged by default use only staged git files.
+Run commands from the config for only git unstaged files. Nano Staged by default use only staged git files.
+
+#### `--changed [<ref1> <ref2>]`
+
+Run commands to changed files between the working tree and the index or a tree, to changed files  between the index and a tree, to changed files between two trees, or to changed files between two index.
 
 #### `--allow-empty`
 
 Will allow creating an empty commit.
 
-## Cheatsheet to filtering files
-
-| **paths**           | **\*** | **\*\*/\*** | **\*.css** | **\*\*/\*.css** | **\*\*/\*.{css,js}** | **\*\*/!(\*test).js** | **src/\*\*/\*.js** |
-| ------------------- | ------ | ----------- | ---------- | --------------- | -------------------- | --------------------- | ------------------ |
-| `style.css`         | ✅     | ✅          | ✅         | ✅              | ✅                   | ❌                    | ❌                 |
-| `src/style.css`     | ✅     | ✅          | ✅         | ✅              | ✅                   | ❌                    | ❌                 |
-| `src/css/style.css` | ✅     | ✅          | ✅         | ✅              | ✅                   | ❌                    | ❌                 |
-| `src/css/style.css` | ✅     | ✅          | ✅         | ✅              | ✅                   | ❌                    | ❌                 |
-| `src/index.js`      | ✅     | ✅          | ❌         | ❌              | ✅                   | ❌                    | ✅                 |
-| `src/js/index.js`   | ✅     | ✅          | ❌         | ❌              | ✅                   | ❌                    | ✅                 |
-| `index.js`          | ✅     | ✅          | ❌         | ❌              | ✅                   | ❌                    | ❌                 |
-| `test/b.test.js`    | ✅     | ✅          | ❌         | ❌              | ✅                   | ✅                    | ❌                 |
-| `test/a.test.js`    | ✅     | ✅          | ❌         | ❌              | ✅                   | ✅                    | ❌                 |
+## Patterns to match file paths
 
 ## Thanks
 
