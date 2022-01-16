@@ -211,7 +211,7 @@ test('get diff files', async () => {
 
   git.diffFileName = async () => 'add.js\x00'
 
-  equal(await git.diffFiles(), { working: ['add.js'], deleted: [], changed: ['add.js'] })
+  equal(await git.changedFiles(), { working: ['add.js'], deleted: [], changed: ['add.js'] })
 })
 
 test('get staged files', async () => {
