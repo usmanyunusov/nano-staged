@@ -182,7 +182,7 @@ Path to file that contains your configuration object. Use this option if you don
 
 Run commands from the config for only git unstaged files. Nano Staged by default use only staged git files.
 
-#### `--changed [<ref1> <ref2>]`
+#### `--diff [<ref1> <ref2>]`
 
 Run commands to changed files between the working tree and the index or a tree, to changed files  between the index and a tree, to changed files between two trees, or to changed files between two index.
 
