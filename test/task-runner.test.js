@@ -1,4 +1,6 @@
 import { is, equal } from 'uvu/assert'
+import { homedir } from 'os'
+import { join } from 'path'
 import esmock from 'esmock'
 import { test } from 'uvu'
 
@@ -14,7 +16,8 @@ test('should create runner and resolve tasks', async () => {
   const { createTaskRunner } = await esmock('../lib/task-runner.js')
 
   let runner = await createTaskRunner({
-    repoPath: 'test',
+    repoPath: join(homedir(), 'test'),
+    cwd: join(homedir(), 'test'),
     files: ['a.js', '../../b.css'],
     config: { '*.js': ['prettier --write'], '../*.css': 'prettier --write' },
     stream: stdout,
@@ -22,13 +25,13 @@ test('should create runner and resolve tasks', async () => {
 
   equal(runner.tasks, [
     {
-      files: ['/Users/odmin/Desktop/Dev/github-projects/nano-staged/test/a.js'],
+      files: [join(homedir(), 'test/a.js')],
       pattern: '*.js',
       type: 'staged',
       cmds: ['prettier --write'],
     },
     {
-      files: ['/Users/odmin/Desktop/Dev/github-projects/b.css'],
+      files: [],
       pattern: '../*.css',
       type: 'staged',
       cmds: ['prettier --write'],
