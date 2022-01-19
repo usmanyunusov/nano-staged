@@ -3,11 +3,12 @@
 <img align="right" width="92" height="92" title="Nano Stores logo"
      src="https://usmanyunusov.github.io/nano-staged/img/logo.svg">
 
-Tiny tool to run commands for both staged, unstaged and changed git files. It help **speeding up the run tests, lint code**, etc...
+Tiny tool to run commands for staged, unstaged and changed git files. It help **speeding up the run tests, lint code**, etc...
 
 - 📦 **Small**: [41kB](https://packagephobia.com/result?p=nano-staged) (160x+ lighter than **lint-staged**).
 - 🥇 **Single dependency** ([`picocolors`](https://github.com/alexeyraspopov/picocolors)).
 - ☯️ Support **staged/unstaged/changed** git files.
+- 🔱 Get changed files between different committing (commit-hash, branch-name, etc...)
 
 ## Benchmarks
 
@@ -189,8 +190,6 @@ Run commands to changed files between the working tree and the index or a tree, 
 #### `--allow-empty`
 
 Will allow creating an empty commit.
-
-## Patterns to match file paths
 
 ## Thanks
 
