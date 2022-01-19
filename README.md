@@ -1,14 +1,15 @@
-# Nano Staged
+<p align="center">
+   <img src="https://usmanyunusov.github.io/nano-staged/img/logo.svg" height="96">
+   <h3 align="center">Nano Staged</h3>
+   <p align="center">Tiny tool to run commands for staged, unstaged and changed git files.<br/> It help <b>speeding up the run tests, lint code</b>, etc...</p>
+</p>
 
-<img align="right" width="92" height="92" title="Nano Stores logo"
-     src="https://usmanyunusov.github.io/nano-staged/img/logo.svg">
-
-Tiny tool to run commands for staged, unstaged and changed git files. It help **speeding up the run tests, lint code**, etc...
+## Features
 
 - 📦 **Small**: [41kB](https://packagephobia.com/result?p=nano-staged) (160x+ lighter than **lint-staged**).
 - 🥇 **Single dependency** ([`picocolors`](https://github.com/alexeyraspopov/picocolors)).
 - ☯️ Support **staged/unstaged/changed** git files.
-- 🔱 Get changed files between different committing (commit-hash, branch-name, etc...)
+- 💪 Get changed files between different committing (commit-hash, branch-name, etc...).
 
 ## Benchmarks
 
@@ -66,9 +67,9 @@ The performance results were generated on a MBP Late 2013, 2,3 GHz Intel Core i7
 
 <details>
    <summary><b>Simple Git Hooks</b></summary>
-  
+
 1. Install `simple-git-hooks` as a dev dependency:
-   
+
    ```terminal
    npm install simple-git-hooks --save-dev
    ```
@@ -130,15 +131,28 @@ The performance results were generated on a MBP Late 2013, 2,3 GHz Intel Core i7
 
 </details>
 
-## Configuration File Formats
+## Configuration File Types
 
-### Supported formats:
+Nano Staged can be configured using any file extension natively supported by Node.js:
 
-- **JavaScript (ESM)** - use `nano-staged.mjs` or `.nano-staged.mjs` (the default export value should be a configuration: `export default { ... }`).
-- **JavaScript (CJS)** - use `nano-staged.cjs` or `.nano-staged.cjs` (the default export value should be a configuration: `module.exports = { ... }`).
-- **JavaScript** – use `nano-staged.js` or `.nano-staged.js` (in either ESM or CJS format, depending on "type" your project's package.json).
-- **JSON** - use `nano-staged.json` or `.nano-staged.json`.
-- **package.json** - create an `nano-staged` property in your package.json file and define your configuration there.
+- `nano-staged.*` and `.nano-staged.*` files, with the different extensions (`.js`, `.cjs`, `.mjs`)
+- `package.json` files with a `"nano-staged"` key
+
+### Supported file extensions:
+
+- `nano-staged.json` and `.nano-staged.json` are parsed as JSON5 and should contain an object matching the config format that Nano Staged accepts.
+- `nano-staged.cjs` and `.nano-staged.cjs` allow you to define your configuration as CommonJS, using `module.exports`.
+- `nano-staged.mjs` and `.nano-staged.mjs` allow you to define your configuration as ECMAScript modules, using `default exports`.
+- `nano-staged.js` and `.nano-staged.js` behave like the `.mjs` equivalents when your package.json file contains the `"type": "module"` option, otherwise they are exactly the same as the `.cjs` files.
+
+  Example JSON configuration file:
+
+  ```json
+  {
+    "*": "your-cmd",
+    "*.ext": ["your-cmd", "your-cmd"]
+  }
+  ```
 
 ### Priorited formats:
 
@@ -154,30 +168,29 @@ If there are multiple configuration files in the same directory, Nano Staged wil
 8. `nano-staged.json`
 9. `package.json`
 
-### Using configuration files:
+### Config Function API:
 
-- The first way to use configuration files. Starting from the current working directory, Nano Staged looks for the following possible sources: `.nano-staged.*`, `nano-staged.*` and `package.json` files.
+JS config files may export export either a single function or an object:
 
-- The second way to use configuration files is to save the file wherever you would like and pass its location to the CLI using the `--config` or `-c` option, such as:
+```js
+export default (api) => {
+  const js_files = api.files.filter((file) => path.extname(file) === '.js')
 
-  ```terminal
-  ./node_modules/.bin/nano-staged --config myconfig.json
-  ```
+  return [`eslint ${js_files.join(' ')}`, `prettier --write ${js_files.join(' ')}`]
+}
+```
 
-  Example JSON configuration file:
-
-  ```json
-  {
-    "*": "your-cmd",
-    "*.ext": ["your-cmd", "your-cmd"]
-  }
-  ```
+```js
+export default {
+  '*.js': (api) => `eslint --fix ${api.files.join(' ')}`,
+}
+```
 
 ## Command Line Interface
 
 #### `--config [<path>]` or `-c [<path>]`
 
-Path to file that contains your configuration object. Use this option if you don't want Nano Staged to search for a configuration file. The path should be either absolute or relative to the directory that your process is running from.
+Path to file that contains your configuration object. The path should be either absolute or relative to the directory that your process is running from.
 
 #### `--unstaged` or `-u`
 
@@ -185,7 +198,7 @@ Run commands from the config for only git unstaged files. Nano Staged by default
 
 #### `--diff [<ref1> <ref2>]`
 
-Run commands to changed files between the working tree and the index or a tree, to changed files  between the index and a tree, to changed files between two trees, or to changed files between two index.
+Run commands to changed files between the working tree and the index or a tree, to changed files between the index and a tree, to changed files between two trees, or to changed files between two index.
 
 #### `--allow-empty`
 
