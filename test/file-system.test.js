@@ -18,7 +18,7 @@ async function fsMock() {
   })
 }
 
-test('unlink file', async () => {
+test('should reported path correctly', async () => {
   let { unlink } = await fsMock()
   let path = 'a.js'
   let result = await unlink(path)
@@ -26,7 +26,7 @@ test('unlink file', async () => {
   is(result, path)
 })
 
-test('read file', async () => {
+test('should reported path correctly', async () => {
   let { read } = await fsMock()
   let path = 'a.js'
   let result = await read(path)
@@ -34,7 +34,7 @@ test('read file', async () => {
   equal(result, path)
 })
 
-test('not read file', async () => {
+test('should "null" when path is not found', async () => {
   let { read } = await fsMock()
   let result = await read()
 

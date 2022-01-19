@@ -4,103 +4,68 @@ import esmock from 'esmock'
 import { join } from 'path'
 import { test } from 'uvu'
 
-import { fixture } from './utils/index.js'
 import { loadConfig, validConfig } from '../lib/config.js'
+import { fixture } from './utils/index.js'
 
-test('cwd null', async () => {
+test('should return "undefined" when config file is not found', async () => {
   is(await loadConfig(join(homedir(), 'test')), undefined)
 })
 
-test('found package.json with config', async () => {
-  equal(await loadConfig(fixture('config/pkg-with-config')), {
+test('should load config from "package.json"', async () => {
+  equal(await loadConfig(fixture('config/test-project/dir')), {
     '*': 'my-tasks',
   })
 })
 
-test('NodeJS API resolve config', async () => {
+test('should return object config', async () => {
   equal(await loadConfig(process.cwd(), { '*': 'my-tasks' }), {
     '*': 'my-tasks',
   })
 })
 
-test('found package.json without config', async () => {
-  is(await loadConfig(fixture('config/pkg-without-config')), undefined)
+test('should load JSON config file', async () => {
+  let config = await loadConfig(fixture('config/json'))
+  equal(config, { '*': 'my-tasks' })
 })
 
-test('not found package.json', async () => {
-  is(await loadConfig(undefined), undefined)
+test('should load EMS config file from .js file', async () => {
+  let config = await loadConfig(fixture('config/esm-in-js'))
+  equal(config['*'](), 'my-tasks')
 })
 
-test('resolve package.json', async () => {
+test('should load EMS config file from .mjs file', async () => {
+  let config = await loadConfig(fixture('config/mjs'))
+  equal(config['*'](), 'my-tasks')
+})
+
+test('should load CJS config file from .cjs file', async () => {
+  let config = await loadConfig(fixture('config/cjs'))
+  equal(config, { '*': 'my-tasks' })
+})
+
+test('should load CJS config file from absolute path', async () => {
+  let config = await loadConfig(process.cwd(), fixture('config/cjs/nano-staged.cjs'))
+  equal(config, { '*': 'my-tasks' })
+})
+
+test('should load CJS config file from relative path', async () => {
+  let config = await loadConfig(
+    process.cwd(),
+    join('test', 'fixtures', 'config', 'cjs', 'nano-staged.cjs')
+  )
+  equal(config, { '*': 'my-tasks' })
+})
+
+test('should return "undefined" when error', async () => {
   const { loadConfig } = await esmock('../lib/config.js', {
     fs: {
       promises: {
-        async readFile() {
-          return Promise.reject()
-        },
+        readFile: async () => Promise.reject(),
       },
     },
   })
 
   is(await loadConfig(), undefined)
-})
-
-test('find config in parent dirs', async () => {
-  let config = await loadConfig(fixture('config/pkg-parent/pkg-child/pkg-child-child'))
-  equal(config, { '*': 'my-tasks' })
-})
-
-test('find nano-staged.json config', async () => {
-  let config = await loadConfig(fixture('config/json-config'))
-  equal(config, { '*': 'my-json-tasks' })
-})
-
-test('find nano-staged.json config', async () => {
-  let config = await loadConfig(
-    fixture('config/json-config'),
-    fixture('config/json-config/nano-staged.json')
-  )
-  equal(config, { '*': 'my-json-tasks' })
-})
-
-test('find .nano-staged.json config', async () => {
-  let config = await loadConfig(fixture('config/dot-json-config'))
-  equal(config, { '*': 'my-json-dot-tasks' })
-})
-
-test('find .nano-staged.js config', async () => {
-  let config = await loadConfig(fixture('config/dot-js-config'))
-  equal(config['*'](), 'my-dot-js-tasks')
-})
-
-test('find nano-staged.js config', async () => {
-  let config = await loadConfig(fixture('config/js-config'))
-  equal(config['*'](), 'my-js-tasks')
-})
-
-test('find .nano-staged.mjs config', async () => {
-  let config = await loadConfig(fixture('config/dot-mjs-config'))
-  equal(config['*'](), 'my-dot-mjs-tasks')
-})
-
-test('find nano-staged.mjs config', async () => {
-  let config = await loadConfig(fixture('config/mjs-config'))
-  equal(config['*'](), 'my-mjs-tasks')
-})
-
-test('find .nano-staged.cjs config', async () => {
-  let config = await loadConfig(fixture('config/dot-cjs-config'))
-  equal(config['*'](), 'my-dot-cjs-tasks')
-})
-
-test('find nano-staged.cjs config', async () => {
-  let config = await loadConfig(fixture('config/cjs-config'))
-  equal(config['*'](), 'my-cjs-tasks')
-})
-
-test('find object config', async () => {
-  let config = await loadConfig(process.cwd(), { '*': 'my-object-tasks' })
-  equal(config['*'], 'my-object-tasks')
 })
 
 test('config undefined', async () => {

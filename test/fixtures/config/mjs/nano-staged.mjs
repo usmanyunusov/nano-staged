@@ -1,3 +1,3 @@
 export default () => {
-  return 'my-mjs-tasks'
+  return 'my-tasks'
 }

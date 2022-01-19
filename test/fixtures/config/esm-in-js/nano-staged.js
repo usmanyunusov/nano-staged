@@ -1,5 +1,5 @@
 export default {
   '*': () => {
-    return 'my-js-tasks'
+    return 'my-tasks'
   },
 }

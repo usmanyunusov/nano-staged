@@ -6,7 +6,7 @@ import fs from 'fs-extra'
 import { writeFile, makeDir, appendFile, fixture, removeFile } from './utils/index.js'
 import { createGit } from '../lib/git.js'
 
-let cwd = fixture('git/nano-staged-git')
+let cwd = fixture('simple/git-test')
 let patchPath = join(cwd, 'nano-staged.patch')
 
 async function execGit(args) {
@@ -28,7 +28,7 @@ test.after.each(async () => {
   await removeFile(cwd)
 })
 
-test('not found git dir', async () => {
+test('should return "null" when git dir is not found', async () => {
   let git = createGit(cwd)
   git.exec = async () => null
 
@@ -38,7 +38,7 @@ test('not found git dir', async () => {
   is(dotGitPath, null)
 })
 
-test('not found git dir', async () => {
+test('should return "null" when run error', async () => {
   let git = createGit(cwd)
   git.exec = async () => Promise.reject()
 
@@ -48,7 +48,7 @@ test('not found git dir', async () => {
   is(dotGitPath, null)
 })
 
-test('resolve git dir', async () => {
+test('should return path when git dir is found', async () => {
   let git = createGit(cwd)
   git.exec = async () => 'test'
 
@@ -58,19 +58,7 @@ test('resolve git dir', async () => {
   is(dotGitPath, process.platform === 'win32' ? 'test\\.git' : 'test/.git')
 })
 
-test('error find git dir', async () => {
-  let git = createGit(cwd)
-  git.exec = async () => {
-    throw new Error('Error')
-  }
-
-  let { repoPath, dotGitPath } = await git.getRepoAndDotGitPaths()
-
-  is(repoPath, null)
-  is(dotGitPath, null)
-})
-
-test('create patch file', async () => {
+test('should create patch to file', async () => {
   let git = createGit(cwd)
 
   await writeFile('README.md', '# Test\n## Test', cwd)
@@ -89,7 +77,7 @@ test('create patch file', async () => {
   )
 })
 
-test('create patch file for files', async () => {
+test('should create patch to files', async () => {
   let git = createGit(cwd)
 
   await appendFile('a.js', 'let a = {};', cwd)
@@ -111,7 +99,7 @@ test('create patch file for files', async () => {
   )
 })
 
-test('checkout files', async () => {
+test('should checkout to files', async () => {
   let git = createGit(cwd)
 
   await appendFile('a.js', 'let a = {};', cwd)
@@ -122,7 +110,7 @@ test('checkout files', async () => {
   equal(await git.status(), [{ x: 65, y: 32, path: 'a.js', rename: undefined }])
 })
 
-test('apply patch file', async () => {
+test('should apply to patch file', async () => {
   let git = createGit(cwd)
 
   await writeFile('README.md', '# Test\n## Test', cwd)
@@ -132,7 +120,7 @@ test('apply patch file', async () => {
   is((await fs.stat(patchPath)).isFile(), true)
 })
 
-test('not apply patch file', async () => {
+test('should error when not apply patch file', async () => {
   let git = createGit(cwd)
 
   try {
@@ -142,7 +130,7 @@ test('not apply patch file', async () => {
   }
 })
 
-test('add files', async () => {
+test('should add to files', async () => {
   let git = createGit(cwd)
 
   await appendFile('a.js', 'let a = {};', cwd)
@@ -151,7 +139,7 @@ test('add files', async () => {
   equal(await git.status(), [{ x: 65, y: 32, path: 'a.js', rename: undefined }])
 })
 
-test('parse status', async () => {
+test('should parse status correctly', async () => {
   let git = createGit(cwd)
 
   await appendFile('a.js', 'let a = {};', cwd)
@@ -162,10 +150,6 @@ test('parse status', async () => {
     { x: 65, y: 32, path: 'b.js', rename: undefined },
     { x: 63, y: 63, path: 'a.js', rename: undefined },
   ])
-})
-
-test('parse status mock', async () => {
-  let git = createGit(cwd)
 
   git.exec = async () => ''
   equal(await git.status(), [])
@@ -188,7 +172,7 @@ test('parse status mock', async () => {
   equal(await git.status(), [])
 })
 
-test('diff file name', async () => {
+test('should diff to file correctly', async () => {
   let git = createGit(cwd)
 
   is(await git.diffFileName(), '')
@@ -206,21 +190,22 @@ test('diff file name', async () => {
   is(await git.diffFileName(), '')
 })
 
-test('get diff files', async () => {
+test('should get diff file correctly', async () => {
   let git = createGit(cwd)
 
   git.diffFileName = async () => 'add.js\x00'
-
   equal(await git.changedFiles(), { working: ['add.js'], deleted: [], changed: ['add.js'] })
+
+  git.diffFileName = async () => ''
+  equal(await git.changedFiles(), { working: [], deleted: [], changed: [] })
 })
 
-test('get staged files', async () => {
+test('should get staged files correctly', async () => {
   let git = createGit(cwd)
-  let status =
+
+  git.exec = async () =>
     '?? new.js\x00A  stage.js\x00MM mod.js\x00AM test/add.js\x00RM rename.js\x00origin.js\x00CM' +
     ' test/copy.js\x00test/base.js\x00MD remove.js\x00D  delete.js\x00'
-
-  git.exec = async () => status
 
   equal(await git.stagedFiles(), {
     working: ['stage.js', 'mod.js', 'test/add.js', 'rename.js', 'test/copy.js', 'remove.js'],
@@ -229,13 +214,12 @@ test('get staged files', async () => {
   })
 })
 
-test('get unstaged files', async () => {
+test('should get unstaged files correctly', async () => {
   let git = createGit(cwd)
-  let status =
+
+  git.exec = async () =>
     'A  add.js\x00AD add_remove.js\x00MM mod.js\x00?? test/add.js\x00RM rename.js\x00origin.js\x00CM' +
     ' test/copy.js\x00test/base.js\x00MD remove.js\x00D  delete.js\x00'
-
-  git.exec = async () => status
 
   equal(await git.unstagedFiles(), {
     working: ['mod.js', 'test/add.js', 'rename.js', 'test/copy.js'],

@@ -38,8 +38,8 @@
     "singleQuote": true
   },
   "c8": {
-    "exclude": [
-      "**/*.test.*"
+    "include": [
+      "lib/**/*"
     ],
     "lines": 100,
     "check-coverage": true
