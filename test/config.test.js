@@ -17,7 +17,7 @@ test('should load config from "package.json"', async () => {
   })
 })
 
-test('should return object config', async () => {
+test('should return "object" config', async () => {
   equal(await getConfig(process.cwd(), { '*': 'my-tasks' }), {
     '*': 'my-tasks',
   })

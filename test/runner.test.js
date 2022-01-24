@@ -119,12 +119,12 @@ test('should step success', async () => {
 
   is(
     stdout.out,
-    '\x1B[32m\x1B[1m√\x1B[22m\x1B[39m Preparing nano-staged...\n' +
-      '\x1B[32m\x1B[1m√\x1B[22m\x1B[39m Backing up unstaged changes for staged files...\n' +
-      '\x1B[32m\x1B[1m√\x1B[22m\x1B[39m Running tasks for staged files...\n' +
-      '\x1B[32m\x1B[1m√\x1B[22m\x1B[39m Applying modifications from tasks...\n' +
-      '\x1B[32m\x1B[1m√\x1B[22m\x1B[39m Restoring unstaged changes for staged files...\n' +
-      '\x1B[32m\x1B[1m√\x1B[22m\x1B[39m Removing temporary to patch files...\n'
+    '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Preparing nano-staged...\n' +
+      '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Backing up unstaged changes for staged files...\n' +
+      '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Running tasks for staged files...\n' +
+      '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Applying modifications from tasks...\n' +
+      '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Restoring unstaged changes for staged files...\n' +
+      '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Removing temporary to patch files...\n'
   )
 })
 
@@ -154,7 +154,8 @@ test('should backupOriginalState error', async () => {
   await runner.run()
   is(
     stdout.out,
-    '\x1B[31m\x1B[1m×\x1B[22m\x1B[39m Preparing nano-staged...\n\x1B[31mbackupOriginalState fail\x1B[39m\n'
+    '\x1B[1m\x1B[31m×\x1B[39m\x1B[22m Preparing nano-staged...\n' +
+      '\x1B[31mbackupOriginalState fail\x1B[39m\n'
   )
 })
 
@@ -187,11 +188,11 @@ test('should backupUnstagedFiles error', async () => {
   await runner.run()
   is(
     stdout.out,
-    '\x1B[32m\x1B[1m√\x1B[22m\x1B[39m Preparing nano-staged...\n' +
-      '\x1B[31m\x1B[1m×\x1B[22m\x1B[39m Backing up unstaged changes for staged files...\n' +
+    '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Preparing nano-staged...\n' +
+      '\x1B[1m\x1B[31m×\x1B[39m\x1B[22m Backing up unstaged changes for staged files...\n' +
       '\x1B[31mbackupUnstagedFiles fail\x1B[39m\n' +
-      '\x1B[32m\x1B[1m√\x1B[22m\x1B[39m Restoring to its original state...\n' +
-      '\x1B[32m\x1B[1m√\x1B[22m\x1B[39m Removing temporary to patch files...\n'
+      '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Restoring to its original state...\n' +
+      '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Removing temporary to patch files...\n'
   )
 })
 
@@ -225,13 +226,13 @@ test('should applyModifications error', async () => {
   await runner.run()
   is(
     stdout.out,
-    '\x1B[32m\x1B[1m√\x1B[22m\x1B[39m Preparing nano-staged...\n' +
-      '\x1B[32m\x1B[1m√\x1B[22m\x1B[39m Backing up unstaged changes for staged files...\n' +
-      '\x1B[32m\x1B[1m√\x1B[22m\x1B[39m Running tasks for staged files...\n' +
-      '\x1B[31m\x1B[1m×\x1B[22m\x1B[39m Applying modifications from tasks...\n' +
+    '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Preparing nano-staged...\n' +
+      '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Backing up unstaged changes for staged files...\n' +
+      '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Running tasks for staged files...\n' +
+      '\x1B[1m\x1B[31m×\x1B[39m\x1B[22m Applying modifications from tasks...\n' +
       '\x1B[31mapplyModifications fail\x1B[39m\n' +
-      '\x1B[32m\x1B[1m√\x1B[22m\x1B[39m Restoring to its original state...\n' +
-      '\x1B[32m\x1B[1m√\x1B[22m\x1B[39m Removing temporary to patch files...\n'
+      '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Restoring to its original state...\n' +
+      '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Removing temporary to patch files...\n'
   )
 })
 
@@ -265,13 +266,13 @@ test('should restoreUnstagedFiles error', async () => {
   await runner.run()
   is(
     stdout.out,
-    '\x1B[32m\x1B[1m√\x1B[22m\x1B[39m Preparing nano-staged...\n' +
-      '\x1B[32m\x1B[1m√\x1B[22m\x1B[39m Backing up unstaged changes for staged files...\n' +
-      '\x1B[32m\x1B[1m√\x1B[22m\x1B[39m Running tasks for staged files...\n' +
-      '\x1B[32m\x1B[1m√\x1B[22m\x1B[39m Applying modifications from tasks...\n' +
-      '\x1B[31m\x1B[1m×\x1B[22m\x1B[39m Restoring unstaged changes for staged files...\n' +
+    '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Preparing nano-staged...\n' +
+      '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Backing up unstaged changes for staged files...\n' +
+      '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Running tasks for staged files...\n' +
+      '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Applying modifications from tasks...\n' +
+      '\x1B[1m\x1B[31m×\x1B[39m\x1B[22m Restoring unstaged changes for staged files...\n' +
       '\x1B[31mrestoreUnstagedFiles fail\x1B[39m\n' +
-      '\x1B[32m\x1B[1m√\x1B[22m\x1B[39m Removing temporary to patch files...\n'
+      '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Removing temporary to patch files...\n'
   )
 })
 
@@ -303,10 +304,10 @@ test('should restoreOriginalState error', async () => {
   await runner.run()
   is(
     stdout.out,
-    '\x1B[32m\x1B[1m√\x1B[22m\x1B[39m Preparing nano-staged...\n' +
-      '\x1B[31m\x1B[1m×\x1B[22m\x1B[39m Backing up unstaged changes for staged files...\n' +
+    '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Preparing nano-staged...\n' +
+      '\x1B[1m\x1B[31m×\x1B[39m\x1B[22m Backing up unstaged changes for staged files...\n' +
       '\x1B[31mbackupUnstagedFiles fail\x1B[39m\n' +
-      '\x1B[31m\x1B[1m×\x1B[22m\x1B[39m Restoring to its original state...\n' +
+      '\x1B[1m\x1B[31m×\x1B[39m\x1B[22m Restoring to its original state...\n' +
       '\x1B[31mrestoreOriginalState fail\x1B[39m\n'
   )
 })
@@ -343,11 +344,11 @@ test('should restoreOriginalState error', async () => {
     is(error, 'Task runner error')
     is(
       stdout.out,
-      '\x1B[32m\x1B[1m√\x1B[22m\x1B[39m Preparing nano-staged...\n' +
-        '\x1B[32m\x1B[1m√\x1B[22m\x1B[39m Backing up unstaged changes for staged files...\n' +
-        '\x1B[32m\x1B[1m√\x1B[22m\x1B[39m Running tasks for staged files...\n' +
-        '\x1B[32m\x1B[1m√\x1B[22m\x1B[39m Restoring to its original state...\n' +
-        '\x1B[32m\x1B[1m√\x1B[22m\x1B[39m Removing temporary to patch files...\n'
+      '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Preparing nano-staged...\n' +
+        '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Backing up unstaged changes for staged files...\n' +
+        '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Running tasks for staged files...\n' +
+        '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Restoring to its original state...\n' +
+        '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Removing temporary to patch files...\n'
     )
   }
 })
@@ -382,12 +383,12 @@ test('should cleanUp error', async () => {
   await runner.run()
   is(
     stdout.out,
-    '\x1B[32m\x1B[1m√\x1B[22m\x1B[39m Preparing nano-staged...\n' +
-      '\x1B[32m\x1B[1m√\x1B[22m\x1B[39m Backing up unstaged changes for staged files...\n' +
-      '\x1B[32m\x1B[1m√\x1B[22m\x1B[39m Running tasks for staged files...\n' +
-      '\x1B[32m\x1B[1m√\x1B[22m\x1B[39m Applying modifications from tasks...\n' +
-      '\x1B[32m\x1B[1m√\x1B[22m\x1B[39m Restoring unstaged changes for staged files...\n' +
-      '\x1B[32m\x1B[1m√\x1B[22m\x1B[39m Removing temporary to patch files...\n'
+    '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Preparing nano-staged...\n' +
+      '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Backing up unstaged changes for staged files...\n' +
+      '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Running tasks for staged files...\n' +
+      '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Applying modifications from tasks...\n' +
+      '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Restoring unstaged changes for staged files...\n' +
+      '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Removing temporary to patch files...\n'
   )
 })
 

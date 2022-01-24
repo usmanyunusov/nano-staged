@@ -23,7 +23,7 @@ test('should return when config undefined', async () => {
     is(
       stdout.out.replace(/\d+\.\d+\.\d+/, '0.1.0'),
       'Nano Staged \x1B[1mv0.1.0\x1B[22m\n' +
-        '\x1B[41m\x1B[30m ERROR \x1B[39m\x1B[49m \x1B[31mCreate Nano Staged config.\x1B[39m\n'
+        '\x1B[1m\x1B[31m×\x1B[39m\x1B[22m \x1B[31mCreate Nano Staged config.\x1B[39m\n'
     )
   }
 })
@@ -41,7 +41,7 @@ test('should return when config path error', async () => {
     is(
       stdout.out.replace(/\d+\.\d+\.\d+/, '0.1.0'),
       'Nano Staged \x1B[1mv0.1.0\x1B[22m\n' +
-        '\x1B[41m\x1B[30m ERROR \x1B[39m\x1B[49m \x1B[31mNano Staged config file \x1B[33mconfig.json\x1B[31m is not found.\x1B[39m\n'
+        '\x1B[1m\x1B[31m×\x1B[39m\x1B[22m \x1B[31mNano Staged config file \x1B[33mconfig.json\x1B[31m is not found.\x1B[39m\n'
     )
   }
 })
@@ -59,7 +59,7 @@ test('should config invalid', async () => {
     is(
       stdout.out.replace(/\d+\.\d+\.\d+/, '0.1.0'),
       'Nano Staged \x1B[1mv0.1.0\x1B[22m\n' +
-        '\x1B[41m\x1B[30m ERROR \x1B[39m\x1B[49m \x1B[31mNano Staged config invalid.\x1B[39m\n'
+        '\x1B[1m\x1B[31m×\x1B[39m\x1B[22m \x1B[31mNano Staged config invalid.\x1B[39m\n'
     )
   }
 })
@@ -138,8 +138,7 @@ test('should runner run error', async () => {
   } catch (error) {
     is(
       stdout.out.replace(/\d+\.\d+\.\d+/, '0.1.0'),
-      'Nano Staged \x1B[1mv0.1.0\x1B[22m\n' +
-        '\x1B[41m\x1B[30m ERROR \x1B[39m\x1B[49m \x1B[31mTask error\x1B[39m\n'
+      'Nano Staged \x1B[1mv0.1.0\x1B[22m\n\x1B[1m\x1B[31m×\x1B[39m\x1B[22m \x1B[31mTask error\x1B[39m\n'
     )
   }
 })
