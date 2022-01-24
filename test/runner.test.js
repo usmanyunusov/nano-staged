@@ -255,7 +255,6 @@ test('should restoreUnstagedFiles error', async () => {
         backupUnstagedFiles: async () => Promise.resolve(),
         applyModifications: async () => Promise.resolve(),
         restoreUnstagedFiles: async () => Promise.reject('restoreUnstagedFiles fail'),
-        restoreOriginalState: async () => Promise.resolve(),
         cleanUp: async () => Promise.resolve(),
       }),
     },
@@ -272,7 +271,6 @@ test('should restoreUnstagedFiles error', async () => {
       '\x1B[32m\x1B[1m√\x1B[22m\x1B[39m Applying modifications from tasks...\n' +
       '\x1B[31m\x1B[1m×\x1B[22m\x1B[39m Restoring unstaged changes for staged files...\n' +
       '\x1B[31mrestoreUnstagedFiles fail\x1B[39m\n' +
-      '\x1B[32m\x1B[1m√\x1B[22m\x1B[39m Restoring to its original state...\n' +
       '\x1B[32m\x1B[1m√\x1B[22m\x1B[39m Removing temporary to patch files...\n'
   )
 })
