@@ -56,7 +56,10 @@ test('should run handle error', async () => {
   try {
     await runner.run()
   } catch (error) {
-    is(error.message, '\x1B[31m*.js prettier --write:\n\x1B[39mRun error')
+    is(
+      error.message,
+      '\x1B[41m\x1B[30m ERROR \x1B[39m\x1B[49m \x1B[31m*.js prettier --write\x1B[39m:\nRun error'
+    )
   }
 })
 

@@ -4,52 +4,52 @@ import esmock from 'esmock'
 import { join } from 'path'
 import { test } from 'uvu'
 
-import { loadConfig, validConfig } from '../lib/config.js'
+import { getConfig, validConfig } from '../lib/config.js'
 import { fixture } from './utils/index.js'
 
 test('should return "undefined" when config file is not found', async () => {
-  is(await loadConfig(join(homedir(), 'test')), undefined)
+  is(await getConfig(join(homedir(), 'test')), undefined)
 })
 
 test('should load config from "package.json"', async () => {
-  equal(await loadConfig(fixture('config/test-project/dir')), {
+  equal(await getConfig(fixture('config/test-project/dir')), {
     '*': 'my-tasks',
   })
 })
 
 test('should return object config', async () => {
-  equal(await loadConfig(process.cwd(), { '*': 'my-tasks' }), {
+  equal(await getConfig(process.cwd(), { '*': 'my-tasks' }), {
     '*': 'my-tasks',
   })
 })
 
 test('should load JSON config file', async () => {
-  let config = await loadConfig(fixture('config/json'))
+  let config = await getConfig(fixture('config/json'))
   equal(config, { '*': 'my-tasks' })
 })
 
 test('should load EMS config file from .js file', async () => {
-  let config = await loadConfig(fixture('config/esm-in-js'))
+  let config = await getConfig(fixture('config/esm-in-js'))
   equal(config['*'](), 'my-tasks')
 })
 
 test('should load EMS config file from .mjs file', async () => {
-  let config = await loadConfig(fixture('config/mjs'))
+  let config = await getConfig(fixture('config/mjs'))
   equal(config['*'](), 'my-tasks')
 })
 
 test('should load CJS config file from .cjs file', async () => {
-  let config = await loadConfig(fixture('config/cjs'))
+  let config = await getConfig(fixture('config/cjs'))
   equal(config, { '*': 'my-tasks' })
 })
 
 test('should load CJS config file from absolute path', async () => {
-  let config = await loadConfig(process.cwd(), fixture('config/cjs/nano-staged.cjs'))
+  let config = await getConfig(process.cwd(), fixture('config/cjs/nano-staged.cjs'))
   equal(config, { '*': 'my-tasks' })
 })
 
 test('should load CJS config file from relative path', async () => {
-  let config = await loadConfig(
+  let config = await getConfig(
     process.cwd(),
     join('test', 'fixtures', 'config', 'cjs', 'nano-staged.cjs')
   )
@@ -57,7 +57,7 @@ test('should load CJS config file from relative path', async () => {
 })
 
 test('should return "undefined" when error', async () => {
-  const { loadConfig } = await esmock('../lib/config.js', {
+  const { getConfig } = await esmock('../lib/config.js', {
     fs: {
       promises: {
         readFile: async () => Promise.reject(),
@@ -65,7 +65,7 @@ test('should return "undefined" when error', async () => {
     },
   })
 
-  is(await loadConfig(), undefined)
+  is(await getConfig(), undefined)
 })
 
 test('config undefined', async () => {

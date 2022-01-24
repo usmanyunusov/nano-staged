@@ -3,7 +3,7 @@ import esmock from 'esmock'
 import { test } from 'uvu'
 
 async function fsMock() {
-  return await esmock('../lib/file-system.js', {
+  return await esmock('../lib/file.js', {
     fs: {
       promises: {
         async unlink(path = null) {
