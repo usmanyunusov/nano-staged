@@ -25,12 +25,14 @@ test('should create runner and resolve tasks', async () => {
 
   equal(runner.tasks, [
     {
+      cmdFn: false,
       files: [join(homedir(), 'test/a.js')],
       pattern: '*.js',
       type: 'staged',
       cmds: ['prettier --write'],
     },
     {
+      cmdFn: false,
       files: [],
       pattern: '../*.css',
       type: 'staged',

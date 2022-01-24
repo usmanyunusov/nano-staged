@@ -9,7 +9,6 @@
 - 📦 **Small**: [41kB](https://packagephobia.com/result?p=nano-staged) (160x+ lighter than **lint-staged**).
 - 🥇 **Single dependency** ([`picocolors`](https://github.com/alexeyraspopov/picocolors)).
 - ☯️ Support **staged/unstaged/changed** git files.
-- 💪 Get changed files between different committing (commit-hash, branch-name, etc...).
 
 ## Benchmarks
 
@@ -84,13 +83,13 @@ The performance results were generated on a MBP Late 2013, 2,3 GHz Intel Core i7
    }
    ```
 
-3. Run the CLI script to update the git hooks with the commands from the config
+3. Run the CLI script to update the git hooks with the commands from the config:
 
    ```terminal
    npx simple-git-hooks
    ```
 
-4. To automatically have Git hooks enabled after install, edit `package.json`
+4. To automatically have Git hooks enabled after install, edit `package.json`:
 
    ```json
    "scripts": {
@@ -109,19 +108,19 @@ The performance results were generated on a MBP Late 2013, 2,3 GHz Intel Core i7
    npm install husky --save-dev
    ```
 
-2. Enable Git hooks
+2. Enable Git hooks:
 
    ```terminal
    npx husky install
    ```
 
-3. Add a command to a hook
+3. Add a command to a hook:
 
    ```terminal
    npx husky add .husky/pre-commit "./node_modules/.bin/nano-staged"
    ```
 
-4. To automatically have Git hooks enabled after install, edit `package.json`
+4. To automatically have Git hooks enabled after install, edit `package.json`:
 
    ```json
    "scripts": {
@@ -131,28 +130,61 @@ The performance results were generated on a MBP Late 2013, 2,3 GHz Intel Core i7
 
 </details>
 
-## Configuration File Types
+## Configuration
 
-Nano Staged can be configured using any file extension natively supported by Node.js:
+Nano Staged supports multiple ways to define config.
 
-- `nano-staged.*` and `.nano-staged.*` files, with the different extensions (`.js`, `.cjs`, `.mjs`)
-- `package.json` files with a `"nano-staged"` key
+1. `nano-staged` section in `package.json`:
 
-### Supported file extensions:
+   ```json
+   "nano-staged": {
+      "*": "your-cmd",
+      "*.ext": ["your-cmd", "your-cmd"]
+   }
+   ```
 
-- `nano-staged.json` and `.nano-staged.json` are parsed as JSON5 and should contain an object matching the config format that Nano Staged accepts.
-- `nano-staged.cjs` and `.nano-staged.cjs` allow you to define your configuration as CommonJS, using `module.exports`.
-- `nano-staged.mjs` and `.nano-staged.mjs` allow you to define your configuration as ECMAScript modules, using `default exports`.
-- `nano-staged.js` and `.nano-staged.js` behave like the `.mjs` equivalents when your package.json file contains the `"type": "module"` option, otherwise they are exactly the same as the `.cjs` files.
+2. or a separate `.nano-staged.json` or `nano-staged.json` config file:
 
-  Example JSON configuration file:
+   ```json
+   {
+     "*": "your-cmd",
+     "*.ext": ["your-cmd", "your-cmd"]
+   }
+   ```
 
-  ```json
-  {
-    "*": "your-cmd",
-    "*.ext": ["your-cmd", "your-cmd"]
-  }
-  ```
+3. or a more flexible `.nano-staged.cjs` or `nano-staged.cjs` config file to CommonJS modules:
+
+   ```js
+   module.exports = {
+     '*': 'your-cmd',
+     '*.ext': ['your-cmd', 'your-cmd'],
+   }
+   ```
+
+4. or a more flexible `.nano-staged.mjs` or `nano-staged.mjs` config file to ECMAScript modules:
+
+   ```js
+   export default {
+     '*': 'your-cmd',
+     '*.ext': ['your-cmd', 'your-cmd'],
+   }
+   ```
+
+5. or a more flexible `.nano-staged.js` or `nano-staged.js` config file:
+
+   ```js
+   // package.json => "type": "module"
+   export default {
+     '*': 'your-cmd',
+     '*.ext': ['your-cmd', 'your-cmd'],
+   }
+
+   // package.json => "type": "commonjs"
+   module.exports = {
+     '*': 'your-cmd',
+     '*.ext': ['your-cmd', 'your-cmd'],
+   }
+   ```
 
 ### Priorited formats:
 
@@ -174,9 +206,9 @@ JS config files may export export either a single function or an object:
 
 ```js
 export default (api) => {
-  const js_files = api.files.filter((file) => path.extname(file) === '.js')
+  const jsFiles = api.files.filter((file) => path.extname(file) === '.js')
 
-  return [`eslint ${js_files.join(' ')}`, `prettier --write ${js_files.join(' ')}`]
+  return [`eslint --fix ${jsFiles.join(' ')}`, `prettier --write ${jsFiles.join(' ')}`]
 }
 ```
 
