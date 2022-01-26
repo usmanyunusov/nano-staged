@@ -8,7 +8,7 @@
 
 - 📦 **Small**: [41kB](https://packagephobia.com/result?p=nano-staged) (160x+ lighter than **lint-staged**).
 - 🥇 **Single dependency** ([`picocolors`](https://github.com/alexeyraspopov/picocolors)).
-- ☯️ Support **staged/unstaged/changed** git files.
+- ☯️ **Multiple git file states** (staged, unstaged, last-commit, changed files for the diff, etc...)
 
 ## Benchmarks
 
@@ -35,13 +35,13 @@ The performance results were generated on a MBP Late 2013, 2,3 GHz Intel Core i7
 
 ### Getting Started
 
-1. Add `nano-staged` as a development dependency in the root of your project:
+1. First, install `nano-staged`:
 
    ```terminal
-   npm install nano-staged -D
+   npm install --save-dev nano-staged
    ```
 
-2. Add the `nano-staged` section to your `package.json`. Fill it with [glob pattern](#cheatsheet-to-filtering-files) and the corresponding commands:
+2. Add the `nano-staged` section and the commands to your `package.json`:
 
    For example:
 
