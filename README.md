@@ -1,14 +1,14 @@
 <p align="center">
    <img src="https://usmanyunusov.github.io/nano-staged/img/logo.svg" height="96">
    <h3 align="center">Nano Staged</h3>
-   <p align="center">Tiny tool to run commands for staged, unstaged and changed git files.<br/> It help <b>speeding up the run tests, lint code</b>, etc...</p>
+   <p align="center">Tiny tool to run commands for modified, staged, and committed git files.<br/> It help <b>speeding up the run tests, linters, scripts</b>, and more</p>
 </p>
 
 ## Features
 
 - 📦 **Small**: [41kB](https://packagephobia.com/result?p=nano-staged) (160x+ lighter than **lint-staged**).
 - 🥇 **Single dependency** ([`picocolors`](https://github.com/alexeyraspopov/picocolors)).
-- ☯️ **Multiple git file states** (staged, unstaged, last-commit, changed files for the diff, etc...)
+- ☯️ **Support multiple file states like staged, unstaged, last-commit, changed etc**
 
 ## Benchmarks
 

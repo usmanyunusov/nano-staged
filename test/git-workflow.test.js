@@ -203,4 +203,14 @@ test('should clean up handle errors', async () => {
   }
 })
 
+test('hasPatch return false when no patch file', async () => {
+  let gitWorkflow = await createGitWorkflow({
+    allowEmpty: false,
+    repoPath: cwd,
+    dotGitPath: resolve(cwd, './.git'),
+  })
+
+  is(await gitWorkflow.hasPatch('./test.patch'), false)
+})
+
 test.run()
