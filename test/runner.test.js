@@ -19,7 +19,7 @@ test('should return when git not found', async () => {
     },
   })
 
-  let runner = await createRunner({ stream: stdout })
+  let runner = createRunner({ stream: stdout })
   try {
     await runner.run()
   } catch (error) {
@@ -39,7 +39,7 @@ test('should return when no files found for staged/unstaged/diff', async () => {
     },
   })
 
-  let runner = await createRunner({ stream: stdout })
+  let runner = createRunner({ stream: stdout })
 
   try {
     await runner.run()
@@ -78,7 +78,7 @@ test('should return when no files match any configured task', async () => {
     },
   })
 
-  let runner = await createRunner({ stream: stdout })
+  let runner = createRunner({ stream: stdout })
 
   try {
     await runner.run()
@@ -113,18 +113,19 @@ test('should step success', async () => {
     },
   })
 
-  let runner = await createRunner({ stream: stdout })
+  let runner = createRunner({ stream: stdout })
 
   await runner.run()
 
   is(
     stdout.out,
-    '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Preparing nano-staged...\n' +
-      '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Backing up unstaged changes for staged files...\n' +
-      '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Running tasks for staged files...\n' +
-      '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Applying modifications from tasks...\n' +
-      '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Restoring unstaged changes for staged files...\n' +
-      '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Removing temporary to patch files...\n'
+    '\x1B[?25l\x1B[33m\\\x1B[39m Preparing nano-staged...\x1B[1G\x1B[2K\x1B[32m√\x1B[39m Preparing nano-staged...\n' +
+      '\x1B[32m√\x1B[39m Backing up unstaged changes for staged files...\n' +
+      '\x1B[32m√\x1B[39m Running tasks for staged files...\n' +
+      '\x1B[32m√\x1B[39m Applying modifications from tasks...\n' +
+      '\x1B[32m√\x1B[39m Restoring unstaged changes for staged files...\n' +
+      '\x1B[32m√\x1B[39m Cleaning up temporary to patch files...\n' +
+      '\x1B[?25h'
   )
 })
 
@@ -149,14 +150,17 @@ test('should backupOriginalState error', async () => {
     },
   })
 
-  let runner = await createRunner({ stream: stdout })
+  let runner = createRunner({ stream: stdout })
 
-  await runner.run()
-  is(
-    stdout.out,
-    '\x1B[1m\x1B[31m×\x1B[39m\x1B[22m Preparing nano-staged...\n' +
-      '\x1B[31mbackupOriginalState fail\x1B[39m\n'
-  )
+  try {
+    await runner.run()
+  } catch (error) {
+    is(
+      stdout.out,
+      '\x1B[?25l\x1B[33m\\\x1B[39m Preparing nano-staged...\x1B[1G\x1B[2K\x1B[31m×\x1B[39m Preparing nano-staged...\n' +
+        '\x1B[?25h'
+    )
+  }
 })
 
 test('should backupUnstagedFiles error', async () => {
@@ -183,17 +187,20 @@ test('should backupUnstagedFiles error', async () => {
     },
   })
 
-  let runner = await createRunner({ stream: stdout })
+  let runner = createRunner({ stream: stdout })
 
-  await runner.run()
-  is(
-    stdout.out,
-    '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Preparing nano-staged...\n' +
-      '\x1B[1m\x1B[31m×\x1B[39m\x1B[22m Backing up unstaged changes for staged files...\n' +
-      '\x1B[31mbackupUnstagedFiles fail\x1B[39m\n' +
-      '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Restoring to its original state...\n' +
-      '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Removing temporary to patch files...\n'
-  )
+  try {
+    await runner.run()
+  } catch (error) {
+    is(
+      stdout.out,
+      '\x1B[?25l\x1B[33m\\\x1B[39m Preparing nano-staged...\x1B[1G\x1B[2K\x1B[32m√\x1B[39m Preparing nano-staged...\n' +
+        '\x1B[31m×\x1B[39m Backing up unstaged changes for staged files...\n' +
+        '\x1B[32m√\x1B[39m Restoring to original state because of errors....\n' +
+        '\x1B[32m√\x1B[39m Cleaning up temporary to patch files...\n' +
+        '\x1B[?25h'
+    )
+  }
 })
 
 test('should applyModifications error', async () => {
@@ -221,19 +228,22 @@ test('should applyModifications error', async () => {
     },
   })
 
-  let runner = await createRunner({ stream: stdout })
+  let runner = createRunner({ stream: stdout })
 
-  await runner.run()
-  is(
-    stdout.out,
-    '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Preparing nano-staged...\n' +
-      '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Backing up unstaged changes for staged files...\n' +
-      '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Running tasks for staged files...\n' +
-      '\x1B[1m\x1B[31m×\x1B[39m\x1B[22m Applying modifications from tasks...\n' +
-      '\x1B[31mapplyModifications fail\x1B[39m\n' +
-      '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Restoring to its original state...\n' +
-      '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Removing temporary to patch files...\n'
-  )
+  try {
+    await runner.run()
+  } catch (error) {
+    is(
+      stdout.out,
+      '\x1B[?25l\x1B[33m\\\x1B[39m Preparing nano-staged...\x1B[1G\x1B[2K\x1B[32m√\x1B[39m Preparing nano-staged...\n' +
+        '\x1B[32m√\x1B[39m Backing up unstaged changes for staged files...\n' +
+        '\x1B[32m√\x1B[39m Running tasks for staged files...\n' +
+        '\x1B[31m×\x1B[39m Applying modifications from tasks...\n' +
+        '\x1B[32m√\x1B[39m Restoring to original state because of errors....\n' +
+        '\x1B[32m√\x1B[39m Cleaning up temporary to patch files...\n' +
+        '\x1B[?25h'
+    )
+  }
 })
 
 test('should restoreUnstagedFiles error', async () => {
@@ -261,19 +271,22 @@ test('should restoreUnstagedFiles error', async () => {
     },
   })
 
-  let runner = await createRunner({ stream: stdout })
+  let runner = createRunner({ stream: stdout })
 
-  await runner.run()
-  is(
-    stdout.out,
-    '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Preparing nano-staged...\n' +
-      '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Backing up unstaged changes for staged files...\n' +
-      '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Running tasks for staged files...\n' +
-      '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Applying modifications from tasks...\n' +
-      '\x1B[1m\x1B[31m×\x1B[39m\x1B[22m Restoring unstaged changes for staged files...\n' +
-      '\x1B[31mrestoreUnstagedFiles fail\x1B[39m\n' +
-      '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Removing temporary to patch files...\n'
-  )
+  try {
+    await runner.run()
+  } catch (error) {
+    is(
+      stdout.out,
+      '\x1B[?25l\x1B[33m\\\x1B[39m Preparing nano-staged...\x1B[1G\x1B[2K\x1B[32m√\x1B[39m Preparing nano-staged...\n' +
+        '\x1B[32m√\x1B[39m Backing up unstaged changes for staged files...\n' +
+        '\x1B[32m√\x1B[39m Running tasks for staged files...\n' +
+        '\x1B[32m√\x1B[39m Applying modifications from tasks...\n' +
+        '\x1B[31m×\x1B[39m Restoring unstaged changes for staged files...\n' +
+        '\x1B[32m√\x1B[39m Cleaning up temporary to patch files...\n' +
+        '\x1B[?25h'
+    )
+  }
 })
 
 test('should restoreOriginalState error', async () => {
@@ -299,17 +312,19 @@ test('should restoreOriginalState error', async () => {
     },
   })
 
-  let runner = await createRunner({ stream: stdout })
+  let runner = createRunner({ stream: stdout })
 
-  await runner.run()
-  is(
-    stdout.out,
-    '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Preparing nano-staged...\n' +
-      '\x1B[1m\x1B[31m×\x1B[39m\x1B[22m Backing up unstaged changes for staged files...\n' +
-      '\x1B[31mbackupUnstagedFiles fail\x1B[39m\n' +
-      '\x1B[1m\x1B[31m×\x1B[39m\x1B[22m Restoring to its original state...\n' +
-      '\x1B[31mrestoreOriginalState fail\x1B[39m\n'
-  )
+  try {
+    await runner.run()
+  } catch (error) {
+    is(
+      stdout.out,
+      '\x1B[?25l\x1B[33m\\\x1B[39m Preparing nano-staged...\x1B[1G\x1B[2K\x1B[32m√\x1B[39m Preparing nano-staged...\n' +
+        '\x1B[31m×\x1B[39m Backing up unstaged changes for staged files...\n' +
+        '\x1B[31m×\x1B[39m Restoring to original state because of errors....\n' +
+        '\x1B[?25h'
+    )
+  }
 })
 
 test('should restoreOriginalState error', async () => {
@@ -336,19 +351,20 @@ test('should restoreOriginalState error', async () => {
     },
   })
 
-  let runner = await createRunner({ stream: stdout })
+  let runner = createRunner({ stream: stdout })
 
   try {
     await runner.run()
   } catch (error) {
-    is(error, 'Task runner error')
+    equal(error, ['Task runner error'])
     is(
       stdout.out,
-      '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Preparing nano-staged...\n' +
-        '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Backing up unstaged changes for staged files...\n' +
-        '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Running tasks for staged files...\n' +
-        '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Restoring to its original state...\n' +
-        '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Removing temporary to patch files...\n'
+      '\x1B[?25l\x1B[33m\\\x1B[39m Preparing nano-staged...\x1B[1G\x1B[2K\x1B[32m√\x1B[39m Preparing nano-staged...\n' +
+        '\x1B[32m√\x1B[39m Backing up unstaged changes for staged files...\n' +
+        '\x1B[31m×\x1B[39m Running tasks for staged files...\n' +
+        '\x1B[32m√\x1B[39m Restoring to original state because of errors....\n' +
+        '\x1B[32m√\x1B[39m Cleaning up temporary to patch files...\n' +
+        '\x1B[?25h'
     )
   }
 })
@@ -380,16 +396,20 @@ test('should cleanUp error', async () => {
 
   let runner = await createRunner({ stream: stdout })
 
-  await runner.run()
-  is(
-    stdout.out,
-    '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Preparing nano-staged...\n' +
-      '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Backing up unstaged changes for staged files...\n' +
-      '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Running tasks for staged files...\n' +
-      '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Applying modifications from tasks...\n' +
-      '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Restoring unstaged changes for staged files...\n' +
-      '\x1B[1m\x1B[32m√\x1B[39m\x1B[22m Removing temporary to patch files...\n'
-  )
+  try {
+    await runner.run()
+  } catch (error) {
+    is(
+      stdout.out,
+      '\x1B[?25l\x1B[33m\\\x1B[39m Preparing nano-staged...\x1B[1G\x1B[2K\x1B[32m√\x1B[39m Preparing nano-staged...\n' +
+        '\x1B[32m√\x1B[39m Backing up unstaged changes for staged files...\n' +
+        '\x1B[32m√\x1B[39m Running tasks for staged files...\n' +
+        '\x1B[32m√\x1B[39m Applying modifications from tasks...\n' +
+        '\x1B[32m√\x1B[39m Restoring unstaged changes for staged files...\n' +
+        '\x1B[31m×\x1B[39m Cleaning up temporary to patch files...\n' +
+        '\x1B[?25h'
+    )
+  }
 })
 
 test.run()

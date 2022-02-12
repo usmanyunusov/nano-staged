@@ -1,7 +1,7 @@
 import { is } from 'uvu/assert'
 import { test } from 'uvu'
 
-import { NanoStagedError } from '../lib/error.js'
+import { NanoStagedError, TaskRunnerError } from '../lib/error.js'
 import { createStdout } from './utils/index.js'
 
 let stdout = createStdout()
@@ -28,6 +28,11 @@ test('has type', () => {
 test('has error for unknown option', () => {
   let err = new NanoStagedError('noFileConfig', 'no-config.js')
   is(err.message, 'Nano Staged config file *no-config.js* is not found.')
+})
+
+test('has error for task', () => {
+  let err = new TaskRunnerError('task error')
+  is(err.message, 'task error')
 })
 
 test.run()

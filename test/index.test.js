@@ -20,11 +20,7 @@ test('should return when config undefined', async () => {
   try {
     await nanoStaged({ stream: stdout })
   } catch (error) {
-    is(
-      stdout.out.replace(/\d+\.\d+\.\d+/, '0.1.0'),
-      'Nano Staged \x1B[1mv0.1.0\x1B[22m\n' +
-        '\x1B[1m\x1B[31m×\x1B[39m\x1B[22m \x1B[31mCreate Nano Staged config.\x1B[39m\n'
-    )
+    is(stdout.out, '\x1B[31m×\x1B[39m \x1B[31mCreate Nano Staged config.\x1B[39m\n')
   }
 })
 
@@ -39,9 +35,8 @@ test('should return when config path error', async () => {
     await nanoStaged({ stream: stdout, config: 'config.json' })
   } catch (error) {
     is(
-      stdout.out.replace(/\d+\.\d+\.\d+/, '0.1.0'),
-      'Nano Staged \x1B[1mv0.1.0\x1B[22m\n' +
-        '\x1B[1m\x1B[31m×\x1B[39m\x1B[22m \x1B[31mNano Staged config file \x1B[33mconfig.json\x1B[31m is not found.\x1B[39m\n'
+      stdout.out,
+      '\x1B[31m×\x1B[39m \x1B[31mNano Staged config file \x1B[33mconfig.json\x1B[31m is not found.\x1B[39m\n'
     )
   }
 })
@@ -56,11 +51,7 @@ test('should config invalid', async () => {
   try {
     await nanoStaged({ stream: stdout })
   } catch (error) {
-    is(
-      stdout.out.replace(/\d+\.\d+\.\d+/, '0.1.0'),
-      'Nano Staged \x1B[1mv0.1.0\x1B[22m\n' +
-        '\x1B[1m\x1B[31m×\x1B[39m\x1B[22m \x1B[31mNano Staged config invalid.\x1B[39m\n'
-    )
+    is(stdout.out, '\x1B[31m×\x1B[39m \x1B[31mNano Staged config invalid.\x1B[39m\n')
   }
 })
 
@@ -71,14 +62,14 @@ test('should staged runner', async () => {
       validConfig: async () => true,
     },
     '../lib/runner.js': {
-      createRunner: async () => ({
+      createRunner: () => ({
         run: async () => stdout.write('staged'),
       }),
     },
   })
 
   await nanoStaged({ stream: stdout })
-  is(stdout.out.replace(/\d+\.\d+\.\d+/, '0.1.0'), 'Nano Staged \x1B[1mv0.1.0\x1B[22m\nstaged')
+  is(stdout.out, 'staged')
 })
 
 test('should unstaged runner', async () => {
@@ -88,14 +79,14 @@ test('should unstaged runner', async () => {
       validConfig: async () => true,
     },
     '../lib/runner.js': {
-      createRunner: async () => ({
+      createRunner: () => ({
         run: async () => stdout.write('unstaged'),
       }),
     },
   })
 
   await nanoStaged({ stream: stdout, unstaged: true })
-  is(stdout.out.replace(/\d+\.\d+\.\d+/, '0.1.0'), 'Nano Staged \x1B[1mv0.1.0\x1B[22m\nunstaged')
+  is(stdout.out, 'unstaged')
 })
 
 test('should diff runner', async () => {
@@ -105,14 +96,14 @@ test('should diff runner', async () => {
       validConfig: async () => true,
     },
     '../lib/runner.js': {
-      createRunner: async () => ({
+      createRunner: () => ({
         run: async () => stdout.write('diff'),
       }),
     },
   })
 
   await nanoStaged({ stream: stdout, diff: [] })
-  is(stdout.out.replace(/\d+\.\d+\.\d+/, '0.1.0'), 'Nano Staged \x1B[1mv0.1.0\x1B[22m\ndiff')
+  is(stdout.out, 'diff')
 })
 
 test('should runner run error', async () => {
@@ -122,7 +113,7 @@ test('should runner run error', async () => {
       validConfig: async () => true,
     },
     '../lib/runner.js': {
-      createRunner: async () => ({
+      createRunner: () => ({
         run: async () => {
           let taskError = new Error('Task error')
           taskError.name = 'TaskError'
@@ -136,10 +127,7 @@ test('should runner run error', async () => {
   try {
     await nanoStaged({ stream: stdout })
   } catch (error) {
-    is(
-      stdout.out.replace(/\d+\.\d+\.\d+/, '0.1.0'),
-      'Nano Staged \x1B[1mv0.1.0\x1B[22m\n\x1B[1m\x1B[31m×\x1B[39m\x1B[22m \x1B[31mTask error\x1B[39m\n'
-    )
+    is(stdout.out, '\n\x1B[31m×\x1B[39m \x1B[31mTask error\x1B[39m\n')
   }
 })
 

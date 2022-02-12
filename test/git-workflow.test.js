@@ -104,7 +104,7 @@ test('should apply empty files', async () => {
   try {
     await gitWorkflow.applyModifications([join(cwd, 'README.md')])
   } catch (error) {
-    is(error, 'Nano Staged prevented an empty git commit.')
+    is(error, 'Prevented an empty git commit!')
   }
 })
 

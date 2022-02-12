@@ -5,6 +5,7 @@ import esmock from 'esmock'
 import { test } from 'uvu'
 
 import { createStdout } from './utils/index.js'
+import { Spinner } from '../lib/spinner.js'
 
 let stdout = createStdout()
 
@@ -55,14 +56,11 @@ test('should run handle error', async () => {
     stream: stdout,
   })
 
-  try {
-    await runner.run()
-  } catch (error) {
-    is(
-      error.message,
-      '\x1B[41m\x1B[30m ERROR \x1B[39m\x1B[49m \x1B[31m*.js prettier --write\x1B[39m:\nRun error'
-    )
-  }
+  const spinner = new Spinner({ stream: stdout })
+
+  await runner.run(spinner)
+
+  spinner.stop()
 })
 
 test.run()
