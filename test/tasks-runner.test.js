@@ -67,4 +67,26 @@ test('should run handle error', async () => {
   }
 })
 
+test('should run handle success', async () => {
+  const { createTasksRunner } = await esmock('../lib/tasks-runner.js', {
+    '../lib/executor.js': {
+      executor: async () => Promise.resolve('Run done'),
+    },
+  })
+
+  let runner = await createTasksRunner({
+    repoPath: 'test',
+    files: ['a.js', '../../b.css'],
+    config: { '*.js': ['prettier --write', 'prettier --write'], '*.css': () => 'prettier --write' },
+    stream: stdout,
+  })
+
+  const spinner = new MultiSpinner({ stream: stdout })
+
+  await runner.run(spinner)
+  is(stdout.out, '\x1B[?25l\x1B[33m\\\x1B[39m *.js\x1B[2m - 1 file\x1B[22m')
+
+  spinner.stop()
+})
+
 test.run()
