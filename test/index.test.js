@@ -127,7 +127,7 @@ test('should runner run error', async () => {
   try {
     await nanoStaged({ stream: stdout })
   } catch (error) {
-    is(stdout.out, '\n\x1B[31m×\x1B[39m \x1B[31mTask error\x1B[39m\n')
+    is(stdout.out, '\n\x1B[31mTask error\x1B[39m\n')
   }
 })
 

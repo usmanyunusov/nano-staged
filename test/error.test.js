@@ -1,7 +1,7 @@
 import { is } from 'uvu/assert'
 import { test } from 'uvu'
 
-import { NanoStagedError, TaskRunnerError } from '../lib/error.js'
+import { NanoStagedError, TaskRunnerError } from '../lib/errors.js'
 import { createStdout } from './utils/index.js'
 
 let stdout = createStdout()

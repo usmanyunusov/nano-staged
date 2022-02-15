@@ -20,6 +20,7 @@ test('should return when git not found', async () => {
   })
 
   let runner = createRunner({ stream: stdout })
+
   try {
     await runner.run()
   } catch (error) {
@@ -71,8 +72,8 @@ test('should return when no files match any configured task', async () => {
         stagedFiles: async () => ({ working: ['a.js'], deleted: [], changed: ['a.js'] }),
       }),
     },
-    '../lib/task-runner.js': {
-      createTaskRunner: () => ({
+    '../lib/tasks-runner.js': {
+      createTasksRunner: () => ({
         tasks: [{ files: [] }],
       }),
     },
@@ -95,8 +96,8 @@ test('should step success', async () => {
         stagedFiles: async () => ({ working: ['a.js'], deleted: [], changed: ['a.js'] }),
       }),
     },
-    '../lib/task-runner.js': {
-      createTaskRunner: () => ({
+    '../lib/tasks-runner.js': {
+      createTasksRunner: () => ({
         tasks: [{ files: ['a.js'] }],
         run: async () => Promise.resolve(),
       }),
@@ -137,8 +138,8 @@ test('should backupOriginalState error', async () => {
         stagedFiles: async () => ({ working: ['a.js'], deleted: [], changed: ['a.js'] }),
       }),
     },
-    '../lib/task-runner.js': {
-      createTaskRunner: () => ({
+    '../lib/tasks-runner.js': {
+      createTasksRunner: () => ({
         tasks: [{ files: ['a.js'] }],
         run: async () => Promise.resolve(),
       }),
@@ -171,8 +172,8 @@ test('should backupUnstagedFiles error', async () => {
         stagedFiles: async () => ({ working: ['a.js'], deleted: [], changed: ['a.js'] }),
       }),
     },
-    '../lib/task-runner.js': {
-      createTaskRunner: () => ({
+    '../lib/tasks-runner.js': {
+      createTasksRunner: () => ({
         tasks: [{ files: ['a.js'] }],
         run: async () => Promise.resolve(),
       }),
@@ -211,8 +212,8 @@ test('should applyModifications error', async () => {
         stagedFiles: async () => ({ working: ['a.js'], deleted: [], changed: ['a.js'] }),
       }),
     },
-    '../lib/task-runner.js': {
-      createTaskRunner: () => ({
+    '../lib/tasks-runner.js': {
+      createTasksRunner: () => ({
         tasks: [{ files: ['a.js'] }],
         run: async () => Promise.resolve(),
       }),
@@ -254,8 +255,8 @@ test('should restoreUnstagedFiles error', async () => {
         stagedFiles: async () => ({ working: ['a.js'], deleted: [], changed: ['a.js'] }),
       }),
     },
-    '../lib/task-runner.js': {
-      createTaskRunner: () => ({
+    '../lib/tasks-runner.js': {
+      createTasksRunner: () => ({
         tasks: [{ files: ['a.js'] }],
         run: async () => Promise.resolve(),
       }),
@@ -297,8 +298,8 @@ test('should restoreOriginalState error', async () => {
         stagedFiles: async () => ({ working: ['a.js'], deleted: [], changed: ['a.js'] }),
       }),
     },
-    '../lib/task-runner.js': {
-      createTaskRunner: () => ({
+    '../lib/tasks-runner.js': {
+      createTasksRunner: () => ({
         tasks: [{ files: ['a.js'] }],
         run: async () => Promise.resolve(),
       }),
@@ -335,8 +336,8 @@ test('should restoreOriginalState error', async () => {
         stagedFiles: async () => ({ working: ['a.js'], deleted: [], changed: ['a.js'] }),
       }),
     },
-    '../lib/task-runner.js': {
-      createTaskRunner: () => ({
+    '../lib/tasks-runner.js': {
+      createTasksRunner: () => ({
         tasks: [{ files: ['a.js'] }],
         run: async () => Promise.reject('Task runner error'),
       }),
@@ -377,8 +378,8 @@ test('should cleanUp error', async () => {
         stagedFiles: async () => ({ working: ['a.js'], deleted: [], changed: ['a.js'] }),
       }),
     },
-    '../lib/task-runner.js': {
-      createTaskRunner: () => ({
+    '../lib/tasks-runner.js': {
+      createTasksRunner: () => ({
         tasks: [{ files: ['a.js'] }],
         run: async () => Promise.resolve(),
       }),

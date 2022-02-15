@@ -1,9 +1,9 @@
 import { is } from 'uvu/assert'
 import { test } from 'uvu'
 
+import { NanoStagedError, TaskRunnerError } from '../lib/errors.js'
+import { createReporter } from '../lib/reporter.js'
 import { createStdout } from './utils/index.js'
-import { createReporter } from '../lib/create-reporter.js'
-import { NanoStagedError, TaskRunnerError } from '../lib/error.js'
 
 let stdout = createStdout()
 let report = createReporter(stdout)
@@ -16,7 +16,7 @@ test('should reported error correctly', () => {
   let err = new Error('Error')
 
   report.error(err)
-  is(stdout.out, '\n\x1B[31m×\x1B[39m \x1B[31mError\x1B[39m\n')
+  is(stdout.out, '\n\x1B[31mError\x1B[39m\n')
 })
 
 test('should reported TaskRunnerError correctly', () => {
@@ -24,7 +24,7 @@ test('should reported TaskRunnerError correctly', () => {
   err.name = 'TaskRunnerError'
 
   report.error(err)
-  is(stdout.out, '\n\x1B[31m×\x1B[39m \x1B[31mTaskRunnerError\x1B[39m\n')
+  is(stdout.out, '\n\x1B[31mTaskRunnerError\x1B[39m\n')
 })
 
 test('should reported NanoStagedError correctly', () => {
