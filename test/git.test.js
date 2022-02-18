@@ -32,30 +32,30 @@ test('should return "null" when git dir is not found', async () => {
   let git = createGit(cwd)
   git.exec = async () => null
 
-  let { repoPath, dotGitPath } = await git.getRepoAndDotGitPaths()
+  let git_paths = await git.getGitPaths()
 
-  is(repoPath, null)
-  is(dotGitPath, null)
+  is(git_paths.root, null)
+  is(git_paths.dot, null)
 })
 
 test('should return "null" when run error', async () => {
   let git = createGit(cwd)
   git.exec = async () => Promise.reject()
 
-  let { repoPath, dotGitPath } = await git.getRepoAndDotGitPaths()
+  let git_paths = await git.getGitPaths()
 
-  is(repoPath, null)
-  is(dotGitPath, null)
+  is(git_paths.root, null)
+  is(git_paths.dot, null)
 })
 
 test('should return path when git dir is found', async () => {
   let git = createGit(cwd)
   git.exec = async () => 'test'
 
-  let { repoPath, dotGitPath } = await git.getRepoAndDotGitPaths()
+  let git_paths = await git.getGitPaths()
 
-  is(repoPath, 'test')
-  is(dotGitPath, process.platform === 'win32' ? 'test\\.git' : 'test/.git')
+  is(git_paths.root, 'test')
+  is(git_paths.dot, process.platform === 'win32' ? 'test\\.git' : 'test/.git')
 })
 
 test('should create patch to file', async () => {

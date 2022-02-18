@@ -30,10 +30,10 @@ test.after.each(async () => {
 })
 
 test('should patch file for original state', async () => {
-  let gitWorkflow = await createGitWorkflow({
+  let gitWorkflow = createGitWorkflow({
+    dotPath: resolve(cwd, './.git'),
     allowEmpty: false,
-    repoPath: cwd,
-    dotGitPath: resolve(cwd, './.git'),
+    rootPath: cwd,
   })
   await gitWorkflow.backupOriginalState()
 
@@ -41,10 +41,10 @@ test('should patch file for original state', async () => {
 })
 
 test('should backup original state handle errors', async () => {
-  let gitWorkflow = await createGitWorkflow({
+  let gitWorkflow = createGitWorkflow({
+    dotPath: resolve(cwd, './.test'),
     allowEmpty: false,
-    repoPath: cwd,
-    dotGitPath: resolve(cwd, './.test'),
+    rootPath: cwd,
   })
 
   try {
@@ -55,10 +55,10 @@ test('should backup original state handle errors', async () => {
 })
 
 test('should patch file for unstaged files', async () => {
-  let gitWorkflow = await createGitWorkflow({
+  let gitWorkflow = createGitWorkflow({
+    dotPath: resolve(cwd, './.git'),
     allowEmpty: false,
-    repoPath: cwd,
-    dotGitPath: resolve(cwd, './.git'),
+    rootPath: cwd,
   })
 
   await writeFile('README.md', '# Test\n# Test', cwd)
@@ -68,10 +68,10 @@ test('should patch file for unstaged files', async () => {
 })
 
 test('should backup unstaged files handle errors', async () => {
-  let gitWorkflow = await createGitWorkflow({
+  let gitWorkflow = createGitWorkflow({
+    dotPath: resolve(cwd, './.git'),
     allowEmpty: false,
-    repoPath: cwd,
-    dotGitPath: resolve(cwd, './.git'),
+    rootPath: cwd,
   })
 
   try {
@@ -82,10 +82,10 @@ test('should backup unstaged files handle errors', async () => {
 })
 
 test('should apply changes files', async () => {
-  let gitWorkflow = await createGitWorkflow({
+  let gitWorkflow = createGitWorkflow({
+    dotPath: resolve(cwd, './.git'),
     allowEmpty: false,
-    repoPath: cwd,
-    dotGitPath: resolve(cwd, './.git'),
+    rootPath: cwd,
   })
 
   await writeFile('README.md', '# Test\n# Test', cwd)
@@ -95,10 +95,10 @@ test('should apply changes files', async () => {
 })
 
 test('should apply empty files', async () => {
-  let gitWorkflow = await createGitWorkflow({
+  let gitWorkflow = createGitWorkflow({
+    dotPath: resolve(cwd, './.git'),
     allowEmpty: false,
-    repoPath: cwd,
-    dotGitPath: resolve(cwd, './.git'),
+    rootPath: cwd,
   })
 
   try {
@@ -109,10 +109,10 @@ test('should apply empty files', async () => {
 })
 
 test('should apply changes files handle errors', async () => {
-  let gitWorkflow = await createGitWorkflow({
+  let gitWorkflow = createGitWorkflow({
+    dotPath: resolve(cwd, './.git'),
     allowEmpty: false,
-    repoPath: cwd,
-    dotGitPath: resolve(cwd, './.git'),
+    rootPath: cwd,
   })
 
   try {
@@ -124,10 +124,10 @@ test('should apply changes files handle errors', async () => {
 })
 
 test('should restore unstaged files handle errors', async () => {
-  let gitWorkflow = await createGitWorkflow({
+  let gitWorkflow = createGitWorkflow({
+    dotPath: resolve(cwd, './.git'),
     allowEmpty: false,
-    repoPath: cwd,
-    dotGitPath: resolve(cwd, './.git'),
+    rootPath: cwd,
   })
 
   try {
@@ -138,10 +138,10 @@ test('should restore unstaged files handle errors', async () => {
 })
 
 test('should restore unstaged files', async () => {
-  let gitWorkflow = await createGitWorkflow({
+  let gitWorkflow = createGitWorkflow({
+    dotPath: resolve(cwd, './.git'),
     allowEmpty: false,
-    repoPath: cwd,
-    dotGitPath: resolve(cwd, './.git'),
+    rootPath: cwd,
   })
 
   await writeFile('README.md', '# Test\n# Test', cwd)
@@ -160,10 +160,10 @@ test('should restore unstaged files handle error', async () => {
     },
   })
 
-  let gitWorkflow = await createGitWorkflow({
+  let gitWorkflow = createGitWorkflow({
+    dotPath: resolve(cwd, './.git'),
     allowEmpty: false,
-    repoPath: cwd,
-    dotGitPath: resolve(cwd, './.git'),
+    rootPath: cwd,
   })
 
   await gitWorkflow.restoreOriginalState().catch((error) => {
@@ -172,10 +172,10 @@ test('should restore unstaged files handle error', async () => {
 })
 
 test('should remove original and unstaged patch', async () => {
-  let gitWorkflow = await createGitWorkflow({
+  let gitWorkflow = createGitWorkflow({
+    dotPath: resolve(cwd, './.git'),
     allowEmpty: false,
-    repoPath: cwd,
-    dotGitPath: resolve(cwd, './.git'),
+    rootPath: cwd,
   })
 
   await writeFile('README.md', '# Test\n# Test', cwd)
@@ -188,29 +188,31 @@ test('should remove original and unstaged patch', async () => {
 })
 
 test('should clean up handle errors', async () => {
-  let gitWorkflow = await createGitWorkflow({
+  let gitWorkflow = createGitWorkflow({
+    dotPath: resolve(cwd, './.git'),
     allowEmpty: false,
-    repoPath: cwd,
-    dotGitPath: resolve(cwd, './.git'),
+    rootPath: cwd,
   })
 
-  gitWorkflow.hasPatch = async () => Promise.reject('Clean up error')
+  gitWorkflow.hasPatch = () => {
+    throw new Error('Clean up error')
+  }
 
   try {
     await gitWorkflow.cleanUp()
   } catch (error) {
-    is(error, 'Clean up error')
+    is(error.message, 'Clean up error')
   }
 })
 
 test('hasPatch return false when no patch file', async () => {
-  let gitWorkflow = await createGitWorkflow({
+  let gitWorkflow = createGitWorkflow({
+    dotPath: resolve(cwd, './.git'),
     allowEmpty: false,
-    repoPath: cwd,
-    dotGitPath: resolve(cwd, './.git'),
+    rootPath: cwd,
   })
 
-  is(await gitWorkflow.hasPatch('./test.patch'), false)
+  is(gitWorkflow.hasPatch('./test.patch'), false)
 })
 
 test.run()

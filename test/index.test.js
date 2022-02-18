@@ -55,12 +55,81 @@ test('should config invalid', async () => {
   }
 })
 
-test('should staged runner', async () => {
+test('should return when git not found', async () => {
   const nanoStaged = await esmock('../lib/index.js', {
     '../lib/config.js': {
       getConfig: async () => true,
       validConfig: async () => true,
     },
+
+    '../lib/git.js': {
+      createGit: () => ({
+        getGitPaths: async () => ({ root: null, dot: null }),
+      }),
+    },
+  })
+
+  try {
+    await nanoStaged({ stream: stdout })
+  } catch (error) {
+    is(error.message, 'Nano Staged didn’t find git directory.')
+  }
+})
+
+test('should return when no files found for staged/unstaged/diff', async () => {
+  const nanoStaged = await esmock('../lib/index.js', {
+    '../lib/config.js': {
+      getConfig: async () => true,
+      validConfig: async () => true,
+    },
+
+    '../lib/git.js': {
+      createGit: () => ({
+        getGitPaths: async () => ({ root: 'dir', dot: 'dir/.git' }),
+        unstagedFiles: async () => ({ working: [], deleted: [], changed: [] }),
+        stagedFiles: async () => ({ working: [], deleted: [], changed: [] }),
+        changedFiles: async () => ({ working: [], deleted: [], changed: [] }),
+      }),
+    },
+  })
+
+  try {
+    await nanoStaged({ stream: stdout })
+  } catch (error) {
+    is(error.message, 'No staged files found.')
+    stdout.out = ''
+  }
+
+  try {
+    await nanoStaged({ stream: stdout, unstaged: true })
+  } catch (error) {
+    is(error.message, 'No unstaged files found.')
+    stdout.out = ''
+  }
+
+  try {
+    await nanoStaged({ stream: stdout, diff: ['1', '2'] })
+  } catch (error) {
+    is(error.message, 'No diff files found.')
+    stdout.out = ''
+  }
+})
+
+test('should staged runner', async () => {
+  const nanoStaged = await esmock('../lib/index.js', {
+    '../lib/config.js': {
+      getConfig: async () => true,
+      validConfig: async () => true,
+      getGitPaths: async () => ({ root: 'dir', dot: 'dir/.git' }),
+    },
+
+    '../lib/git.js': {
+      createGit: () => ({
+        getGitPaths: async () => ({ root: 'dir', dot: 'dir/.git' }),
+        stagedFiles: async () => ({ working: ['a.js'], deleted: [], changed: ['a.js'] }),
+      }),
+    },
+
     '../lib/runner.js': {
       createRunner: () => ({
         run: async () => stdout.write('staged'),
@@ -78,6 +147,14 @@ test('should unstaged runner', async () => {
       getConfig: async () => true,
       validConfig: async () => true,
     },
+
+    '../lib/git.js': {
+      createGit: () => ({
+        getGitPaths: async () => ({ root: 'dir', dot: 'dir/.git' }),
+        unstagedFiles: async () => ({ working: ['a.js'], deleted: [], changed: ['a.js'] }),
+      }),
+    },
+
     '../lib/runner.js': {
       createRunner: () => ({
         run: async () => stdout.write('unstaged'),
@@ -95,6 +172,14 @@ test('should diff runner', async () => {
       getConfig: async () => true,
       validConfig: async () => true,
     },
+
+    '../lib/git.js': {
+      createGit: () => ({
+        getGitPaths: async () => ({ root: 'dir', dot: 'dir/.git' }),
+        changedFiles: async () => ({ working: ['a.js'], deleted: [], changed: ['a.js'] }),
+      }),
+    },
+
     '../lib/runner.js': {
       createRunner: () => ({
         run: async () => stdout.write('diff'),
@@ -112,6 +197,14 @@ test('should runner run error', async () => {
       getConfig: async () => true,
       validConfig: async () => true,
     },
+
+    '../lib/git.js': {
+      createGit: () => ({
+        getGitPaths: async () => ({ root: 'dir', dot: 'dir/.git' }),
+        stagedFiles: async () => ({ working: ['a.js'], deleted: [], changed: ['a.js'] }),
+      }),
+    },
+
     '../lib/runner.js': {
       createRunner: () => ({
         run: async () => {

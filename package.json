@@ -13,7 +13,7 @@
   },
   "scripts": {
     "lint": "prettier --write lib/**/*.js",
-    "unit": "node --loader=esmock --no-warnings ./node_modules/uvu/bin.js test \"\\.test\\.js$\"",
+    "unit": "CI=1 node --loader=esmock --no-warnings ./node_modules/uvu/bin.js test \"\\.test\\.js$\"",
     "test": "c8 pnpm unit",
     "bench": "node bench/running-time/index.js && node bench/size/index.js"
   },
@@ -25,6 +25,7 @@
     "clean-publish": "^3.4.5",
     "esmock": "^1.7.2",
     "fs-extra": "^10.0.0",
+    "nanodelay": "^2.0.2",
     "nanoid": "^3.2.0",
     "prettier": "^2.5.1",
     "uvu": "^0.5.3"
