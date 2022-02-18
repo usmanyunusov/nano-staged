@@ -23,10 +23,10 @@
   "devDependencies": {
     "c8": "^7.11.0",
     "clean-publish": "^3.4.5",
-    "esmock": "^1.7.2",
+    "esmock": "^1.7.4",
     "fs-extra": "^10.0.0",
     "nanodelay": "^2.0.2",
-    "nanoid": "^3.2.0",
+    "nanoid": "^3.3.1",
     "prettier": "^2.5.1",
     "uvu": "^0.5.3"
   },

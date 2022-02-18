@@ -3,9 +3,10 @@ lockfileVersion: 5.3
 specifiers:
   c8: ^7.11.0
   clean-publish: ^3.4.5
-  esmock: ^1.7.2
+  esmock: ^1.7.4
   fs-extra: ^10.0.0
-  nanoid: ^3.2.0
+  nanodelay: ^2.0.2
+  nanoid: ^3.3.1
   picocolors: ^1.0.0
   prettier: ^2.5.1
   uvu: ^0.5.3
@@ -16,9 +17,10 @@ dependencies:
 devDependencies:
   c8: 7.11.0
   clean-publish: 3.4.5
-  esmock: 1.7.2
+  esmock: 1.7.4
   fs-extra: 10.0.0
-  nanoid: 3.2.0
+  nanodelay: 2.0.2
+  nanoid: 3.3.1
   prettier: 2.5.1
   uvu: 0.5.3
 
@@ -99,7 +101,7 @@ packages:
       foreground-child: 2.0.0
       istanbul-lib-coverage: 3.2.0
       istanbul-lib-report: 3.0.0
-      istanbul-reports: 3.1.3
+      istanbul-reports: 3.1.4
       rimraf: 3.0.2
       test-exclude: 6.0.0
       v8-to-istanbul: 8.1.1
@@ -176,10 +178,10 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
-  /esmock/1.7.2:
-    resolution: {integrity: sha512-H6CTtJ1PV5fmEtSieSTQBTtLPTksP+NFRXypnMPWsrMwHMMZTOJre3ueBavvemn/eyRrmLf1zegiZ97O00L6TQ==}
+  /esmock/1.7.4:
+    resolution: {integrity: sha512-svdcSxV5uTMBJGOugESRITlZwthsDASS7vJ37knHFhMQomxjqUTIAR+MUXqrRhMp7sJ472yRPZeTDLle3kVfcw==}
     dependencies:
-      resolvewithplus: 0.6.0
+      resolvewithplus: 0.8.0
     dev: true
 
   /fast-glob/3.2.11:
@@ -219,7 +221,7 @@ packages:
     engines: {node: '>=8.0.0'}
     dependencies:
       cross-spawn: 7.0.3
-      signal-exit: 3.0.6
+      signal-exit: 3.0.7
     dev: true
 
   /fs-extra/10.0.0:
@@ -253,7 +255,7 @@ packages:
       fs.realpath: 1.0.0
       inflight: 1.0.6
       inherits: 2.0.4
-      minimatch: 3.0.4
+      minimatch: 3.1.2
       once: 1.4.0
       path-is-absolute: 1.0.1
     dev: true
@@ -329,8 +331,8 @@ packages:
       supports-color: 7.2.0
     dev: true
 
-  /istanbul-reports/3.1.3:
-    resolution: {integrity: sha512-x9LtDVtfm/t1GFiLl3NffC7hz+I1ragvgX1P/Lg1NlIagifZDKUkuuaAxH/qpwj2IuEfD8G2Bs/UKp+sZ/pKkg==}
+  /istanbul-reports/3.1.4:
+    resolution: {integrity: sha512-r1/DshN4KSE7xWEknZLLLLDn5CJybV3nw01VTkp6D5jzLuELlcbudfj/eSQFvrKsJuTVCGnePO7ho82Nw9zzfw==}
     engines: {node: '>=8'}
     dependencies:
       html-escaper: 2.0.2
@@ -389,8 +391,8 @@ packages:
       picomatch: 2.3.1
     dev: true
 
-  /minimatch/3.0.4:
-    resolution: {integrity: sha512-yJHVQEhyqPLUTgt9B83PXu6W3rx4MvvHvSUvToogpwoGDOUQ+yDrR0HRot+yOCdCO7u4hX3pWft6kWBBcqh0UA==}
+  /minimatch/3.1.2:
+    resolution: {integrity: sha512-J7p63hRiAjw1NDEww1W7i37+ByIrOWO5XQQAzZ3VOcL0PNybwpfmV/N05zFAzwQ9USyEcX6t3UO+K5aqBQOIHw==}
     dependencies:
       brace-expansion: 1.1.11
     dev: true
@@ -400,8 +402,13 @@ packages:
     engines: {node: '>=4'}
     dev: true
 
-  /nanoid/3.2.0:
-    resolution: {integrity: sha512-fmsZYa9lpn69Ad5eDn7FMcnnSR+8R34W9qJEijxYhTbfOWzr22n1QxCMzXLK+ODyW2973V3Fux959iQoUxzUIA==}
+  /nanodelay/2.0.2:
+    resolution: {integrity: sha512-6AS5aCSXsjoxq2Jr9CdaAeT60yoYDOTp6po9ziqeOeY6vf6uTEHYSqWql6EFILrM3fEfXgkZ4KqE9L0rTm/wlA==}
+    engines: {node: ^12.0.0 || ^14.0.0 || >=16.0.0}
+    dev: true
+
+  /nanoid/3.3.1:
+    resolution: {integrity: sha512-n6Vs/3KGyxPQd6uO0eH4Bv0ojGSUvuLlIHtC3Y0kEO23YRge8H9x1GCzLn28YX0H66pMkxuaeESFq4tKISKwdw==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
     dev: true
@@ -465,8 +472,8 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
-  /resolvewithplus/0.6.0:
-    resolution: {integrity: sha512-3oHAYXtmJeT5NIu6QIxq9Cs+lK0gsMuJuXlOnbukQ3Xw7Nl/Pp1I/PH5ofhVvkhuu+v4vMyJwHdRbrH4ljlySg==}
+  /resolvewithplus/0.8.0:
+    resolution: {integrity: sha512-k2ZTNmYyHjSVMswoitU9I5C0It/Jgs/4+oVSz2Tg9zgW4oURz3FSeHjAAbSau8W+njdBwfWVjFxl45B9cprWTw==}
     dev: true
 
   /reusify/1.0.4:
@@ -515,8 +522,8 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
-  /signal-exit/3.0.6:
-    resolution: {integrity: sha512-sDl4qMFpijcGw22U5w63KmD3cZJfBuFlVNbVMKje2keoKML7X2UzWbc4XrmEbDwg0NXJc3yv4/ox7b+JWb57kQ==}
+  /signal-exit/3.0.7:
+    resolution: {integrity: sha512-wnD2ZE+l+SPC/uoS0vXeE9L1+0wuaMqKlfz9AMUo38JsyLSBWSFcHR1Rri62LZc12vLr1gb3jl7iwQhgwpAbGQ==}
     dev: true
 
   /source-map/0.7.3:
@@ -553,7 +560,7 @@ packages:
     dependencies:
       '@istanbuljs/schema': 0.1.3
       glob: 7.2.0
-      minimatch: 3.0.4
+      minimatch: 3.1.2
     dev: true
 
   /to-regex-range/5.0.1:
