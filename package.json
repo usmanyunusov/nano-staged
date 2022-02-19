@@ -1,19 +1,19 @@
 {
   "name": "nano-staged",
   "version": "0.5.0",
-  "description": "Tool to run commands only on git staged files",
+  "description": "Tiny tool to run commands for both staged and unstaged git files",
   "author": "Usman Yunusov <usman.iunusov@gmail.com>",
   "license": "MIT",
   "repository": "usmanyunusov/nano-staged",
   "type": "module",
   "bin": "./lib/bin.js",
-  "exports": "./lib/run.js",
+  "exports": "./lib/index.js",
   "engines": {
     "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
   },
   "scripts": {
     "lint": "prettier --write lib/**/*.js",
-    "unit": "node --loader=esmock --no-warnings ./node_modules/uvu/bin.js test \"\\.test\\.js$\"",
+    "unit": "cross-env CI=true node --loader=esmock --no-warnings ./node_modules/uvu/bin.js test \"\\.test\\.js$\"",
     "test": "c8 pnpm unit",
     "bench": "node bench/running-time/index.js && node bench/size/index.js"
   },
@@ -21,13 +21,15 @@
     "picocolors": "^1.0.0"
   },
   "devDependencies": {
-    "c8": "^7.10.0",
-    "clean-publish": "^3.4.4",
-    "esmock": "^1.7.2",
+    "c8": "^7.11.0",
+    "clean-publish": "^3.4.5",
+    "cross-env": "^7.0.3",
+    "esmock": "^1.7.4",
     "fs-extra": "^10.0.0",
-    "nanoid": "^3.1.30",
+    "nanodelay": "^2.0.2",
+    "nanoid": "^3.3.1",
     "prettier": "^2.5.1",
-    "uvu": "^0.5.2"
+    "uvu": "^0.5.3"
   },
   "clean-publish": {
     "cleanDocs": true
@@ -38,8 +40,8 @@
     "singleQuote": true
   },
   "c8": {
-    "exclude": [
-      "**/*.test.*"
+    "include": [
+      "lib/**/*"
     ],
     "lines": 100,
     "check-coverage": true

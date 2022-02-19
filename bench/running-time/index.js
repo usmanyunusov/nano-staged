@@ -5,7 +5,7 @@ import { promisify } from 'util'
 import { nanoid } from 'nanoid'
 import fs from 'fs-extra'
 
-import { gitWorker } from '../../lib/git.js'
+import { createGit } from '../../lib/git.js'
 
 let spawn = promisify(execFile)
 let currentDir = dirname(fileURLToPath(import.meta.url))
@@ -22,7 +22,7 @@ async function appendFile(filename, content, dir = cwd) {
 }
 
 async function execGit(args) {
-  let git = gitWorker(cwd)
+  let git = createGit(cwd)
   await git.exec(args, { cwd })
 }
 

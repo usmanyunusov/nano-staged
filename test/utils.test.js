@@ -23,8 +23,8 @@ test('single to array', () => {
 
 test('print version', () => {
   let stdout = createStdout()
-  showVersion(stdout.write)
-  is(stdout.out.replace(/\d+\.\d+\.\d+/, '0.1.0'), 'Nano Staged \x1B[1mv0.1.0\x1B[22m')
+  showVersion(stdout)
+  is(stdout.out.replace(/\d+\.\d+\.\d+/, '0.1.0'), 'Nano Staged \x1B[1mv0.1.0\x1B[22m\n')
 })
 
 test('string to args', () => {
@@ -36,19 +36,13 @@ test('string to args', () => {
 test('FORCE_COLOR: 1', () => {
   process.env = { FORCE_COLOR: '1' }
   is(getForceColorLevel(), 1)
-})
 
-test('FORCE_COLOR: empty', () => {
   process.env = { FORCE_COLOR: '' }
   is(getForceColorLevel(), 0)
-})
 
-test('FORCE_COLOR: 256', () => {
   process.env = { FORCE_COLOR: '256' }
   is(getForceColorLevel(), 3)
-})
 
-test('FORCE_NO_COLOR: true', () => {
   process.env = { FORCE_NO_COLOR: true }
   is(getForceColorLevel(), 0)
 })
@@ -138,30 +132,30 @@ test('prefer level 2/xterm over COLORTERM', () => {
   is(getForceColorLevel(), 2)
 })
 
-test('return level 1 when `TERM` is set to dumb when `FORCE_COLOR` is set', (t) => {
+test('return level 1 when `TERM` is set to dumb when `FORCE_COLOR` is set', () => {
   process.env = { FORCE_COLOR: '1', TERM: 'dumb' }
   is(getForceColorLevel(), 1)
 })
 
-test('--no-color', (t) => {
+test('--no-color', () => {
   process.env = { TERM: 'xterm-256color' }
   process.argv = ['--no-colors']
   is(getForceColorLevel(), 0)
 })
 
-test('--no-colors', (t) => {
+test('--no-colors', () => {
   process.env = { TERM: 'xterm-256color' }
   process.argv = ['--no-colors']
   is(getForceColorLevel(), 0)
 })
 
-test('-color=false', (t) => {
+test('-color=false', () => {
   process.env = { TERM: 'xterm-256color' }
   process.argv = ['--color=false']
   is(getForceColorLevel(), 0)
 })
 
-test('--color=never', (t) => {
+test('--color=never', () => {
   process.env = { TERM: 'xterm-256color' }
   process.argv = ['--color=never']
   is(getForceColorLevel(), 0)

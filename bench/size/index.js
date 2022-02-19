@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { get } from 'https'
-import pico from 'picocolors'
+import c from 'picocolors'
 
 async function getJSON(url) {
   return new Promise((resolve) => {
@@ -24,7 +24,7 @@ async function benchmark(lib) {
   process.stdout.write(
     prefix +
       lib.padEnd('lint-staged   '.length) +
-      pico.bold(
+      c.bold(
         Math.round(size / 1024)
           .toString()
           .padStart(4)
@@ -34,7 +34,7 @@ async function benchmark(lib) {
 }
 
 async function start() {
-  process.stdout.write(pico.gray('Data from packagephobia.com\n'))
+  process.stdout.write(c.gray('Data from packagephobia.com\n'))
   await benchmark('lint-staged')
   await benchmark('nano-staged')
 }

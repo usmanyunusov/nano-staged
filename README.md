@@ -1,13 +1,14 @@
-# Nano Staged
+<p align="center">
+   <img src="https://usmanyunusov.github.io/nano-staged/img/logo.svg" height="96">
+   <h3 align="center">Nano Staged</h3>
+   <p align="center">Tiny tool to run commands for modified, staged, and committed git files.<br/> It help <b>speeding up the run tests, linters, scripts</b>, and more</p>
+</p>
 
-<img align="right" width="92" height="92" title="Nano Stores logo"
-     src="https://usmanyunusov.github.io/nano-staged/img/logo.svg">
-
-Tiny tool to run commands for both staged and unstaged git files. It help **speeding up the run tests, lint code**, etc...
+## Features
 
 - 📦 **Small**: [41kB](https://packagephobia.com/result?p=nano-staged) (160x+ lighter than **lint-staged**).
 - 🥇 **Single dependency** ([`picocolors`](https://github.com/alexeyraspopov/picocolors)).
-- ☯️ Support **staged/unstaged** git files.
+- ☯️ **Support multiple file states like staged, unstaged, last-commit, changed etc**
 
 ## Benchmarks
 
@@ -34,13 +35,13 @@ The performance results were generated on a MBP Late 2013, 2,3 GHz Intel Core i7
 
 ### Getting Started
 
-1. Add `nano-staged` as a development dependency in the root of your project.
+1. First, install `nano-staged`:
 
    ```terminal
-   npm install nano-staged -D
+   npm install --save-dev nano-staged
    ```
 
-2. Add the `nano-staged` section to your `package.json`. Fill it with [glob pattern](#cheatsheet-to-filtering-files) and the corresponding commands:
+2. Add the `nano-staged` section and the commands to your `package.json`:
 
    For example:
 
@@ -53,23 +54,18 @@ The performance results were generated on a MBP Late 2013, 2,3 GHz Intel Core i7
 
 3. Now, run commands with Nano Staged:
 
-   For staged files:
    ```terminal
    ./node_modules/.bin/nano-staged
    ```
 
-   For unstaged files:
-   ```terminal
-   ./node_modules/.bin/nano-staged --unstaged
-   ```
-
-   > Nano Staged will filter out files which are in staging/unstaging area, and run commands from the config for them.
+   > Nano Staged by default to run commands from the config for staged files.
 
 ### Pre-commit Hook
 
 > You can use Nano Staged with a pre-commit tools to run it automatically after every commit.
 
-#### Simple Git Hooks
+<details>
+   <summary><b>Simple Git Hooks</b></summary>
 
 1. Install `simple-git-hooks` as a dev dependency:
 
@@ -87,13 +83,13 @@ The performance results were generated on a MBP Late 2013, 2,3 GHz Intel Core i7
    }
    ```
 
-3. Run the CLI script to update the git hooks with the commands from the config
+3. Run the CLI script to update the git hooks with the commands from the config:
 
    ```terminal
    npx simple-git-hooks
    ```
 
-4. To automatically have Git hooks enabled after install, edit `package.json`
+4. To automatically have Git hooks enabled after install, edit `package.json`:
 
    ```json
    "scripts": {
@@ -101,7 +97,10 @@ The performance results were generated on a MBP Late 2013, 2,3 GHz Intel Core i7
    }
    ```
 
-#### Husky
+   </details>
+
+<details>
+   <summary><b>Husky</b></summary>
 
 1. Install `husky` as a dev dependency:
 
@@ -109,19 +108,19 @@ The performance results were generated on a MBP Late 2013, 2,3 GHz Intel Core i7
    npm install husky --save-dev
    ```
 
-2. Enable Git hooks
+2. Enable Git hooks:
 
    ```terminal
    npx husky install
    ```
 
-3. Add a command to a hook
-   
+3. Add a command to a hook:
+
    ```terminal
    npx husky add .husky/pre-commit "./node_modules/.bin/nano-staged"
    ```
 
-4. To automatically have Git hooks enabled after install, edit `package.json`
+4. To automatically have Git hooks enabled after install, edit `package.json`:
 
    ```json
    "scripts": {
@@ -129,65 +128,119 @@ The performance results were generated on a MBP Late 2013, 2,3 GHz Intel Core i7
    }
    ```
 
-## Configuration File Formats
+</details>
 
-Nano Staged supports configuration files in several formats:
+## Configuration
 
-- **JSON** - use `nano-staged.json` or `.nano-staged.json` to define the configuration structure.
-- **package.json** - create an `nano-staged` property in your package.json file and define your configuration there.
+Nano Staged supports multiple ways to define config.
+
+1. `nano-staged` section in `package.json`:
+
+   ```json
+   "nano-staged": {
+      "*": "your-cmd",
+      "*.ext": ["your-cmd", "your-cmd"]
+   }
+   ```
+
+2. or a separate `.nano-staged.json` or `nano-staged.json` config file:
+
+   ```json
+   {
+     "*": "your-cmd",
+     "*.ext": ["your-cmd", "your-cmd"]
+   }
+   ```
+
+3. or a more flexible `.nano-staged.cjs` or `nano-staged.cjs` config file to CommonJS modules:
+
+   ```js
+   module.exports = {
+     '*': 'your-cmd',
+     '*.ext': ['your-cmd', 'your-cmd'],
+   }
+   ```
+
+4. or a more flexible `.nano-staged.mjs` or `nano-staged.mjs` config file to ECMAScript modules:
+
+   ```js
+   export default {
+     '*': 'your-cmd',
+     '*.ext': ['your-cmd', 'your-cmd'],
+   }
+   ```
+
+5. or a more flexible `.nano-staged.js` or `nano-staged.js` config file:
+
+   ```js
+   // package.json => "type": "module"
+   export default {
+     '*': 'your-cmd',
+     '*.ext': ['your-cmd', 'your-cmd'],
+   }
+
+   // package.json => "type": "commonjs"
+   module.exports = {
+     '*': 'your-cmd',
+     '*.ext': ['your-cmd', 'your-cmd'],
+   }
+   ```
+
+### Priorited formats:
 
 If there are multiple configuration files in the same directory, Nano Staged will only use one. The priority order is as follows:
 
-1. `.nano-staged.json`
-2. `nano-staged.json`
-3. `package.json`
+1. `.nano-staged.js`
+2. `nano-staged.js`
+3. `.nano-staged.cjs`
+4. `nano-staged.cjs`
+5. `.nano-staged.mjs`
+6. `nano-staged.mjs`
+7. `.nano-staged.json`
+8. `nano-staged.json`
+9. `package.json`
 
-There are two ways to use configuration files.
+### Config Function API:
 
-The first way to use configuration files. Starting from the current working directory, Nano Staged looks for the following possible sources: `.nano-staged.*`, `nano-staged.*` and `package.json` files.
+JS config files may export export either a single function or an object:
 
-The second way to use configuration files is to save the file wherever you would like and pass its location to the CLI using the `--config` or `-c` option, such as:
+```js
+export default (api) => {
+  const jsFiles = api.files.filter((file) => path.extname(file) === '.js')
 
-```terminal
-./node_modules/.bin/nano-staged --config myconfig.json
-```
-
-Example JSON configuration file:
-
-```json
-{
-   "*": "your-cmd",
-   "*.ext": ["your-cmd", "your-cmd"]
+  return [`eslint --fix ${jsFiles.join(' ')}`, `prettier --write ${jsFiles.join(' ')}`]
 }
 ```
 
-## Command line flags
+```js
+export default {
+  '*.js': (api) => `eslint --fix ${api.files.join(' ')}`,
+}
+```
 
-#### `--config` or `-c`
+The `api` object exposes:
 
-Path to a JSON file that contains your configuration object. Use this option if you don't want Nano Staged to search for a configuration file. The path should be either absolute or relative to the directory that your process is running from.
+`api.filenames` - working filenames
+
+`api.type` - run type: `staged`, `unstaged`, `diff`
+
+## Command Line Interface
+
+#### `--config [<path>]` or `-c [<path>]`
+
+Path to file that contains your configuration object. The path should be either absolute or relative to the directory that your process is running from.
 
 #### `--unstaged` or `-u`
 
-Under this flag will be run commands from the config for only unstaged git files. Nano Staged by default use only staged git files.
+Run commands from the config for only git unstaged files. Nano Staged by default use only staged git files.
+
+#### `--diff [<ref1> <ref2>]`
+
+Run commands to changed files between the working tree and the index or a tree, to changed files between the index and a tree, to changed files between two trees, or to changed files between two index.
 
 #### `--allow-empty`
 
 Will allow creating an empty commit.
-
-## Cheatsheet to filtering files
-
-| **paths**           | **\*** | **\*\*/\*** | **\*.css** | **\*\*/\*.css** | **\*\*/\*.{css,js}** | **\*\*/!(\*test).js** | **src/\*\*/\*.js** |
-| ------------------- | ------ | ----------- | ---------- | --------------- | -------------------- | --------------------- | ------------------ |
-| `style.css`         | ✅     | ✅          | ✅         | ✅              | ✅                   | ❌                    | ❌                 |
-| `src/style.css`     | ✅     | ✅          | ✅         | ✅              | ✅                   | ❌                    | ❌                 |
-| `src/css/style.css` | ✅     | ✅          | ✅         | ✅              | ✅                   | ❌                    | ❌                 |
-| `src/css/style.css` | ✅     | ✅          | ✅         | ✅              | ✅                   | ❌                    | ❌                 |
-| `src/index.js`      | ✅     | ✅          | ❌         | ❌              | ✅                   | ❌                    | ✅                 |
-| `src/js/index.js`   | ✅     | ✅          | ❌         | ❌              | ✅                   | ❌                    | ✅                 |
-| `index.js`          | ✅     | ✅          | ❌         | ❌              | ✅                   | ❌                    | ❌                 |
-| `test/b.test.js`    | ✅     | ✅          | ❌         | ❌              | ✅                   | ✅                    | ❌                 |
-| `test/a.test.js`    | ✅     | ✅          | ❌         | ❌              | ✅                   | ✅                    | ❌                 |
 
 ## Thanks
 

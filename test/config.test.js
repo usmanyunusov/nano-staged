@@ -4,54 +4,68 @@ import esmock from 'esmock'
 import { join } from 'path'
 import { test } from 'uvu'
 
+import { getConfig, validConfig } from '../lib/config.js'
 import { fixture } from './utils/index.js'
-import { loadConfig, validConfig } from '../lib/config.js'
 
-test('cwd null', async () => {
-  is(loadConfig(join(homedir(), 'test')), undefined)
+test('should return "undefined" when config file is not found', async () => {
+  is(await getConfig(join(homedir(), 'test')), undefined)
 })
 
-test('found package.json with config', async () => {
-  equal(loadConfig(fixture('config/pkg-with-config')), {
+test('should load config from "package.json"', async () => {
+  equal(await getConfig(fixture('config/test-project/dir')), {
     '*': 'my-tasks',
   })
 })
 
-test('found package.json without config', async () => {
-  is(loadConfig(fixture('config/pkg-without-config')), undefined)
+test('should return "object" config', async () => {
+  equal(await getConfig(process.cwd(), { '*': 'my-tasks' }), {
+    '*': 'my-tasks',
+  })
 })
 
-test('not found package.json', async () => {
-  is(loadConfig(undefined), undefined)
+test('should load JSON config file', async () => {
+  let config = await getConfig(fixture('config/json'))
+  equal(config, { '*': 'my-tasks' })
 })
 
-test('resolve package.json', async () => {
-  const { loadConfig } = await esmock('../lib/config.js', {
+test('should load EMS config file from .js file', async () => {
+  let config = await getConfig(fixture('config/esm-in-js'))
+  equal(config['*'](), 'my-tasks')
+})
+
+test('should load EMS config file from .mjs file', async () => {
+  let config = await getConfig(fixture('config/mjs'))
+  equal(config['*'](), 'my-tasks')
+})
+
+test('should load CJS config file from .cjs file', async () => {
+  let config = await getConfig(fixture('config/cjs'))
+  equal(config, { '*': 'my-tasks' })
+})
+
+test('should load CJS config file from absolute path', async () => {
+  let config = await getConfig(process.cwd(), fixture('config/cjs/nano-staged.cjs'))
+  equal(config, { '*': 'my-tasks' })
+})
+
+test('should load CJS config file from relative path', async () => {
+  let config = await getConfig(
+    process.cwd(),
+    join('test', 'fixtures', 'config', 'cjs', 'nano-staged.cjs')
+  )
+  equal(config, { '*': 'my-tasks' })
+})
+
+test('should return "undefined" when error', async () => {
+  const { getConfig } = await esmock('../lib/config.js', {
     fs: {
       promises: {
-        async readFile() {
-          return Promise.reject()
-        },
+        readFile: async () => Promise.reject(),
       },
     },
   })
 
-  is(loadConfig(), undefined)
-})
-
-test('find config in parent dirs', async () => {
-  let config = loadConfig(fixture('config/pkg-parent/pkg-child/pkg-child-child'))
-  equal(config, { '*': 'my-tasks' })
-})
-
-test('find nano-staged.json config', async () => {
-  let config = loadConfig(fixture('config/json-config'))
-  equal(config, { '*': 'my-json-tasks' })
-})
-
-test('find .nano-staged.json config', async () => {
-  let config = loadConfig(fixture('config/dot-json-config'))
-  equal(config, { '*': 'my-json-dot-tasks' })
+  is(await getConfig(), undefined)
 })
 
 test('config undefined', async () => {
