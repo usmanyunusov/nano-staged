@@ -2,6 +2,13 @@
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.6
+
+- Add JS API
+- Add multispinner output
+- Support CI terminal
+- Support run script for `diff` files
+
 ## 0.5
 
 - Support run script for unstaged files

@@ -1,7 +1,7 @@
 {
   "name": "nano-staged",
-  "version": "0.5.0",
-  "description": "Tiny tool to run commands for both staged and unstaged git files",
+  "version": "0.6.0",
+  "description": "Tiny tool to run commands for modified, staged, and committed git files.",
   "author": "Usman Yunusov <usman.iunusov@gmail.com>",
   "license": "MIT",
   "repository": "usmanyunusov/nano-staged",
@@ -51,6 +51,8 @@
     "lint",
     "git",
     "staged",
+    "unstaged",
+    "diff",
     "eslint",
     "prettier",
     "stylelint"
