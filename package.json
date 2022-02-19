@@ -13,7 +13,7 @@
   },
   "scripts": {
     "lint": "prettier --write lib/**/*.js",
-    "unit": "CI=1 node --loader=esmock --no-warnings ./node_modules/uvu/bin.js test \"\\.test\\.js$\"",
+    "unit": "cross-env CI=true node --loader=esmock --no-warnings ./node_modules/uvu/bin.js test \"\\.test\\.js$\"",
     "test": "c8 pnpm unit",
     "bench": "node bench/running-time/index.js && node bench/size/index.js"
   },
@@ -23,6 +23,7 @@
   "devDependencies": {
     "c8": "^7.11.0",
     "clean-publish": "^3.4.5",
+    "cross-env": "^7.0.3",
     "esmock": "^1.7.4",
     "fs-extra": "^10.0.0",
     "nanodelay": "^2.0.2",
