@@ -218,6 +218,12 @@ export default {
 }
 ```
 
+The `api` object exposes:
+
+`api.filenames` - working filenames
+
+`api.type` - run type: `staged`, `unstaged`, `diff`
+
 ## Command Line Interface
 
 #### `--config [<path>]` or `-c [<path>]`
