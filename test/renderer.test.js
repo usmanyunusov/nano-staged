@@ -22,31 +22,41 @@ test('should create is TTY renderer', async () => {
     ],
   }
 
-  renderer.start(task)
+  renderer.spin(task)
   task.state = 'run'
 
-  await delay(500)
+  renderer.spin(task)
   task.state = 'warn'
 
-  await delay(500)
+  renderer.spin(task)
   task.state = 'done'
 
-  await delay(500)
+  renderer.spin(task)
   task.state = 'fail'
 
   renderer.stop()
 
   is(
     stdout.out,
-    '\x1B[?25l\x1B[90m*\x1B[39m Test\n' +
+    '\x1B[90m*\x1B[39m Test\n' +
       '  \x1B[90m*\x1B[39m Sub test\x1B[1G\x1B[2K\x1B[1A\x1B[1G\x1B[2K\x1B[33m\\\x1B[39m Test\n' +
-      '  \x1B[90m*\x1B[39m Sub test\x1B[1G\x1B[2K\x1B[1A\x1B[1G\x1B[2K\x1B[33m|\x1B[39m Test\n' +
-      '  \x1B[90m*\x1B[39m Sub test\x1B[1G\x1B[2K\x1B[1A\x1B[1G\x1B[2K\x1B[33m/\x1B[39m Test\n' +
-      '  \x1B[90m*\x1B[39m Sub test\x1B[1G\x1B[2K\x1B[1A\x1B[1G\x1B[2K\x1B[33m↓\x1B[39m Test\n' +
-      '  \x1B[90m*\x1B[39m Sub test\x1B[1G\x1B[2K\x1B[1A\x1B[1G\x1B[2K\x1B[33m↓\x1B[39m Test\n' +
-      '  \x1B[90m*\x1B[39m Sub test\x1B[1G\x1B[2K\x1B[1A\x1B[1G\x1B[2K\x1B[33m↓\x1B[39m Test\n' +
-      '  \x1B[90m*\x1B[39m Sub test\x1B[1G\x1B[2K\x1B[1A\x1B[1G\x1B[2K\x1B[33m↓\x1B[39m Test\n' +
-      '  \x1B[90m*\x1B[39m Sub test\x1B[1G\x1B[2K\x1B[1A\x1B[1G\x1B[2K\x1B[32m√\x1B[39m Test\x1B[1G\x1B[2K\x1B[32m√\x1B[39m Test\x1B[1G\x1B[2K\x1B[32m√\x1B[39m Test\x1B[1G\x1B[2K\x1B[32m√\x1B[39m Test\x1B[1G\x1B[2K\x1B[31m×\x1B[39m Test\n' +
+      '  \x1B[90m*\x1B[39m Sub test\n' +
+      '\x1B[33m|\x1B[39m Test\n' +
+      '  \x1B[90m*\x1B[39m Sub test\x1B[1G\x1B[2K\x1B[1A\x1B[1G\x1B[2K\x1B[1A\x1B[1G\x1B[2K\x1B[1A\x1B[1G\x1B[2K\x1B[33m↓\x1B[39m Test\n' +
+      '  \x1B[90m*\x1B[39m Sub test\n' +
+      '\x1B[33m↓\x1B[39m Test\n' +
+      '  \x1B[90m*\x1B[39m Sub test\n' +
+      '\x1B[33m↓\x1B[39m Test\n' +
+      '  \x1B[90m*\x1B[39m Sub test\x1B[1G\x1B[2K\x1B[1A\x1B[1G\x1B[2K\x1B[1A\x1B[1G\x1B[2K\x1B[1A\x1B[1G\x1B[2K\x1B[1A\x1B[1G\x1B[2K\x1B[1A\x1B[1G\x1B[2K\x1B[32m√\x1B[39m Test\n' +
+      '\x1B[32m√\x1B[39m Test\n' +
+      '\x1B[32m√\x1B[39m Test\n' +
+      '\x1B[32m√\x1B[39m Test\x1B[1G\x1B[2K\x1B[1A\x1B[1G\x1B[2K\x1B[1A\x1B[1G\x1B[2K\x1B[1A\x1B[1G\x1B[2K\x1B[31m×\x1B[39m Test\n' +
+      '  \x1B[90m*\x1B[39m Sub test\n' +
+      '\x1B[31m×\x1B[39m Test\n' +
+      '  \x1B[90m*\x1B[39m Sub test\n' +
+      '\x1B[31m×\x1B[39m Test\n' +
+      '  \x1B[90m*\x1B[39m Sub test\n' +
+      '\x1B[31m×\x1B[39m Test\n' +
       '  \x1B[90m*\x1B[39m Sub test\n' +
       '\x1B[?25h'
   )
@@ -81,8 +91,7 @@ test('should create is CI renderer', async () => {
   ]
 
   for (const task of tasks) {
-    renderer.start(task)
-    await delay(1000)
+    renderer.spin(task)
   }
 
   renderer.stop()
