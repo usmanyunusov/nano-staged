@@ -47,7 +47,7 @@ The performance results were generated on a MBP Late 2013, 2,3 GHz Intel Core i7
 
    ```json
    "nano-staged": {
-      "*.js": "prettier --write",
+      "*.{js,ts}": "prettier --write",
       "*.css": ["stylelint", "eslint --fix"]
    },
    ```
