@@ -1,5 +1,8 @@
 blank_issues_enabled: false
 contact_links:
+  - name: Discord Chat
+    url: https://discord.gg/YeW2RA7UD4
+    about: Ask questions and discuss with other Nano Staged users in real time.
   - name: Questions & Discussions
     url: https://github.com/usmanyunusov/nano-staged/discussions
     about: Use GitHub discussions for message-board style questions and discussions.
