@@ -245,3 +245,7 @@ Will allow creating an empty commit.
 ## Thanks
 
 Special thanks to [lint-staged](https://github.com/okonet/lint-staged). Some codes was borrowed from it.
+
+## Community
+
+The Nano Staged community can be found on [GitHub Discussions](https://github.com/usmanyunusov/nano-staged/discussions), where you can ask questions, voice ideas, and share your projects.
