@@ -143,7 +143,7 @@ Nano Staged supports multiple ways to define config.
    }
    ```
 
-2. or a separate `.nano-staged.json` or `nano-staged.json` config file:
+2. or a separate `.nano-staged.json`, `nano-staged.json` or `.nanostagedrc` config file:
 
    ```json
    {
