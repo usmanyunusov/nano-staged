@@ -198,7 +198,8 @@ If there are multiple configuration files in the same directory, Nano Staged wil
 6. `nano-staged.mjs`
 7. `.nano-staged.json`
 8. `nano-staged.json`
-9. `package.json`
+9. `.nanostagedrc`
+10. `package.json`
 
 ### Config Function API:
 
