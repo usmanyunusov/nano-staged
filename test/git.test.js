@@ -1,5 +1,5 @@
 import { equal, is } from 'uvu/assert'
-import { join } from 'path'
+import { join, resolve } from 'path'
 import { test } from 'uvu'
 import fs from 'fs-extra'
 
@@ -50,12 +50,15 @@ test('should return "null" when run error', async () => {
 
 test('should return path when git dir is found', async () => {
   let git = createGit(cwd)
-  git.exec = async () => 'test'
-
   let git_paths = await git.getGitPaths()
 
-  is(git_paths.root, 'test')
-  is(git_paths.dot, process.platform === 'win32' ? 'test\\.git' : 'test/.git')
+  is(git_paths.root, fixture('simple/git-test'))
+  is(
+    git_paths.dot,
+    process.platform === 'win32'
+      ? fixture('simple/git-test') + '\\.git'
+      : fixture('simple/git-test') + '/.git'
+  )
 })
 
 test('should create patch to file', async () => {
@@ -225,6 +228,19 @@ test('should get unstaged files correctly', async () => {
     working: ['mod.js', 'test/add.js', 'rename.js', 'test/copy.js'],
     deleted: [],
     changed: ['mod.js', 'test/add.js', 'rename.js', 'test/copy.js'],
+  })
+})
+
+test('should handle git worktrees', async () => {
+  let git = createGit(cwd)
+  let work_tree_dir = resolve(cwd, 'worktree')
+
+  await execGit(['branch', 'test'])
+  await execGit(['worktree', 'add', work_tree_dir, 'test'])
+
+  equal(await git.getGitPaths({ cwd: work_tree_dir }), {
+    root: fixture('simple/git-test/worktree'),
+    dot: fixture('simple/git-test/.git/worktrees/worktree'),
   })
 })
 
