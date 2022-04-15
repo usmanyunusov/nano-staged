@@ -4,12 +4,12 @@ specifiers:
   c8: ^7.11.0
   clean-publish: ^3.4.5
   cross-env: ^7.0.3
-  esmock: ^1.7.4
-  fs-extra: ^10.0.0
+  esmock: ^1.7.5
+  fs-extra: ^10.0.1
   nanodelay: ^2.0.2
-  nanoid: ^3.3.1
+  nanoid: ^3.3.2
   picocolors: ^1.0.0
-  prettier: ^2.5.1
+  prettier: ^2.6.2
   uvu: ^0.5.3
 
 dependencies:
@@ -19,11 +19,11 @@ devDependencies:
   c8: 7.11.0
   clean-publish: 3.4.5
   cross-env: 7.0.3
-  esmock: 1.7.4
-  fs-extra: 10.0.0
+  esmock: 1.7.5
+  fs-extra: 10.0.1
   nanodelay: 2.0.2
-  nanoid: 3.3.1
-  prettier: 2.5.1
+  nanoid: 3.3.2
+  prettier: 2.6.2
   uvu: 0.5.3
 
 packages:
@@ -118,9 +118,9 @@ packages:
     dependencies:
       cross-spawn: 7.0.3
       fast-glob: 3.2.11
-      fs-extra: 10.0.0
+      fs-extra: 10.0.1
       hosted-git-info: 4.1.0
-      lilconfig: 2.0.4
+      lilconfig: 2.0.5
     dev: true
 
   /cliui/7.0.4:
@@ -188,8 +188,8 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
-  /esmock/1.7.4:
-    resolution: {integrity: sha512-svdcSxV5uTMBJGOugESRITlZwthsDASS7vJ37knHFhMQomxjqUTIAR+MUXqrRhMp7sJ472yRPZeTDLle3kVfcw==}
+  /esmock/1.7.5:
+    resolution: {integrity: sha512-vvPplt3s8nSQ+Pre8QiMFj3NogTwjQRQCv90DQzjlqfNUoyA0Z72tJux9MRUQKlGc4omd2Dsp27OJ6XXIucgmA==}
     dependencies:
       resolvewithplus: 0.8.0
     dev: true
@@ -202,7 +202,7 @@ packages:
       '@nodelib/fs.walk': 1.2.8
       glob-parent: 5.1.2
       merge2: 1.4.1
-      micromatch: 4.0.4
+      micromatch: 4.0.5
     dev: true
 
   /fastq/1.13.0:
@@ -234,11 +234,11 @@ packages:
       signal-exit: 3.0.7
     dev: true
 
-  /fs-extra/10.0.0:
-    resolution: {integrity: sha512-C5owb14u9eJwizKGdchcDUQeFtlSHHthBk8pbX9Vc1PFZrLombudjDnNns88aYslCyF6IY5SUw3Roz6xShcEIQ==}
+  /fs-extra/10.0.1:
+    resolution: {integrity: sha512-NbdoVMZso2Lsrn/QwLXOy6rm0ufY2zEOKCDzJR/0kBsb0E6qed0P3iYK+Ath3BfvXEeu4JhEtXLgILx5psUfag==}
     engines: {node: '>=12'}
     dependencies:
-      graceful-fs: 4.2.9
+      graceful-fs: 4.2.10
       jsonfile: 6.1.0
       universalify: 2.0.0
     dev: true
@@ -270,8 +270,8 @@ packages:
       path-is-absolute: 1.0.1
     dev: true
 
-  /graceful-fs/4.2.9:
-    resolution: {integrity: sha512-NtNxqUcXgpW2iMrfqSfR73Glt39K+BLwWsPs94yR63v45T0Wbej7eRmL5cWfwEgqXnmjQp3zaJTshdRW/qC2ZQ==}
+  /graceful-fs/4.2.10:
+    resolution: {integrity: sha512-9ByhssR2fPVsNZj478qUUbKfmL0+t5BDVyjShtyZZLiK7ZDAArFFfopyOTj0M05wE2tJPisA4iTnnXl2YoPvOA==}
     dev: true
 
   /has-flag/4.0.0:
@@ -354,7 +354,7 @@ packages:
     dependencies:
       universalify: 2.0.0
     optionalDependencies:
-      graceful-fs: 4.2.9
+      graceful-fs: 4.2.10
     dev: true
 
   /kleur/4.1.4:
@@ -362,8 +362,8 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
-  /lilconfig/2.0.4:
-    resolution: {integrity: sha512-bfTIN7lEsiooCocSISTWXkiWJkRqtL9wYtYy+8EK3Y41qh3mpwPU0ycTOgjdY9ErwXCc8QyrQp82bdL0Xkm9yA==}
+  /lilconfig/2.0.5:
+    resolution: {integrity: sha512-xaYmXZtTHPAw5m+xLN8ab9C+3a8YmV3asNSPOATITbtwrfbwaLJj8h66H1WMIpALCkqsIzK3h7oQ+PdX+LQ9Eg==}
     engines: {node: '>=10'}
     dev: true
 
@@ -393,8 +393,8 @@ packages:
     engines: {node: '>= 8'}
     dev: true
 
-  /micromatch/4.0.4:
-    resolution: {integrity: sha512-pRmzw/XUcwXGpD9aI9q/0XOwLNygjETJ8y0ao0wdqprrzDa4YnxLcz7fQRZr8voh8V10kGhABbNcHVk5wHgWwg==}
+  /micromatch/4.0.5:
+    resolution: {integrity: sha512-DMy+ERcEW2q8Z2Po+WNXuw3c5YaUSFjAO5GsJqfEl7UjvtIuFKO6ZrKvcItdy98dwFI2N1tg3zNIdKaQT+aNdA==}
     engines: {node: '>=8.6'}
     dependencies:
       braces: 3.0.2
@@ -417,8 +417,8 @@ packages:
     engines: {node: ^12.0.0 || ^14.0.0 || >=16.0.0}
     dev: true
 
-  /nanoid/3.3.1:
-    resolution: {integrity: sha512-n6Vs/3KGyxPQd6uO0eH4Bv0ojGSUvuLlIHtC3Y0kEO23YRge8H9x1GCzLn28YX0H66pMkxuaeESFq4tKISKwdw==}
+  /nanoid/3.3.2:
+    resolution: {integrity: sha512-CuHBogktKwpm5g2sRgv83jEy2ijFzBwMoYA60orPDR7ynsLijJDqgsi4RDGj3OJpy3Ieb+LYwiRmIOGyytgITA==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
     dev: true
@@ -467,8 +467,8 @@ packages:
     engines: {node: '>=8.6'}
     dev: true
 
-  /prettier/2.5.1:
-    resolution: {integrity: sha512-vBZcPRUR5MZJwoyi3ZoyQlc1rXeEck8KgeC9AwwOn+exuxLxq5toTRDTSaVrXHxelDMHy9zlicw8u66yxoSUFg==}
+  /prettier/2.6.2:
+    resolution: {integrity: sha512-PkUpF+qoXTqhOeWL9fu7As8LXsIUZ1WYaJiY/a7McAQzxjk82OF0tibkFXVCDImZtWxbvojFjerkiLb0/q8mew==}
     engines: {node: '>=10.13.0'}
     hasBin: true
     dev: true
