@@ -2,6 +2,10 @@
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+# 0.7
+
+- Suppor git config dir location if .git is a file
+
 ## 0.6
 
 - Add JS API
@@ -14,7 +18,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Support run script for unstaged files
 - Added allowing empty git commit
 - Update docs
-- Replace yarn to pnpm 
+- Replace yarn to pnpm
 - Add logo
 
 ## 0.4.5
@@ -51,7 +55,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## 0.3
 
-- Added config load from file 
+- Added config load from file
 
 ## 0.2.1
 
