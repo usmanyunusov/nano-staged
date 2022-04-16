@@ -56,6 +56,11 @@ test('should load CJS config file from relative path', async () => {
   equal(config, { '*': 'my-tasks' })
 })
 
+test('should load no extension config file', async () => {
+  let config = await getConfig(fixture('config/no-ext'))
+  equal(config, { '*': 'my-tasks' })
+})
+
 test('should return "undefined" when error', async () => {
   const { getConfig } = await esmock('../lib/config.js', {
     fs: {
