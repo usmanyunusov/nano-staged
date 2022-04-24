@@ -2,6 +2,10 @@
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+# 0.8
+
+- Support .nanostagedrc config files (by Azat S.)
+
 # 0.7
 
 - Suppor git config dir location if .git is a file
