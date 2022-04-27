@@ -4,65 +4,65 @@ import esmock from 'esmock'
 import { join } from 'path'
 import { test } from 'uvu'
 
-import { getConfig, validConfig } from '../lib/config.js'
+import { get_config, valid_config } from '../../lib/config.js'
 import { fixture } from './utils/index.js'
 
 test('should return "undefined" when config file is not found', async () => {
-  is(await getConfig(join(homedir(), 'test')), undefined)
+  is(await get_config(join(homedir(), 'test')), undefined)
 })
 
 test('should load config from "package.json"', async () => {
-  equal(await getConfig(fixture('config/test-project/dir')), {
+  equal(await get_config(fixture('config/test-project/dir')), {
     '*': 'my-tasks',
   })
 })
 
 test('should return "object" config', async () => {
-  equal(await getConfig(process.cwd(), { '*': 'my-tasks' }), {
+  equal(await get_config(process.cwd(), { '*': 'my-tasks' }), {
     '*': 'my-tasks',
   })
 })
 
 test('should load JSON config file', async () => {
-  let config = await getConfig(fixture('config/json'))
+  let config = await get_config(fixture('config/json'))
   equal(config, { '*': 'my-tasks' })
 })
 
 test('should load EMS config file from .js file', async () => {
-  let config = await getConfig(fixture('config/esm-in-js'))
+  let config = await get_config(fixture('config/esm-in-js'))
   equal(config['*'](), 'my-tasks')
 })
 
 test('should load EMS config file from .mjs file', async () => {
-  let config = await getConfig(fixture('config/mjs'))
+  let config = await get_config(fixture('config/mjs'))
   equal(config['*'](), 'my-tasks')
 })
 
 test('should load CJS config file from .cjs file', async () => {
-  let config = await getConfig(fixture('config/cjs'))
+  let config = await get_config(fixture('config/cjs'))
   equal(config, { '*': 'my-tasks' })
 })
 
 test('should load CJS config file from absolute path', async () => {
-  let config = await getConfig(process.cwd(), fixture('config/cjs/nano-staged.cjs'))
+  let config = await get_config(process.cwd(), fixture('config/cjs/nano-staged.cjs'))
   equal(config, { '*': 'my-tasks' })
 })
 
 test('should load CJS config file from relative path', async () => {
-  let config = await getConfig(
+  let config = await get_config(
     process.cwd(),
-    join('test', 'fixtures', 'config', 'cjs', 'nano-staged.cjs')
+    join('test', 'unit', 'fixtures', 'config', 'cjs', 'nano-staged.cjs')
   )
   equal(config, { '*': 'my-tasks' })
 })
 
 test('should load no extension config file', async () => {
-  let config = await getConfig(fixture('config/no-ext'))
+  let config = await get_config(fixture('config/no-ext'))
   equal(config, { '*': 'my-tasks' })
 })
 
 test('should return "undefined" when error', async () => {
-  const { getConfig } = await esmock('../lib/config.js', {
+  const { get_config } = await esmock('../../lib/config.js', {
     fs: {
       promises: {
         readFile: async () => Promise.reject(),
@@ -70,88 +70,47 @@ test('should return "undefined" when error', async () => {
     },
   })
 
-  is(await getConfig(), undefined)
+  is(await get_config(), undefined)
 })
 
 test('config undefined', async () => {
-  is(validConfig(), false)
+  is(valid_config(), false)
 })
 
 test('config empty', async () => {
-  is(validConfig({}), false)
+  is(valid_config({}), false)
 })
 
 test('config single cmd', async () => {
-  is(
-    validConfig({
-      '*': 'my-tasks',
-    }),
-    true
-  )
+  is(valid_config({ '*': 'my-tasks' }), true)
 })
 
 test('config array cmds', async () => {
-  is(
-    validConfig({
-      '*': ['my-tasks'],
-    }),
-    true
-  )
+  is(valid_config({ '*': ['my-tasks'] }), true)
 })
 
 test('config glob empty', async () => {
-  is(
-    validConfig({
-      '': ['my-tasks'],
-    }),
-    false
-  )
+  is(valid_config({ '': ['my-tasks'] }), false)
 })
 
 test('config single cmd empty', async () => {
-  is(
-    validConfig({
-      '*': '',
-    }),
-    false
-  )
+  is(valid_config({ '*': '' }), false)
 })
 
 test('config array cmds empty', async () => {
-  is(
-    validConfig({
-      '*': ['', ''],
-    }),
-    false
-  )
+  is(valid_config({ '*': ['', ''] }), false)
 })
 
 test('config cmd not string', async () => {
-  is(
-    validConfig({
-      '': 1,
-    }),
-    false
-  )
+  is(valid_config({ '': 1 }), false)
 })
 
 test('config glob and cmd empty', async () => {
-  is(
-    validConfig({
-      '': '',
-    }),
-    false
-  )
+  is(valid_config({ '': '' }), false)
 })
 
 test('config one task invalid', async () => {
-  is(
-    validConfig({
-      '*': '',
-      '*.js': 'my-task',
-    }),
-    false
-  )
+  is(valid_config({ '*': '', '*.js': 'my-task' }), false)
 })
 
 test.run()
