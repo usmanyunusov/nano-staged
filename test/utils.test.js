@@ -4,8 +4,7 @@ import { test } from 'uvu'
 import tty from 'tty'
 import os from 'os'
 
-import { toArray, showVersion, stringArgvToArray, getForceColorLevel } from '../lib/utils.js'
-import { createStdout } from './utils/index.js'
+import { toArray, stringArgvToArray, getForceColorLevel } from '../lib/utils.js'
 
 test.before.each(() => {
   Object.defineProperty(process, 'platform', {
@@ -19,12 +18,6 @@ test.before.each(() => {
 test('single to array', () => {
   equal(toArray('path'), ['path'])
   equal(toArray(['path']), ['path'])
-})
-
-test('print version', () => {
-  let stdout = createStdout()
-  showVersion(stdout)
-  is(stdout.out.replace(/\d+\.\d+\.\d+/, '0.1.0'), 'Nano Staged \x1B[1mv0.1.0\x1B[22m\n')
 })
 
 test('string to args', () => {
