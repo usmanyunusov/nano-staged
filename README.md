@@ -1,7 +1,7 @@
 <p align="center">
    <img src="https://usmanyunusov.github.io/nano-staged/img/logo.svg" height="96">
    <h3 align="center">Nano Staged</h3>
-   <p align="center">Tiny tool to run commands for modified, staged, and committed git files.<br/> It help <b>speeding up the run tests, linters, scripts</b>, and more</p>
+   <p align="center">Tiny tool to run commands for modified, staged, and committed files in a GIT repository.<br/> It helps <b>speed up running of the tests, linters, scripts</b>, and more.</p>
 </p>
 
 ## Features
@@ -29,16 +29,20 @@ Data from packagephobia.com
 + nano-staged     47 kB
 ```
 
-The performance results were generated on a MBP Late 2013, 2,3 GHz Intel Core i7 by running `npm run bench` in the library folder. See [bench/running-time/index.js](https://github.com/usmanyunusov/nano-staged/blob/master/bench/running-time/index.js)
+The performance results were generated on a MBP Late 2013, 2.3 GHz Intel Core i7 by running `npm run bench` in the library folder. See [bench/running-time/index.js](https://github.com/usmanyunusov/nano-staged/blob/master/bench/running-time/index.js)
 
 ## Usage
 
 ### Getting Started
 
-1. First, install `nano-staged`:
+1. Install `nano-staged`:
 
    ```terminal
    npm install --save-dev nano-staged
+   ```
+   or
+   ```terminal
+   yarn add nano-staged -D
    ```
 
 2. Add the `nano-staged` section and the commands to your `package.json`:
@@ -52,7 +56,7 @@ The performance results were generated on a MBP Late 2013, 2,3 GHz Intel Core i7
    },
    ```
 
-3. Now, run commands with Nano Staged:
+3. Run commands with Nano Staged:
 
    ```terminal
    ./node_modules/.bin/nano-staged
@@ -62,7 +66,7 @@ The performance results were generated on a MBP Late 2013, 2,3 GHz Intel Core i7
 
 ### Pre-commit Hook
 
-> You can use Nano Staged with a pre-commit tools to run it automatically after every commit.
+> You can use Nano Staged with a pre-commit tools to run it automatically before every commit.
 
 <details>
    <summary><b>Simple Git Hooks</b></summary>
@@ -186,7 +190,7 @@ Nano Staged supports multiple ways to define config.
    }
    ```
 
-### Priorited formats:
+### Format priorities:
 
 If there are multiple configuration files in the same directory, Nano Staged will only use one. The priority order is as follows:
 
@@ -233,11 +237,11 @@ Path to file that contains your configuration object. The path should be either 
 
 #### `--unstaged` or `-u`
 
-Run commands from the config for only git unstaged files. Nano Staged by default use only staged git files.
+Run commands from the config only for git unstaged files. Nano Staged by default uses only staged git files.
 
 #### `--diff [<ref1> <ref2>]`
 
-Run commands to changed files between the working tree and the index or a tree, to changed files between the index and a tree, to changed files between two trees, or to changed files between two index.
+Run commands on files changed between the working tree and the index or a tree, on files changed between the index and a tree, files changed between two trees, or on files changed between two indexes (commit hashes).
 
 #### `--allow-empty`
 
