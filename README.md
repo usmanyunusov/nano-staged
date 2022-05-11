@@ -211,7 +211,7 @@ JS config files may export export either a single function or an object:
 
 ```js
 export default (api) => {
-  const jsFiles = api.files.filter((file) => path.extname(file) === '.js')
+  const jsFiles = api.filenames.filter((file) => path.extname(file) === '.js')
 
   return [`eslint --fix ${jsFiles.join(' ')}`, `prettier --write ${jsFiles.join(' ')}`]
 }
@@ -219,7 +219,7 @@ export default (api) => {
 
 ```js
 export default {
-  '*.js': (api) => `eslint --fix ${api.files.join(' ')}`,
+  '*.js': (api) => `eslint --fix ${api.filenames.join(' ')}`,
 }
 ```
 
