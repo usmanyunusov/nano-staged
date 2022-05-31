@@ -84,7 +84,13 @@ function showTime(name) {
 async function run() {
   for (let runner of runners) {
     before = performance.now()
-    await executor(`./node_modules/.bin/${runner}`, [], { cwd })
+
+    try {
+      await executor(`./node_modules/.bin/${runner}`, [], { cwd })
+    } catch (error) {
+      console.log(error)
+    }
+
     showTime(runner)
   }
 }
