@@ -12,7 +12,7 @@ function create_temp() {
   return path.normalize(work_dir)
 }
 
-export class FilesystemTestRig {
+export class FileSystemTestRig {
   temp = create_temp()
 
   async ensure(dir) {

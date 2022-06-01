@@ -3,6 +3,7 @@ import { suite } from 'uvu'
 
 import { pretty_js, ugly_js } from './fixtures/files.js'
 import { NanoStagedTestRig } from './utils/test-rig.js'
+import { prettier_write } from './fixtures/configs.js'
 
 const test = suite()
 
@@ -18,18 +19,16 @@ test.before.each(async (ctx) => {
 
 test.after.each(async (ctx) => {
   try {
-    await ctx.rig.remove(ctx.rig.temp)
+    await ctx.rig.cleanup()
   } catch (e) {
     console.error('uvu after error', e)
     process.exit(1)
   }
 })
 
-test('fails when task reverts staged changes without `--allow-empty`, to prevent an empty git commit', async ({
-  rig,
-}) => {
+test('fails when without `--allow-empty`, to prevent an empty git commit', async ({ rig }) => {
   try {
-    await rig.write('.nano-staged.json', JSON.stringify({ '*.js': 'prettier --write' }))
+    await rig.write('.nano-staged.json', JSON.stringify(prettier_write))
     await rig.write('test.js', pretty_js)
 
     await rig.git.exec(['add', '.'])
@@ -41,17 +40,14 @@ test('fails when task reverts staged changes without `--allow-empty`, to prevent
     await rig.commit()
   } catch (error) {
     assert.match(error, 'Prevented an empty git commit!')
+    assert.is((await rig.git.exec(['rev-list', '--count', 'HEAD'])).trim(), '2')
+    assert.is((await rig.git.exec(['log', '-1', '--pretty=%B'])).trim(), 'committed pretty file')
+    assert.is(await rig.read('test.js'), pretty_js)
   }
-
-  assert.is((await rig.git.exec(['rev-list', '--count', 'HEAD'])).trim(), '2')
-  assert.is((await rig.git.exec(['log', '-1', '--pretty=%B'])).trim(), 'committed pretty file')
-  assert.is(await rig.read('test.js'), pretty_js)
 })
 
-test('creates commit when task reverts staged changed and --allow-empty is used', async ({
-  rig,
-}) => {
-  await rig.write('.nano-staged.json', JSON.stringify({ '*.js': 'prettier --write' }))
+test('with `--allow-empty` creates empty commit', async ({ rig }) => {
+  await rig.write('.nano-staged.json', JSON.stringify(prettier_write))
   await rig.write('test.js', pretty_js)
 
   await rig.git.exec(['add', '.'])

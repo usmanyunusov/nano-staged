@@ -1,6 +1,5 @@
-import { is, equal } from 'uvu/assert'
+import { is } from 'uvu/assert'
 import { test } from 'uvu'
-import { delay } from 'nanodelay'
 
 import { createRenderer } from '../lib/renderer.js'
 import { createStdout } from './utils/index.js'

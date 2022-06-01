@@ -1,11 +1,11 @@
 import { is } from 'uvu/assert'
 import { test } from 'uvu'
 
-import { globToRegex } from '../lib/glob-to-regex.js'
+import { globex } from '../../lib/globex.js'
 
 function match(glob, path, opts = {}) {
-  let regex = globToRegex(glob, opts)
-  return regex.regex.test(path)
+  let regex = globex(glob, opts)
+  return regex.test(path)
 }
 
 test('Standard * matching', () => {

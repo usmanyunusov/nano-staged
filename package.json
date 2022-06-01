@@ -18,7 +18,7 @@
   },
   "scripts": {
     "lint": "prettier --write lib/**/*.js",
-    "unit": "cross-env CI=true node --loader=esmock --no-warnings ./node_modules/uvu/bin.js test/integration \"\\.test\\.js$\"",
+    "unit": "cross-env LC_ALL=en_US.utf8 CI=true node --loader=esmock --no-warnings ./node_modules/uvu/bin.js test/integration \"\\.test\\.js$\"",
     "test": "c8 pnpm unit",
     "bench": "node bench/running-time/index.js"
   },
