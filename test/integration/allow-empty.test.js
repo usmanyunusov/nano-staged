@@ -5,7 +5,7 @@ import { pretty_js, ugly_js } from './fixtures/files.js'
 import { NanoStagedTestRig } from './utils/test-rig.js'
 import { prettier_write } from './fixtures/configs.js'
 
-const test = suite()
+const test = suite('integration')
 
 test.before.each(async (ctx) => {
   try {
