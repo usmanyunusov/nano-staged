@@ -22,6 +22,7 @@ const pkg_config = {
 
 export class NanoStagedTestRig extends FileSystemTestRig {
   initial_commit = true
+  no_commit = false
   git = create_git(this.temp)
 
   constructor({ with_git = true, ...props } = {}) {
@@ -61,7 +62,7 @@ export class NanoStagedTestRig extends FileSystemTestRig {
     try {
       const result = await executor(nano_staged_bin, nano_staged_args, { cwd })
 
-      if (this.with_git) {
+      if (this.with_git && !this.no_commit) {
         await this.git.exec(['commit', ...git_commit_args], { cwd })
       }
 

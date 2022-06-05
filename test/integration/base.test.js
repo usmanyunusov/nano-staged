@@ -76,7 +76,6 @@ test('fails to commit entire staged file when errors from linter', async ({ rig 
 
 test('fails to commit entire staged file when errors from linter and linter modifies files', async ({
   rig,
-  ...ctx
 }) => {
   await rig.write('.nano-staged.json', JSON.stringify(prettier_write))
 
