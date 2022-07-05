@@ -1,13 +1,11 @@
-import { execFile } from 'child_process'
 import { resolve, dirname } from 'path'
 import { fileURLToPath } from 'url'
-import { promisify } from 'util'
 import { nanoid } from 'nanoid'
 import fs from 'fs-extra'
 
-import { createGit } from '../../lib/git.js'
+import { create_git } from '../../lib/git.js'
+import { executor } from '../../lib/executor.js'
 
-let spawn = promisify(execFile)
 let currentDir = dirname(fileURLToPath(import.meta.url))
 let cwd = resolve(currentDir, `nano-staged-${nanoid()}`)
 let runners = ['lint-staged', 'nano-staged']
@@ -22,7 +20,7 @@ async function appendFile(filename, content, dir = cwd) {
 }
 
 async function execGit(args) {
-  let git = createGit(cwd)
+  let git = create_git(cwd)
   await git.exec(args, { cwd })
 }
 
@@ -33,7 +31,7 @@ async function initGitRepo() {
   await appendFile('README.md', '# Test\n')
   await appendFile('.gitignore', `node_modules/\n`)
   await execGit(['add', 'README.md'])
-  await execGit(['commit', '-m initial commit'])
+  await execGit(['commit', '-m', '"initial commit"'])
 }
 
 async function initProject() {
@@ -41,20 +39,24 @@ async function initProject() {
     'package.json',
     `{
       "lint-staged": {
-        "*.js": "prettier --write",
-        "*.css": "prettier --write"
+        "*.js": "echo test",
+        "*.css": "echo test"
       },
       "nano-staged": {
-        "*.js": "prettier --write",
-        "*.css": "prettier --write"
+        "*.js": "echo test",
+        "*.css": "echo test"
       }
     }`
   )
 
-  await spawn('yarn', ['add', 'lint-staged'], { cwd })
-  await spawn('yarn', ['add', resolve(cwd, '../../../../nano-staged')], {
+  await executor('pnpm', ['add', 'lint-staged'], {
     cwd,
   })
+
+  await executor('pnpm', ['add', resolve(cwd, '../../../../nano-staged')], {
+    cwd,
+  })
+
   await appendFile('a.js', 'var test = {};')
   await appendFile('b.js', 'var test = {};')
   await appendFile('c.js', 'var test = {};')
@@ -82,7 +84,13 @@ function showTime(name) {
 async function run() {
   for (let runner of runners) {
     before = performance.now()
-    await spawn(`./node_modules/.bin/${runner}`, { cwd })
+
+    try {
+      await executor(`./node_modules/.bin/${runner}`, [], { cwd })
+    } catch (error) {
+      console.log(error)
+    }
+
     showTime(runner)
   }
 }
