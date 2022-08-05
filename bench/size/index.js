@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { get } from 'https'
-import c from 'picocolors'
+import c from '../../lib/colors.js'
 
 async function getJSON(url) {
   return new Promise((resolve) => {
