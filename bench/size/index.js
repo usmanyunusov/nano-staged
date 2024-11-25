@@ -4,8 +4,14 @@ import { get } from 'https'
 import c from 'picocolors'
 
 async function getJSON(url) {
+  const options = {
+    headers: {
+      'User-Agent': 'nano-staged',
+    },
+  }
+
   return new Promise((resolve) => {
-    get(url, (res) => {
+    get(url, options, (res) => {
       let text = ''
       res.on('data', (chunk) => {
         text += chunk
