@@ -1,23 +1,33 @@
 import { is, equal } from 'uvu/assert'
-import { homedir } from 'os'
 import { join } from 'path'
 import esmock from 'esmock'
 import { test } from 'uvu'
 
-import { createStdout } from './utils/index.js'
+import { createStdout, fixture, makeDir, writeFile, removeFile } from './utils/index.js'
 
 let stdout = createStdout()
+const cwd = fixture('simple/runner-test')
+const srcDir = fixture('simple/runner-test/src/foo')
 
-test.before.each(() => {
+test.before.each(async () => {
   stdout.out = ''
+
+  await makeDir(srcDir)
+  await writeFile('a.js', 'const a = 1;\n', srcDir)
+  await writeFile('b.js', 'const b = 1;\n', srcDir)
+  await writeFile('b.css', 'body { color: red; }\n', cwd)
+})
+
+test.after.each(async () => {
+  await removeFile(cwd)
 })
 
 test('should create runner and resolve tasks', async () => {
   const { createCmdRunner } = await esmock('../lib/cmd-runner.js')
 
   let runner = createCmdRunner({
-    rootPath: join(homedir(), 'test'),
-    cwd: join(homedir(), 'test'),
+    rootPath: srcDir,
+    cwd: srcDir,
     files: ['a.js', '../../b.css'],
     config: { '*.js': ['prettier --write'], '../*.css': 'prettier --write' },
     stream: stdout,
@@ -34,7 +44,7 @@ test('should create runner and resolve tasks', async () => {
         tasks: [{ title: 'prettier --write', pattern: '*.js' }],
       },
       { title: '../*.css\u001b[2m - no files\u001b[22m', file_count: 0, tasks: [] },
-    ])
+    ]),
   )
 })
 
@@ -46,7 +56,8 @@ test('should run handle error', async () => {
   })
 
   let runner = await createCmdRunner({
-    repoPath: 'test',
+    rootPath: srcDir,
+    cwd: srcDir,
     files: ['a.js', '../../b.css'],
     config: { '*.js': ['prettier --write', 'prettier --write'], '*.css': () => 'prettier --write' },
     stream: stdout,
@@ -60,11 +71,11 @@ test('should run handle error', async () => {
   } catch (error) {
     is(
       error.message,
-      '\x1B[31m*.js\x1B[39m \x1B[2m>\x1B[22m \x1B[31mprettier --write\x1B[39m:\nRun error'
+      '\x1B[31m*.js\x1B[39m \x1B[2m>\x1B[22m \x1B[31mprettier --write\x1B[39m:\nRun error',
     )
     equal(
       task.tasks.map((t) => ({ state: t.state })),
-      [{ state: 'fail' }, { state: 'warn' }]
+      [{ state: 'fail' }, { state: 'warn' }],
     )
   }
 })
@@ -77,7 +88,8 @@ test('should run handle success', async () => {
   })
 
   let runner = await createCmdRunner({
-    repoPath: 'test',
+    rootPath: srcDir,
+    cwd: srcDir,
     files: ['a.js', 'b.js', '../../b.css'],
     config: { '*.js': ['prettier --write', 'prettier --write'], '*.css': () => 'prettier --write' },
     stream: stdout,
@@ -90,7 +102,7 @@ test('should run handle success', async () => {
 
   equal(
     task.tasks.map((t) => ({ state: t.state })),
-    [{ state: 'done' }, { state: 'warn' }]
+    [{ state: 'done' }, { state: 'warn' }],
   )
 })
 
