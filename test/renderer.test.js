@@ -1,4 +1,4 @@
-import { is, equal } from 'uvu/assert'
+import { is, equal, match } from 'uvu/assert'
 import { test } from 'uvu'
 import { delay } from 'nanodelay'
 
@@ -101,5 +101,24 @@ test('should create is CI renderer', async () => {
     '\x1B[32m√\x1B[39m Test\n\x1B[32m√\x1B[39m Sub test\x1B[33m ≫ \x1B[39mSub sub test\n'
   )
 })
+
+test('should show failed tasks in quiet mode', async () => {
+  const renderer = createRenderer(stdout, { quiet: true })
+  const task = { title: 'Test', state: 'run' }
+
+  renderer.start(task)
+  
+  is(stdout.out, '')
+  
+  task.state = 'fail'
+  renderer.render()
+
+  match(stdout.out, 'Test')
+  match(stdout.out, '\x1B[31m×\x1B[39m') 
+
+  renderer.stop()
+
+})
+
 
 test.run()

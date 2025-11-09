@@ -247,6 +247,10 @@ Run commands on files changed between the working tree and the index or a tree, 
 
 Will allow creating an empty commit.
 
+#### `--quiet`
+
+Shows only that work is done and errors occured.
+
 ## Thanks
 
 Special thanks to [lint-staged](https://github.com/okonet/lint-staged). Some codes was borrowed from it.
