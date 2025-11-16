@@ -102,4 +102,25 @@ test('should create is CI renderer', async () => {
   )
 })
 
+test('should remove all progress and result', async () => {
+  const renderer = createRenderer(stdout, { quiet: true })
+  const task = { title: 'Test', state: 'run' }
+
+  renderer.start(task)
+
+  is(stdout.out, '')
+
+  renderer.spin(task)
+
+  is(stdout.out, '')
+  
+  task.state = 'fail'
+  renderer.render()
+
+  is(stdout.out, '')
+
+  renderer.stop()
+
+})
+
 test.run()
