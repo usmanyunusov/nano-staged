@@ -1,5 +1,4 @@
 import { equal, is } from 'uvu/assert'
-import { homedir } from 'os'
 import esmock from 'esmock'
 import { join } from 'path'
 import { test } from 'uvu'
@@ -8,7 +7,7 @@ import { getConfig, validConfig } from '../lib/config.js'
 import { fixture } from './utils/index.js'
 
 test('should return "undefined" when config file is not found', async () => {
-  is(await getConfig(join(homedir(), 'test')), undefined)
+  is(await getConfig(join(fixture('simple/non-existent'), 'test')), undefined)
 })
 
 test('should load config from "package.json"', async () => {
@@ -51,7 +50,7 @@ test('should load CJS config file from absolute path', async () => {
 test('should load CJS config file from relative path', async () => {
   let config = await getConfig(
     process.cwd(),
-    join('test', 'fixtures', 'config', 'cjs', 'nano-staged.cjs')
+    join('test', 'fixtures', 'config', 'cjs', 'nano-staged.cjs'),
   )
   equal(config, { '*': 'my-tasks' })
 })
@@ -64,8 +63,8 @@ test('should load no extension config file', async () => {
 test('should return "undefined" when error', async () => {
   const { getConfig } = await esmock('../lib/config.js', {
     fs: {
-      promises: {
-        readFile: async () => Promise.reject(),
+      existsSync: () => {
+        throw new Error('foo')
       },
     },
   })
@@ -86,7 +85,7 @@ test('config single cmd', async () => {
     validConfig({
       '*': 'my-tasks',
     }),
-    true
+    true,
   )
 })
 
@@ -95,7 +94,7 @@ test('config array cmds', async () => {
     validConfig({
       '*': ['my-tasks'],
     }),
-    true
+    true,
   )
 })
 
@@ -104,7 +103,7 @@ test('config glob empty', async () => {
     validConfig({
       '': ['my-tasks'],
     }),
-    false
+    false,
   )
 })
 
@@ -113,7 +112,7 @@ test('config single cmd empty', async () => {
     validConfig({
       '*': '',
     }),
-    false
+    false,
   )
 })
 
@@ -122,7 +121,7 @@ test('config array cmds empty', async () => {
     validConfig({
       '*': ['', ''],
     }),
-    false
+    false,
   )
 })
 
@@ -131,7 +130,7 @@ test('config cmd not string', async () => {
     validConfig({
       '': 1,
     }),
-    false
+    false,
   )
 })
 
@@ -140,7 +139,7 @@ test('config glob and cmd empty', async () => {
     validConfig({
       '': '',
     }),
-    false
+    false,
   )
 })
 
@@ -150,7 +149,7 @@ test('config one task invalid', async () => {
       '*': '',
       '*.js': 'my-task',
     }),
-    false
+    false,
   )
 })
 

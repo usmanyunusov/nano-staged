@@ -9,7 +9,7 @@ export async function appendFile(filename, content, dir = process.cwd()) {
 }
 
 export async function makeDir(dir = process.cwd()) {
-  await fs.mkdir(dir)
+  await fs.mkdir(dir, { recursive: true })
 }
 
 export async function writeFile(filename, content, dir = process.cwd()) {
