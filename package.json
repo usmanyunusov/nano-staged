@@ -15,7 +15,8 @@
     "lint": "prettier --write lib/**/*.js",
     "unit": "cross-env CI=true node --loader=esmock --no-warnings ./node_modules/uvu/bin.js test \"\\.test\\.js$\"",
     "test": "c8 pnpm unit",
-    "bench": "node bench/running-time/index.js && node bench/size/index.js"
+    "bench": "node bench/running-time/index.js && node bench/size/index.js",
+    "publish": "clean-publish"
   },
   "dependencies": {
     "picocolors": "^1.0.0"
