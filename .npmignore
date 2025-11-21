@@ -1,6 +1,7 @@
 pnpm-lock.yaml
 
 coverage/
+.github/
 bench/
 test/
 img/
