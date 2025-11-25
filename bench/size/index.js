@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { get } from 'https'
-import c from 'picocolors'
+import { styleText } from 'util'
 
 async function getJSON(url) {
   const options = {
@@ -30,7 +30,8 @@ async function benchmark(lib) {
   process.stdout.write(
     prefix +
       lib.padEnd('lint-staged   '.length) +
-      c.bold(
+      styleText(
+        'bold',
         Math.round(size / 1024)
           .toString()
           .padStart(4)
@@ -40,7 +41,7 @@ async function benchmark(lib) {
 }
 
 async function start() {
-  process.stdout.write(c.gray('Data from packagephobia.com\n'))
+  process.stdout.write(styleText('gray', 'Data from packagephobia.com\n'))
   await benchmark('lint-staged')
   await benchmark('nano-staged')
 }
