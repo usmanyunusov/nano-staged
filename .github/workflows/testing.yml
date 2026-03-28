@@ -10,13 +10,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v6
       - name: Install pnpm
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v5
         with:
-          version: 6.32.9
+          version: 10
       - name: Install Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v6
         with:
           node-version: 25
           cache: pnpm
@@ -31,10 +31,6 @@ jobs:
     strategy:
       matrix:
         node-version:
-          - 12
-          - 14
-          - 16
-          - 18
           - 20
           - 22
           - 24
@@ -47,13 +43,13 @@ jobs:
       - if: matrix.os == 'windows-latest'
         run: git config --global core.autocrlf true
       - name: Checkout the repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v6
       - name: Install pnpm
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v5
         with:
-          version: 6.32.9
+          version: 10
       - name: Install Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
           cache: pnpm
@@ -63,18 +59,52 @@ jobs:
         run: pnpm unit
         env:
           FORCE_COLOR: 2
+  old:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        node-version:
+          - 12
+          - 14
+          - 16
+          - 18
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
+    name: Node.js v${{ matrix.node-version }} on ${{ matrix.os }}
+    steps:
+      - if: matrix.os == 'windows-latest'
+        run: git config --global core.autocrlf true
+      - name: Checkout the repository
+        uses: actions/checkout@v6
+      - name: Install pnpm
+        uses: pnpm/action-setup@v5
+        with:
+          version: 6
+      - name: Install Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+      - name: Run unit tests
+        run: pnpm unit
+        env:
+          FORCE_COLOR: 2
   benchmark:
     name: Benchmark
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v6
       - name: Install pnpm
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v5
         with:
           version: 6.32.9
       - name: Install Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v6
         with:
           node-version: 16
           cache: pnpm
