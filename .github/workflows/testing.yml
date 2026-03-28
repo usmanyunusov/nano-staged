@@ -6,7 +6,7 @@ on:
     branches: [master]
 jobs:
   full:
-      name: Node.js 17 Full
+      name: Node.js 25 Full
       runs-on: ubuntu-latest
       steps:
         - name: Checkout the repository
