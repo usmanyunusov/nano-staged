@@ -25,8 +25,9 @@ async function getJSON(url) {
 
 async function benchmark(lib) {
   let prefix = lib === 'nano-staged' ? '+ ' : '- '
-  let data = await getJSON(`https://packagephobia.com/v2/api.json?p=${lib}`)
-  let size = data.install.bytes
+  let data = await getJSON(`https://registry.npmjs.org/${lib}`)
+  let latest = data['dist-tags'].latest
+  let size = data.versions[latest].dist.unpackedSize
   process.stdout.write(
     prefix +
       lib.padEnd('lint-staged   '.length) +
@@ -41,7 +42,7 @@ async function benchmark(lib) {
 }
 
 async function start() {
-  process.stdout.write(styleText('gray', 'Data from packagephobia.com\n'))
+  process.stdout.write(styleText('gray', 'Data from registry.npmjs.org\n'))
   await benchmark('lint-staged')
   await benchmark('nano-staged')
 }

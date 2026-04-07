@@ -80,6 +80,55 @@ test('should run handle error', async () => {
   }
 })
 
+if (typeof AbortController === 'undefined') {
+  test.skip(
+    'should bail on first error and skip pending tasks — AbortController not available in this Node.js version',
+  )
+} else
+  test('should bail on first error and skip pending tasks', async () => {
+    const { createCmdRunner } = await esmock('../lib/cmd-runner.js', {
+      '../lib/executor.js': {
+        executor: async (cmd, args, opts) => {
+          if (opts && opts.signal && opts.signal.aborted) return Promise.reject('')
+          if (cmd === 'echo') return Promise.reject('Run error')
+          return new Promise((resolve, reject) => {
+            let timer = setTimeout(() => reject('Slow error'), 10000)
+            if (opts && opts.signal) {
+              opts.signal.addEventListener('abort', () => {
+                clearTimeout(timer)
+                reject('')
+              })
+            }
+          })
+        },
+      },
+    })
+
+    let runner = createCmdRunner({
+      rootPath: srcDir,
+      cwd: srcDir,
+      files: ['a.js', 'b.js'],
+      config: {
+        'a.js': 'echo Error',
+        'b.js': 'sleep 1000',
+      },
+      bail: true,
+    })
+
+    const cmdTasks = await runner.generateCmdTasks()
+    const task = { tasks: cmdTasks }
+    const start = Date.now()
+
+    try {
+      await runner.run(task)
+    } catch (error) {
+      const elapsed = Date.now() - start
+      is(elapsed < 5000, true)
+      is(task.tasks[0].state, 'fail')
+      is(task.tasks[1].state, 'warn')
+    }
+  })
+
 test('should run handle success', async () => {
   const { createCmdRunner } = await esmock('../lib/cmd-runner.js', {
     '../lib/executor.js': {

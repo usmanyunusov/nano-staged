@@ -251,6 +251,10 @@ Will allow creating an empty commit.
 
 Shows only that work is done and errors occured.
 
+#### `--bail`
+
+Stop running commands after the first failure.
+
 ## Thanks
 
 Special thanks to [lint-staged](https://github.com/okonet/lint-staged). Some codes was borrowed from it.

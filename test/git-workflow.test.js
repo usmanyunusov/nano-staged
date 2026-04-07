@@ -94,6 +94,29 @@ test('should apply changes files', async () => {
   is(await execGit(['diff', '--name-only', '--staged']), 'README.md\n')
 })
 
+test('should apply changes files on initial commit (no HEAD)', async () => {
+  let initialCwd = fixture('simple/git-workflow-initial-test')
+  await makeDir(initialCwd)
+  await createGit(initialCwd).exec(['init'])
+  await createGit(initialCwd).exec(['config', 'user.name', '"test"'])
+  await createGit(initialCwd).exec(['config', 'user.email', '"test@test.com"'])
+  await appendFile('README.md', '# Test\n', initialCwd)
+  await createGit(initialCwd).exec(['add', 'README.md'])
+
+  let gitWorkflow = createGitWorkflow({
+    dotPath: resolve(initialCwd, './.git'),
+    allowEmpty: false,
+    rootPath: initialCwd,
+  })
+
+  await writeFile('README.md', '# Test\n# Test', initialCwd)
+  await gitWorkflow.applyModifications([join(initialCwd, 'README.md')])
+
+  is(await createGit(initialCwd).exec(['diff', '--name-only', '--staged']), 'README.md\n')
+
+  await removeFile(initialCwd)
+})
+
 test('should apply empty files', async () => {
   let gitWorkflow = createGitWorkflow({
     dotPath: resolve(cwd, './.git'),
