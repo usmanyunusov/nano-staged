@@ -7,7 +7,7 @@
 ## Features
 
 - 📦 **Small**: [47kB](https://packagephobia.com/result?p=nano-staged) (142x+ lighter than **lint-staged**).
-- 🥇 **Single dependency** ([`picocolors`](https://github.com/alexeyraspopov/picocolors)).
+- 🥇 **No dependencies**
 - ☯️ **Support multiple file states like staged, unstaged, last-commit, changed etc**
 
 ## Benchmarks

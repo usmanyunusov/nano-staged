@@ -22,6 +22,7 @@ test('single to array', () => {
 })
 
 test('print version', () => {
+  process.env = { FORCE_COLOR: '1' }
   let stdout = createStdout()
   showVersion(stdout)
   is(stdout.out.replace(/\d+\.\d+\.\d+/, '0.1.0'), 'Nano Staged \x1B[1mv0.1.0\x1B[22m\n')
