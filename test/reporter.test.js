@@ -40,4 +40,15 @@ test('should reported NanoStagedError correctly', () => {
   is(stdout.out, '\x1B[31m×\x1B[39m \x1B[31mNano Staged config invalid.\x1B[39m\n')
 })
 
+test('should fall back to err when message is empty for TaskRunnerError', () => {
+  let err = new TaskRunnerError()
+  report.error(err)
+  is(stdout.out, `\n${err}\n`)
+})
+
+test('should fall back to err when message is empty for generic error', () => {
+  report.error('raw error')
+  is(stdout.out, `\n\x1B[31mraw error\x1B[39m\n`)
+})
+
 test.run()
