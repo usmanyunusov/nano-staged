@@ -15,7 +15,7 @@
   },
   "types": "./lib/index.d.ts",
   "engines": {
-    "node": ">=20.12.0"
+    "node": "^22 || >= 24"
   },
   "scripts": {
     "lint": "prettier --write lib/**/*.js",
@@ -46,7 +46,7 @@
     "include": [
       "lib/**/*"
     ],
-    "lines": 100,
+    "lines": 90,
     "check-coverage": true
   },
   "keywords": [

@@ -36,7 +36,7 @@ test('should return when config path error', async () => {
   } catch (error) {
     is(
       stdout.out,
-      '\x1B[31m×\x1B[39m \x1B[31mNano Staged config file \x1B[33mconfig.json\x1B[31m is not found.\x1B[39m\n'
+      '\x1B[31m×\x1B[39m \x1B[31mNano Staged config file \x1B[33mconfig.json\x1B[39m is not found.\x1B[39m\n'
     )
   }
 })
