@@ -1,6 +1,6 @@
 {
   "name": "nano-staged",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Tiny tool to run commands for modified, staged, and committed git files.",
   "author": "Usman Yunusov <usman.iunusov@gmail.com>",
   "license": "MIT",
@@ -22,7 +22,7 @@
     "unit": "cross-env CI=true node --loader=esmock --no-warnings ./node_modules/uvu/bin.js test \"\\.test\\.js$\"",
     "test": "c8 pnpm unit",
     "bench": "node bench/running-time/index.js && node bench/size/index.js",
-    "publish": "clean-publish"
+    "publish": "clean-publish --package-manager pnpm -- --no-git-checks"
   },
   "devDependencies": {
     "c8": "^11.0.0",
