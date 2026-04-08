@@ -1,6 +1,6 @@
 {
   "name": "nano-staged",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Tiny tool to run commands for modified, staged, and committed git files.",
   "author": "Usman Yunusov <usman.iunusov@gmail.com>",
   "license": "MIT",
@@ -34,6 +34,13 @@
     "prettier": "^3.8.1",
     "uvu": "^0.5.6"
   },
+  "files": [
+    "lib",
+    "CHANGELOG.md",
+    "LICENSE",
+    "README.md",
+    "package.json"
+  ],
   "clean-publish": {
     "cleanDocs": true
   },
