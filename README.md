@@ -6,7 +6,7 @@
 
 ## Features
 
-- 📦 **Small**: [47kB](https://packagephobia.com/result?p=nano-staged) (142x+ lighter than **lint-staged**).
+- 📦 **Small**: [52kB](https://packagephobia.com/result?p=nano-staged) (2x+ lighter than **lint-staged**).
 - 🥇 **No dependencies**
 - ☯️ **Support multiple file states like staged, unstaged, last-commit, changed etc**
 
@@ -16,8 +16,8 @@ Benchmarks running time for 10 file:
 
 ```diff
 $ node bench/running-time/index.js
-- lint-staged 1.394 ms
-+ nano-staged 0.968 ms
+- lint-staged 1.145 ms
++ nano-staged 0.652 ms
 ```
 
 The space in node_modules including sub-dependencies:
@@ -25,8 +25,8 @@ The space in node_modules including sub-dependencies:
 ```diff
 $ node bench/size/index.js
 Data from packagephobia.com
-- lint-staged   6688 kB
-+ nano-staged     47 kB
+- lint-staged    147 kB
++ nano-staged     52 kB
 ```
 
 The performance results were generated on a MBP Late 2013, 2.3 GHz Intel Core i7 by running `npm run bench` in the library folder. See [bench/running-time/index.js](https://github.com/usmanyunusov/nano-staged/blob/master/bench/running-time/index.js)

@@ -51,8 +51,8 @@ async function initProject() {
     }`
   )
 
-  await spawn('yarn', ['add', 'lint-staged'], { cwd })
-  await spawn('yarn', ['add', resolve(cwd, '../../../../nano-staged')], {
+  await spawn('pnpm', ['add', 'lint-staged'], { cwd })
+  await spawn('pnpm', ['add', resolve(cwd, '../../../../nano-staged')], {
     cwd,
   })
   await appendFile('a.js', 'var test = {};')
