@@ -24,23 +24,29 @@ test('should return when config undefined', async () => {
   }
 })
 
-test('should return when config path error', async () => {
-  const nanoStaged = await esmock('../lib/index.js', {
-    '../lib/config.js': {
-      getConfig: async () => undefined,
-    },
+const nodeVersion = parseInt(process.versions.node.split('.')[0])
+
+if (nodeVersion < 21) {
+  test.skip('should return when config path error — styleText nested color restore requires Node.js 21+')
+} else {
+  test('should return when config path error', async () => {
+    const nanoStaged = await esmock('../lib/index.js', {
+      '../lib/config.js': {
+        getConfig: async () => undefined,
+      },
+    })
+
+    try {
+      await nanoStaged({ stream: stdout, config: 'config.json' })
+    } catch (error) {
+      is(
+        stdout.out,
+        '\x1B[31m×\x1B[39m \x1B[31mNano Staged config file \x1B[33mconfig.json\x1B[31m is not found.\x1B[39m\n'
+      )
+    }
   })
-
-  try {
-    await nanoStaged({ stream: stdout, config: 'config.json' })
-  } catch (error) {
-    is(
-      stdout.out,
-      '\x1B[31m×\x1B[39m \x1B[31mNano Staged config file \x1B[33mconfig.json\x1B[31m is not found.\x1B[39m\n'
-    )
-  }
-})
-
+}
+    
 test('should config invalid', async () => {
   const nanoStaged = await esmock('../lib/index.js', {
     '../lib/config.js': {
