@@ -35,4 +35,9 @@ test('has error for task', () => {
   is(err.message, 'task error')
 })
 
+test('has error for --fail-on-changes', () => {
+  let err = new NanoStagedError('failOnChanges')
+  is(err.message, 'Tasks modified files and --fail-on-changes was used!')
+})
+
 test.run()

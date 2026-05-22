@@ -69,6 +69,13 @@ export interface Options {
    * @default false
    */
   quiet?: boolean
+
+  /**
+   * Fail when tasks modify tracked files.
+   *
+   * @default false
+   */
+  failOnChanges?: boolean
 }
 
 /**

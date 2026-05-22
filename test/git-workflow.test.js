@@ -238,4 +238,31 @@ test('hasPatch return false when no patch file', async () => {
   is(gitWorkflow.hasPatch('./test.patch'), false)
 })
 
+test('should detect changes since initial diff', async () => {
+  let gitWorkflow = createGitWorkflow({
+    dotPath: resolve(cwd, './.git'),
+    allowEmpty: false,
+    rootPath: cwd,
+  })
+
+  await writeFile('README.md', '# Test\n# Staged', cwd)
+  await execGit(['add', 'README.md'])
+  await gitWorkflow.captureInitialDiffHash()
+  await writeFile('README.md', '# Test\n# Modified by task', cwd)
+
+  is(await gitWorkflow.hasChangesSinceInitialDiff(), true)
+})
+
+test('should not detect changes since initial diff when diff is unchanged', async () => {
+  let gitWorkflow = createGitWorkflow({
+    dotPath: resolve(cwd, './.git'),
+    allowEmpty: false,
+    rootPath: cwd,
+  })
+
+  await gitWorkflow.captureInitialDiffHash()
+
+  is(await gitWorkflow.hasChangesSinceInitialDiff(), false)
+})
+
 test.run()

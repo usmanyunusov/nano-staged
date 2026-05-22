@@ -247,6 +247,10 @@ Run commands on files changed between the working tree and the index or a tree, 
 
 Will allow creating an empty commit.
 
+#### `--fail-on-changes`
+
+Fail with exit code 1 when tasks modify tracked files. This flag also disables staging of changes made by tasks and skips reverting to the original state on failure so you can review and stage changes manually.
+
 #### `--quiet`
 
 Shows only that work is done and errors occured.

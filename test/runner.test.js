@@ -262,6 +262,130 @@ test('should restoreOriginalState error', async () => {
   }
 })
 
+test('should fail when tasks modify files with failOnChanges', async () => {
+  const git_paths = { root: 'dir', dot: 'dir/.git' }
+  const files = { working: ['a.js'], deleted: [], changed: ['a.js'] }
+
+  const { createRunner } = await esmock('../lib/runner.js', {
+    '../lib/cmd-runner.js': {
+      createCmdRunner: () => ({
+        generateCmdTasks: async () => [{ file_count: 1 }],
+        run: async () => Promise.resolve(),
+      }),
+    },
+    '../lib/git-workflow.js': {
+      createGitWorkflow: () => ({
+        backupOriginalState: async () => Promise.resolve(),
+        backupUnstagedFiles: async () => Promise.resolve(),
+        captureInitialDiffHash: async () => Promise.resolve(),
+        hasChangesSinceInitialDiff: async () => true,
+        applyModifications: async () => Promise.resolve(),
+        restoreUnstagedFiles: async () => Promise.resolve(),
+        restoreOriginalState: async () => Promise.resolve(),
+        cleanUp: async () => Promise.resolve(),
+      }),
+    },
+  })
+
+  try {
+    await createRunner({ stream: stdout, git_paths, files, failOnChanges: true }).run()
+  } catch (error) {
+    is(error[0].message, 'Tasks modified files and --fail-on-changes was used!')
+    is(
+      stdout.out,
+      '\x1B[32m√\x1B[39m Preparing nano-staged\n' +
+        '\x1B[32m√\x1B[39m Backing up unstaged changes for staged files\n' +
+        '\x1B[32m√\x1B[39m Capturing initial diff hash\n' +
+        '\x1B[31m×\x1B[39m Checking for task modifications\n' +
+        '\x1B[32m√\x1B[39m Restoring unstaged changes for staged files\n',
+    )
+  }
+})
+
+test('should fail in diff mode when tasks modify files with failOnChanges', async () => {
+  const git_paths = { root: 'dir', dot: 'dir/.git' }
+  const files = { working: ['a.js'], deleted: [], changed: ['a.js'] }
+
+  const { createRunner } = await esmock('../lib/runner.js', {
+    '../lib/cmd-runner.js': {
+      createCmdRunner: () => ({
+        generateCmdTasks: async () => [{ file_count: 1 }],
+        run: async () => Promise.resolve(),
+      }),
+    },
+    '../lib/git-workflow.js': {
+      createGitWorkflow: () => ({
+        backupOriginalState: async () => Promise.resolve(),
+        captureInitialDiffHash: async () => {},
+        hasChangesSinceInitialDiff: async () => true,
+        applyModifications: async () => Promise.resolve(),
+        restoreOriginalState: async () => Promise.resolve(),
+        cleanUp: async () => Promise.resolve(),
+      }),
+    },
+  })
+
+  try {
+    await createRunner({
+      stream: stdout,
+      git_paths,
+      files,
+      type: 'diff',
+      failOnChanges: true,
+    }).run()
+  } catch (error) {
+    is(error[0].message, 'Tasks modified files and --fail-on-changes was used!')
+    is(
+      stdout.out,
+      '\x1B[32m√\x1B[39m Preparing nano-staged\n' +
+        '\x1B[32m√\x1B[39m Capturing initial diff hash\n' +
+        '\x1B[31m×\x1B[39m Checking for task modifications\n',
+    )
+  }
+})
+
+test('should fail in unstaged mode when tasks modify files with failOnChanges', async () => {
+  const git_paths = { root: 'dir', dot: 'dir/.git' }
+  const files = { working: ['a.js'], deleted: [], changed: ['a.js'] }
+
+  const { createRunner } = await esmock('../lib/runner.js', {
+    '../lib/cmd-runner.js': {
+      createCmdRunner: () => ({
+        generateCmdTasks: async () => [{ file_count: 1 }],
+        run: async () => Promise.resolve(),
+      }),
+    },
+    '../lib/git-workflow.js': {
+      createGitWorkflow: () => ({
+        backupOriginalState: async () => Promise.resolve(),
+        captureInitialDiffHash: async () => Promise.resolve(),
+        hasChangesSinceInitialDiff: async () => true,
+        applyModifications: async () => Promise.resolve(),
+        restoreOriginalState: async () => Promise.resolve(),
+        cleanUp: async () => Promise.resolve(),
+      }),
+    },
+  })
+
+  try {
+    await createRunner({
+      stream: stdout,
+      git_paths,
+      files,
+      type: 'unstaged',
+      failOnChanges: true,
+    }).run()
+  } catch (error) {
+    is(error[0].message, 'Tasks modified files and --fail-on-changes was used!')
+    is(
+      stdout.out,
+      '\x1B[32m√\x1B[39m Preparing nano-staged\n' +
+        '\x1B[32m√\x1B[39m Capturing initial diff hash\n' +
+        '\x1B[31m×\x1B[39m Checking for task modifications\n',
+    )
+  }
+})
+
 test('should cleanUp error', async () => {
   const git_paths = { root: 'dir', dot: 'dir/.git' }
   const files = { working: ['a.js'], deleted: [], changed: ['a.js'] }
