@@ -34,6 +34,12 @@ test('string to args', () => {
   equal(stringArgvToArray(), [])
 })
 
+test('string to args with quoted values', () => {
+  equal(stringArgvToArray('cmd "path with spaces"'), ['cmd', 'path with spaces'])
+  equal(stringArgvToArray("cmd 'path with spaces'"), ['cmd', 'path with spaces'])
+  equal(stringArgvToArray('cmd ""'), ['cmd', ''])
+})
+
 test('FORCE_COLOR: 1', () => {
   process.env = { FORCE_COLOR: '1' }
   is(getForceColorLevel(), 1)
