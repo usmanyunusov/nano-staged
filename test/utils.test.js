@@ -4,7 +4,13 @@ import { test } from 'uvu'
 import tty from 'tty'
 import os from 'os'
 
-import { toArray, showVersion, stringArgvToArray, getForceColorLevel } from '../lib/utils.js'
+import {
+  chunkFiles,
+  toArray,
+  showVersion,
+  stringArgvToArray,
+  getForceColorLevel,
+} from '../lib/utils.js'
 import { createStdout } from './utils/index.js'
 
 test.before.each(() => {
@@ -19,6 +25,13 @@ test.before.each(() => {
 test('single to array', () => {
   equal(toArray('path'), ['path'])
   equal(toArray(['path']), ['path'])
+})
+
+test('chunk files by total length', () => {
+  equal(chunkFiles(), [])
+  equal(chunkFiles(['a', 'b', 'c']), [['a', 'b', 'c']])
+  equal(chunkFiles(['aa', 'bb', 'cc'], 6), [['aa', 'bb'], ['cc']])
+  equal(chunkFiles(['a-very-long-path', 'b'], 4), [['a-very-long-path'], ['b']])
 })
 
 test('print version', () => {
