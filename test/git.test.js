@@ -244,4 +244,50 @@ test('should handle git worktrees', async () => {
   })
 })
 
+test('should add, diff and checkout files in chunks when the paths are too long', async () => {
+  let git = createGit(cwd)
+  let calls = []
+  let exec = git.exec
+  git.exec = async (args, opts) => {
+    calls.push(args[0])
+    return exec(args, opts)
+  }
+  git.maxPathsLength = 5
+
+  await appendFile('a.js', 'let a = {};', cwd)
+  await appendFile('b.js', 'let b = {};', cwd)
+  await appendFile('c.js', 'let c = {};', cwd)
+  await git.add(['a.js', 'b.js', 'c.js'])
+
+  equal(calls, ['add', 'add', 'add'])
+  equal(await git.status(), [
+    { x: 65, y: 32, path: 'a.js', rename: undefined },
+    { x: 65, y: 32, path: 'b.js', rename: undefined },
+    { x: 65, y: 32, path: 'c.js', rename: undefined },
+  ])
+
+  await writeFile('a.js', 'let a = 1;', cwd)
+  await writeFile('c.js', 'let c = 3;', cwd)
+  calls = []
+  await git.diff(patchPath, ['a.js', 'c.js'])
+
+  equal(calls, ['diff', 'diff'])
+  let patch = (await fs.readFile(patchPath)).toString()
+  is(patch.includes('diff --git a/a.js b/a.js'), true)
+  is(patch.includes('diff --git a/c.js b/c.js'), true)
+  is(fs.existsSync(`${patchPath}.part`), false)
+
+  calls = []
+  await git.checkout(['a.js', 'c.js'])
+
+  equal(calls, ['checkout', 'checkout'])
+  is((await fs.readFile(join(cwd, 'a.js'))).toString(), 'let a = {};')
+  is((await fs.readFile(join(cwd, 'c.js'))).toString(), 'let c = {};')
+
+  await git.apply(patchPath)
+
+  is((await fs.readFile(join(cwd, 'a.js'))).toString(), 'let a = 1;')
+  is((await fs.readFile(join(cwd, 'c.js'))).toString(), 'let c = 3;')
+})
+
 test.run()
